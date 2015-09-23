@@ -6,6 +6,7 @@
 	<string name="action_refresh">Refresh</string>
 	<string name="nav_open">Open</string>
 	<string name="nav_close">Close</string>
+	<string name="timeleft">+25min</string>
 
 	<string name="volgende_uur">Volgende Uur</string>
 </resources>
