@@ -26,7 +26,7 @@
 					android:padding="@dimen/layout_cardpadding">
 
 					<ImageView
-						android:src="@drawable/ic_alarm_green_500_36dp"
+						android:src="@drawable/ic_alarm_black_36dp"
 						android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
 						android:alpha="0.54" />
@@ -166,7 +166,7 @@
 					android:padding="@dimen/layout_cardpadding">
 
 					<ImageView
-						android:src="@drawable/ic_grade_yellow_500_36dp"
+						android:src="@drawable/ic_grade_black_36dp"
 						android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
 						android:alpha="0.54" />
