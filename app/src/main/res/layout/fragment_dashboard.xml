@@ -26,7 +26,7 @@
 					android:padding="@dimen/layout_cardpadding">
 
 						<ImageView
-							android:src="@drawable/ic_alarm_36dp"
+							android:src="@drawable/ic_alarm_green_500_36dp"
 							android:layout_height="wrap_content"
 							android:layout_width="wrap_content"
 							android:alpha="0.54" />
@@ -43,7 +43,8 @@
 			<View
 				android:layout_height="1dp"
 				android:layout_width="match_parent"
-				android:background="@android:color/darker_gray" />
+				android:background="@android:color/black"
+				android:alpha="0.12" />
 
 				<LinearLayout
 					android:layout_width="match_parent"
@@ -96,10 +97,6 @@
 							android:textColor="@color/textCardSecondary" />
 					</LinearLayout>
 				</LinearLayout>
-				<View
-					android:layout_height="1dp"
-					android:layout_width="match_parent"
-					android:background="@android:color/darker_gray" />
 				<LinearLayout
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -170,13 +167,13 @@
 					android:padding="@dimen/layout_cardpadding">
 
 					<ImageView
-						android:src="@drawable/ic_grade_black_36dp"
+						android:src="@drawable/ic_grade_yellow_500_36dp"
 						android:layout_height="wrap_content"
 						android:layout_width="wrap_content"
 						android:alpha="0.54" />
 
 					<TextView
-						android:text="@string/volgende_uur"
+						android:text="Laatste cijfers"
 						android:textSize="@dimen/card_text_primary_size"
 						android:textColor="@color/textCardPrimary"
 						android:gravity="top|right"
@@ -187,7 +184,8 @@
 				<View
 					android:layout_height="1dp"
 					android:layout_width="match_parent"
-					android:background="@android:color/darker_gray" />
+					android:background="@android:color/black"
+					android:alpha="0.12"/>
 
 				<LinearLayout
 					android:layout_width="match_parent"
@@ -211,7 +209,7 @@
 						<TextView
 							android:layout_height="wrap_content"
 							android:layout_width="wrap_content"
-							android:text="K201"
+							android:text="7.3"
 							android:layout_weight="1"
 							android:gravity="right"
 							android:textSize="@dimen/card_text_primary_size"
@@ -233,17 +231,13 @@
 						<TextView
 							android:layout_height="wrap_content"
 							android:layout_width="wrap_content"
-							android:text="+25min"
+							android:text="18min geleden"
 							android:layout_weight="1"
 							android:gravity="right"
 							android:textSize="@dimen/card_text_secondary_size"
 							android:textColor="@color/textCardSecondary" />
 					</LinearLayout>
 				</LinearLayout>
-				<View
-					android:layout_height="1dp"
-					android:layout_width="match_parent"
-					android:background="@android:color/darker_gray" />
 				<LinearLayout
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -266,7 +260,7 @@
 						<TextView
 							android:layout_height="wrap_content"
 							android:layout_width="wrap_content"
-							android:text="K106"
+							android:text="17.9"
 							android:layout_weight="1"
 							android:gravity="right"
 							android:textSize="@dimen/card_text_primary_size"
@@ -288,7 +282,7 @@
 						<TextView
 							android:layout_height="wrap_content"
 							android:layout_width="wrap_content"
-							android:text="+1h 25min"
+							android:text="1h 12min geleden"
 							android:layout_weight="1"
 							android:gravity="right"
 							android:textSize="@dimen/card_text_secondary_size"
