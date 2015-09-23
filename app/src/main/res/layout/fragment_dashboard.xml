@@ -8,28 +8,20 @@
 	<LinearLayout
 		android:orientation="vertical"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:padding="@dimen/layout_cardpadding">
+		android:layout_height="match_parent">
 
 		<LinearLayout
 			android:orientation="horizontal"
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
-			android:gravity="center">
+			android:gravity="center"
+			android:padding="@dimen/layout_cardpadding">
 
 				<ImageView
 					android:src="@drawable/ic_alarm_36dp"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
 					android:alpha="0.54" />
-
-					<TextView
-						android:layout_height="wrap_content"
-						android:layout_width="wrap_content"
-						android:text="@string/timeleft"
-						android:textSize="@dimen/card_text_secondary_size"
-						android:gravity="center"
-						android:textColor="@color/textCardPrimary" />
 
 					<TextView
 						android:text="@string/volgende_uur"
@@ -43,14 +35,13 @@
 	<View
 		android:layout_height="1dp"
 		android:layout_width="match_parent"
-		android:background="@android:color/darker_gray"
-		android:layout_marginTop="6dp"
-		android:layout_marginBottom="6dp"/>
+		android:background="@android:color/darker_gray" />
 
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:orientation="vertical">
+			android:orientation="vertical"
+			android:padding="@dimen/layout_cardpadding">
 
 			<LinearLayout
 				android:layout_width="match_parent"
@@ -60,35 +51,96 @@
 				<TextView
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:text="K201"
-					android:layout_weight="1"
-					android:textSize="@dimen/card_text_secondary_size"
-					android:textColor="@color/textCardPrimary" />
-
-				<TextView
-					android:layout_height="wrap_content"
-					android:layout_width="wrap_content"
 					android:text="Natuurkunde"
 					android:layout_weight="1"
-					android:textSize="@dimen/card_text_secondary_size"
+					android:textSize="@dimen/card_text_primary_size"
 					android:textColor="@color/textCardPrimary" />
 
 				<TextView
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:text="DOP"
+					android:text="K201"
+					android:layout_weight="1"
+					android:gravity="right"
+					android:textSize="@dimen/card_text_primary_size"
+					android:textColor="@color/textCardPrimary" />
+
+			</LinearLayout>
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+
+				<TextView
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="K. Dopheide"
 					android:layout_weight="1"
 					android:textSize="@dimen/card_text_secondary_size"
-					android:textColor="@color/textCardPrimary" />
-
+					android:textColor="@color/textCardSecondary" />
 				<TextView
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
-					android:text="9:30 - 10:30"
+					android:text="+25min"
 					android:layout_weight="1"
 					android:gravity="right"
 					android:textSize="@dimen/card_text_secondary_size"
+					android:textColor="@color/textCardSecondary" />
+			</LinearLayout>
+		</LinearLayout>
+		<View
+			android:layout_height="1dp"
+			android:layout_width="match_parent"
+			android:background="@android:color/darker_gray" />
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:padding="@dimen/layout_cardpadding">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+
+				<TextView
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="Informatica"
+					android:layout_weight="1"
+					android:textSize="@dimen/card_text_primary_size"
 					android:textColor="@color/textCardPrimary" />
+
+				<TextView
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="K106"
+					android:layout_weight="1"
+					android:gravity="right"
+					android:textSize="@dimen/card_text_primary_size"
+					android:textColor="@color/textCardPrimary" />
+
+			</LinearLayout>
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+
+				<TextView
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="M. d. Krosse"
+					android:layout_weight="1"
+					android:textSize="@dimen/card_text_secondary_size"
+					android:textColor="@color/textCardSecondary" />
+				<TextView
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:text="+1h 25min"
+					android:layout_weight="1"
+					android:gravity="right"
+					android:textSize="@dimen/card_text_secondary_size"
+					android:textColor="@color/textCardSecondary" />
 			</LinearLayout>
 		</LinearLayout>
 	</LinearLayout>
