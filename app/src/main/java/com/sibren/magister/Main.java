@@ -40,11 +40,16 @@ public class Main extends AppCompatActivity{
 			}
 		});
 
-		selectItem(0);
+		selectItem(0, false);
 	}
 
 	private void selectItem(int position) {
 
+		selectItem(position, true);
+	}
+
+	private void selectItem(int position, boolean backstack)
+	{
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		int container = R.id.fragment_container;
 
@@ -59,7 +64,11 @@ public class Main extends AppCompatActivity{
 				break;
 		}
 
-		transaction.addToBackStack(null);
+		if (backstack)
+		{
+			transaction.addToBackStack(null);
+		}
+
 		transaction.commit();
 
 		dlayout.closeDrawers();
