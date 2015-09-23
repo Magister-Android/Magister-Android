@@ -31,7 +31,6 @@ public class Main extends AppCompatActivity{
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
 		vlist = (ListView) findViewById(R.id.left_drawer);
 		vlist.setAdapter(adapter);
-		/* Dit heeft Jurryt bijna helemaal zelf getypt */
 
 		vlist.setOnItemClickListener(new ListView.OnItemClickListener() {
 
