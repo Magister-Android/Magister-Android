@@ -25,26 +25,22 @@
 					android:gravity="center"
 					android:padding="@dimen/layout_cardpadding">
 
-						<ImageView
-							android:src="@drawable/ic_alarm_green_500_36dp"
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:alpha="0.54" />
+					<ImageView
+						android:src="@drawable/ic_alarm_green_500_36dp"
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:alpha="0.54" />
 
-							<TextView
-								android:text="@string/volgende_uur"
-								android:textSize="@dimen/card_text_primary_size"
-								android:textColor="@color/textCardPrimary"
-								android:gravity="top|right"
-								android:layout_width="match_parent"
-								android:layout_height="wrap_content" />
-			</LinearLayout>
+					<TextView
+						android:text="@string/volgende_uur"
+						android:textSize="@dimen/card_text_primary_size"
+						android:textColor="@color/textCardPrimary"
+						android:gravity="top|right"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content" />
+				</LinearLayout>
 
-			<View
-				android:layout_height="1dp"
-				android:layout_width="match_parent"
-				android:background="@android:color/black"
-				android:alpha="0.12" />
+				<View style="@style/divider"/>
 
 				<LinearLayout
 					android:layout_width="match_parent"
@@ -181,11 +177,7 @@
 						android:layout_height="wrap_content" />
 				</LinearLayout>
 
-				<View
-					android:layout_height="1dp"
-					android:layout_width="match_parent"
-					android:background="@android:color/black"
-					android:alpha="0.12"/>
+				<View style="@style/divider"/>
 
 				<LinearLayout
 					android:layout_width="match_parent"
