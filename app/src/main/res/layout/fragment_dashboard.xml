@@ -46,107 +46,11 @@
 					android:background="@android:color/black"
 					android:alpha="0.12"/>
 
-				<LinearLayout
+				<FrameLayout
+					android:id="@+id/volgende_uur_container"
 					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					android:padding="@dimen/layout_cardpadding">
+					android:layout_height="wrap_content" />
 
-					<LinearLayout
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:orientation="horizontal">
-
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="Natuurkunde"
-							android:layout_weight="1"
-							android:textSize="@dimen/card_text_primary_size"
-							android:textColor="@color/textCardPrimary" />
-
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="K201"
-							android:layout_weight="1"
-							android:gravity="right"
-							android:textSize="@dimen/card_text_primary_size"
-							android:textColor="@color/textCardPrimary" />
-					</LinearLayout>
-					<LinearLayout
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:orientation="horizontal">
-
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="K. Dopheide"
-							android:layout_weight="1"
-							android:textSize="@dimen/card_text_secondary_size"
-							android:textColor="@color/textCardSecondary" />
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="+25min"
-							android:layout_weight="1"
-							android:gravity="right"
-							android:textSize="@dimen/card_text_secondary_size"
-							android:textColor="@color/textCardSecondary" />
-					</LinearLayout>
-				</LinearLayout>
-				<LinearLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					android:padding="@dimen/layout_cardpadding">
-
-					<LinearLayout
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:orientation="horizontal">
-
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="Informatica"
-							android:layout_weight="1"
-							android:textSize="@dimen/card_text_primary_size"
-							android:textColor="@color/textCardPrimary" />
-
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="K106"
-							android:layout_weight="1"
-							android:gravity="right"
-							android:textSize="@dimen/card_text_primary_size"
-							android:textColor="@color/textCardPrimary" />
-
-					</LinearLayout>
-					<LinearLayout
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:orientation="horizontal">
-
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="M. d. Krosse"
-							android:layout_weight="1"
-							android:textSize="@dimen/card_text_secondary_size"
-							android:textColor="@color/textCardSecondary" />
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="+1h 25min"
-							android:layout_weight="1"
-							android:gravity="right"
-							android:textSize="@dimen/card_text_secondary_size"
-							android:textColor="@color/textCardSecondary" />
-					</LinearLayout>
-				</LinearLayout>
 			</LinearLayout>
 		</android.support.v7.widget.CardView>
 		<android.support.v7.widget.CardView
@@ -186,108 +90,12 @@
 					android:background="@android:color/black"
 					android:alpha="0.12"/>
 
-				<LinearLayout
+
+				<FrameLayout
+					android:id="@+id/laatste_cijfers_container"
 					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					android:padding="@dimen/layout_cardpadding">
+					android:layout_height="wrap_content" />
 
-					<LinearLayout
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:orientation="horizontal">
-
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="Natuurkunde"
-							android:layout_weight="1"
-							android:textSize="@dimen/card_text_primary_size"
-							android:textColor="@color/textCardPrimary" />
-
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="7.3"
-							android:layout_weight="1"
-							android:gravity="right"
-							android:textSize="@dimen/card_text_primary_size"
-							android:textColor="@color/textCardPrimary" />
-
-					</LinearLayout>
-					<LinearLayout
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:orientation="horizontal">
-
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="K. Dopheide"
-							android:layout_weight="1"
-							android:textSize="@dimen/card_text_secondary_size"
-							android:textColor="@color/textCardSecondary" />
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="18min geleden"
-							android:layout_weight="1"
-							android:gravity="right"
-							android:textSize="@dimen/card_text_secondary_size"
-							android:textColor="@color/textCardSecondary" />
-					</LinearLayout>
-				</LinearLayout>
-				<LinearLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					android:padding="@dimen/layout_cardpadding">
-
-					<LinearLayout
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:orientation="horizontal">
-
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="Informatica"
-							android:layout_weight="1"
-							android:textSize="@dimen/card_text_primary_size"
-							android:textColor="@color/textCardPrimary" />
-
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="17.9"
-							android:layout_weight="1"
-							android:gravity="right"
-							android:textSize="@dimen/card_text_primary_size"
-							android:textColor="@color/textCardPrimary" />
-
-					</LinearLayout>
-					<LinearLayout
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:orientation="horizontal">
-
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="M. d. Krosse"
-							android:layout_weight="1"
-							android:textSize="@dimen/card_text_secondary_size"
-							android:textColor="@color/textCardSecondary" />
-						<TextView
-							android:layout_height="wrap_content"
-							android:layout_width="wrap_content"
-							android:text="1h 12min geleden"
-							android:layout_weight="1"
-							android:gravity="right"
-							android:textSize="@dimen/card_text_secondary_size"
-							android:textColor="@color/textCardSecondary" />
-					</LinearLayout>
-				</LinearLayout>
 			</LinearLayout>
 		</android.support.v7.widget.CardView>
 	</LinearLayout>
