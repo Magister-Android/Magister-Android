@@ -31,7 +31,6 @@ public class Main extends AppCompatActivity{
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
 		vlist = (ListView) findViewById(R.id.left_drawer);
 		vlist.setAdapter(adapter);
-		/* Dit heeft Jurryt bijna helemaal zelf getypt */
 
 		vlist.setOnItemClickListener(new ListView.OnItemClickListener() {
 
@@ -41,11 +40,16 @@ public class Main extends AppCompatActivity{
 			}
 		});
 
-		selectItem(0);
+		selectItem(0, false);
 	}
 
 	private void selectItem(int position) {
 
+		selectItem(position, true);
+	}
+
+	private void selectItem(int position, boolean backstack)
+	{
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		int container = R.id.fragment_container;
 
@@ -60,7 +64,11 @@ public class Main extends AppCompatActivity{
 				break;
 		}
 
-		transaction.addToBackStack(null);
+		if (backstack)
+		{
+			transaction.addToBackStack(null);
+		}
+
 		transaction.commit();
 
 		dlayout.closeDrawers();
