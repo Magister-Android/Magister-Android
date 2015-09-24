@@ -6,32 +6,32 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 /**
  * Created by max on 24-9-15.
  */
 public class ResourceRow extends Fragment
 {
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public static class Resource
+    {
+        public String vak;
+        public String title;
+        public String docent;
+        public String time;
 
-        // Maak een resource rij
-        View view =  inflater.inflate(R.layout.fragment_resource_row, container, false);
-
-        // Zet dingen in de text views.
-
-        setTextOnView(view, R.id.text_vak, "Natuurkunde");
-        setTextOnView(view, R.id.text_primary_resource, "K009");
-        setTextOnView(view, R.id.text_docent, "C. Dopheide");
-        setTextOnView(view, R.id.text_time, "8.30 - 9.30");
-
-        return view;
+        public Resource(String vak, String title, String docent, String time)
+        {
+            this.vak = vak;
+            this.title = title;
+            this.docent = docent;
+            this.time = time;
+        }
     }
 
-    private void setTextOnView(View view, Integer id, String text)
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        ((TextView) view.findViewById(id)).setText(text);
+        return inflater.inflate(R.layout.resource_row, container, false);
     }
 }

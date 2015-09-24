@@ -46,7 +46,7 @@
 					android:background="@android:color/black"
 					android:alpha="0.12"/>
 
-				<FrameLayout
+				<android.support.v7.widget.RecyclerView
 					android:id="@+id/volgende_uur_container"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content" />
@@ -91,7 +91,7 @@
 					android:alpha="0.12"/>
 
 
-				<FrameLayout
+				<android.support.v7.widget.RecyclerView
 					android:id="@+id/laatste_cijfers_container"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content" />
