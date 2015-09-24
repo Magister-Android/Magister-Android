@@ -3,6 +3,7 @@ package com.sibren.magister;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -41,6 +42,14 @@ public class Main extends AppCompatActivity{
 		});
 
 		selectItem(0, false);
+	}
+
+	@Override
+	public void onBackPressed(){
+		if(dlayout.isDrawerOpen(GravityCompat.START))
+			dlayout.closeDrawers();
+		else
+			super.onBackPressed();
 	}
 
 	private void selectItem(int position) {
