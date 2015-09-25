@@ -1,18 +1,20 @@
 <resources>
-	<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+	<style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
 		<item name="colorPrimary">@color/primary</item>
 		<item name="colorPrimaryDark">@color/primaryDark</item>
 		<item name="colorAccent">@color/accent</item>
-		<item name="android:actionMenuTextColor">@color/textPrimaryDark</item>
+		<item name="android:actionMenuTextColor">@color/textPrimary</item>
 		<item name="android:textColorPrimary">@color/textPrimaryDark</item>
 		<item name="android:textColor">@color/textPrimaryDark</item>
 		<item name="android:windowBackground">@color/background</item>
-
 	</style>
 
-	<style name="toolbarTheme" parent="Theme.AppCompat.Light">
+	<style name="toolbarTheme" parent="Theme.AppCompat">
 		<!-- navigation icon color -->
 		<item name="colorControlNormal">@color/white</item>
+		<item name="android:actionMenuTextColor">@color/textPrimary</item>
+		<item name="android:textColor">@color/textPrimary</item>
+
 	</style>
 
 	<style name="divider">

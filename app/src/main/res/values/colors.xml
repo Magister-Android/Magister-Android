@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<!-- Zie http://stackoverflow.com/questions/15852122/hex-transparency-in-colors voor een lijst met hexa dec. procenten-->
 	<item name="white" type="color">#FFFFFFFF</item>
 	<item name="primary" type="color">#2196F3</item>
 	<item name="primaryDark" type="color">#FF1976D2</item>
@@ -8,7 +9,7 @@
 	<item name="textPrimary" type="color">#DDFFFFFF</item>
 	<item name="textCardPrimary" type="color">#86000000</item>
 	<item name="textCardSecondary" type="color">#54000000</item>
-	<item name="divider" type="color">#FFB6B6B6</item>
+	<item name="divider" type="color">#1F000000</item>
 	<item name="textSecondary" type="color">#FF727272</item>
 	<item name="background" type="color">@color/white</item>
 	<item name="darkbg" type="color">#FF111111</item>
