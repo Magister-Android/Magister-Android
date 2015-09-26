@@ -1,12 +1,14 @@
 package com.sibren.magister;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import org.solovyev.android.views.llm.LinearLayoutManager; // Andere linear layout manager voor wrap_content op recycler view
 
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +16,12 @@ import android.view.ViewGroup;
 
 public class DashboardFragment extends Fragment
 {
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-				SwipeRefreshLayout mDashSwipeView;
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         Context c = getActivity();
@@ -30,8 +34,21 @@ public class DashboardFragment extends Fragment
         cijfers.setLayoutManager(new LinearLayoutManager(c));
         cijfers.setAdapter(new ResourceAdapter(getTestCijfers()));
 
-				mDashSwipeView = (SwipeRefreshLayout) view.findViewById(R.id.dasboard_swipeview);
-				mDashSwipeView.setColorSchemeResources(R.color.primary);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.dasboard_swipeview);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh()
+            {
+                Log.i("Refresh", "Refresh gesture made, refreshing");
+                refreshDashboard();
+                Log.i("Refresh", "Refresh finished");
+
+                // mDashSwipeView.setRefreshing(false);
+            }
+
+        });
 
         return view;
 
@@ -57,6 +74,16 @@ public class DashboardFragment extends Fragment
             new ResourceRow.Resource("Wiskunde B", "8.3", "M. Traas", "2 uur geleden"),
             new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden")
         };
+    }
+
+    public void refreshDashboard()
+    {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        }, 2000);
     }
 
 }
