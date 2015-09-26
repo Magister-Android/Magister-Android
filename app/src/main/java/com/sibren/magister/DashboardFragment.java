@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import org.solovyev.android.views.llm.LinearLayoutManager; // Andere linear layout manager voor wrap_content op recycler view
+
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ public class DashboardFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+				SwipeRefreshLayout mDashSwipeView;
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         Context c = getActivity();
@@ -26,6 +29,9 @@ public class DashboardFragment extends Fragment
         RecyclerView cijfers = (RecyclerView) view.findViewById(R.id.laatste_cijfers_container);
         cijfers.setLayoutManager(new LinearLayoutManager(c));
         cijfers.setAdapter(new ResourceAdapter(getTestCijfers()));
+
+				mDashSwipeView = (SwipeRefreshLayout) view.findViewById(R.id.dasboard_swipeview);
+				mDashSwipeView.setColorSchemeResources(R.color.primary);
 
         return view;
 

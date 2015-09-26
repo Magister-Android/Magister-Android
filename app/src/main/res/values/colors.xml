@@ -13,4 +13,8 @@
 	<item name="textSecondary" type="color">#FF727272</item>
 	<item name="background" type="color">@color/white</item>
 	<item name="darkbg" type="color">#FF111111</item>
+
+	<item name="refresh_progress_1" type="color">@color/primary</item>
+	<item name="refresh_progress_2" type="color">@color/primary</item>
+	<item name="refresh_progress_3" type="color">@color/primary</item>
 </resources>
