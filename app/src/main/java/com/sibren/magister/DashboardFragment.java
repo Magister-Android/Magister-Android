@@ -37,6 +37,9 @@ public class DashboardFragment extends Fragment
             new ResourceRow.Resource("Natuurkunde", "K109", "C. Dopheide", "9.30 - 10.30"),
             new ResourceRow.Resource("Scheikunde", "K009", "R. Habich", "10.30 - 11.30"),
             new ResourceRow.Resource("Wiskunde B", "K235", "M. Traas", "11.50 - 12.50"),
+            new ResourceRow.Resource("Wiskunde B", "K235", "M. Traas", "11.50 - 12.50"),
+            new ResourceRow.Resource("Wiskunde B", "K235", "M. Traas", "11.50 - 12.50"),
+            new ResourceRow.Resource("Wiskunde B", "K235", "M. Traas", "11.50 - 12.50"),
             new ResourceRow.Resource("Informagica", "K169", "M. de Krosse", "12.50 - 13.50")
         };
     }
