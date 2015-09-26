@@ -109,9 +109,6 @@ public class Main extends AppCompatActivity{
 			case R.id.action_settings:
 				return true;
 
-			case R.id.action_refresh:
-				return true;
-
 			default:
 				return super.onOptionsItemSelected(item);
 		}
