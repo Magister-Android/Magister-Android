@@ -1,5 +1,5 @@
 # Magister-Android
-The unofficial Android app for Magister
+De onofficiele [magister](http://www.schoolmaster.nl/) app voor Android. We hebben een soort van [een website](http://magister-android.github.io/).
 
 ## Progress
 *Dashboard*
