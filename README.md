@@ -1,10 +1,6 @@
 # Magister-Android
 The unofficial Android app for Magister
 
-## Installation
-Just clone it and open it in Android Studio
-
-
 ## Progress
 *Dashboard*
 
