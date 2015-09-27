@@ -16,15 +16,6 @@
 		<item name="android:textColor">@color/textPrimary</item>
 	</style>
 
-	<style name="TextLabel" parent="TextAppearance.AppCompat">
-		<!-- TODO deze kleurtjes moeten nog even gedesigned worden door team Nout & Jurryt-->
-		<item name="android:textColorHint">@color/primary</item>
-		<item name="android:textSize">20sp</item>
-		<item name="colorAccent">@color/primary</item>
-		<item name="colorControlNormal">@color/primary</item>
-		<item name="colorControlActivated">@color/primary</item>
-	</style>
-
 	<style name="divider">
 		<item name="android:background">#000000</item>
 		<item name="android:alpha">0.12</item>
