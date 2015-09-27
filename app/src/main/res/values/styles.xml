@@ -2,7 +2,7 @@
 	<style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
 		<item name="colorPrimary">@color/primary</item>
 		<item name="colorPrimaryDark">@color/primaryDark</item>
-		<item name="colorAccent">@color/accent</item>
+		<item name="colorAccent">@color/primary</item>
 		<item name="android:actionMenuTextColor">@color/textPrimary</item>
 		<item name="android:textColorPrimary">@color/textPrimaryDark</item>
 		<item name="android:textColor">@color/textPrimaryDark</item>
@@ -14,7 +14,15 @@
 		<item name="colorControlNormal">@color/white</item>
 		<item name="android:actionMenuTextColor">@color/textPrimary</item>
 		<item name="android:textColor">@color/textPrimary</item>
+	</style>
 
+	<style name="TextLabel" parent="TextAppearance.AppCompat">
+		<!-- TODO deze kleurtjes moeten nog even gedesigned worden door team Nout & Jurryt-->
+		<item name="android:textColorHint">@color/primary</item>
+		<item name="android:textSize">20sp</item>
+		<item name="colorAccent">@color/primary</item>
+		<item name="colorControlNormal">@color/primary</item>
+		<item name="colorControlActivated">@color/primary</item>
 	</style>
 
 	<style name="divider">

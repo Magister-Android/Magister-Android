@@ -6,8 +6,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.sibren.magister.R;
-
 public class Settings extends AppCompatActivity {
 
 	@Override
@@ -24,6 +22,7 @@ public class Settings extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				finish();
+				// TODO Ik weet niet of dit een goede manier is, dit stopt de activity, misschien kunnen we beter terug in de backstack
 			}
 		});
 	}
