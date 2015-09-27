@@ -1,5 +1,6 @@
 package com.sibren.magister;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -107,6 +108,8 @@ public class Main extends AppCompatActivity{
 		// as you specify a parent activity in AndroidManifest.xml.
 		switch(item.getItemId()){
 			case R.id.action_settings:
+				Intent settingsactivity = new Intent(this, Settings.class);
+				this.startActivity(settingsactivity);
 				return true;
 
 			default:
