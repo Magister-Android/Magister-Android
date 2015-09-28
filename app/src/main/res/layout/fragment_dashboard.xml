@@ -16,7 +16,8 @@
 			<android.support.v7.widget.CardView
 				android:layout_height="wrap_content"
 				android:layout_width="match_parent"
-				android:layout_margin="@dimen/layout_cardmargin">
+				android:layout_marginTop="@dimen/layout_cardmargin"
+				style="@style/card">
 
 				<LinearLayout
 					android:orientation="vertical"
@@ -61,7 +62,7 @@
 			<android.support.v7.widget.CardView
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/layout_cardmargin">
+				style="@style/card">
 				<LinearLayout
 					android:orientation="vertical"
 					android:layout_width="match_parent"

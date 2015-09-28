@@ -21,4 +21,10 @@
 		<item name="android:alpha">0.12</item>
 	</style>
 
+	<style name="card">
+		<item name="android:layout_marginLeft">@dimen/layout_cardmargin</item>
+		<item name="android:layout_marginRight">@dimen/layout_cardmargin</item>
+		<item name="android:layout_marginBottom">@dimen/layout_cardmargin</item>
+	</style>
+
 </resources>
