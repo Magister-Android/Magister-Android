@@ -1,9 +1,10 @@
-package com.sibren.magister;
+package ml.informaticaowners.magister;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.view.View;
+
 
 public class Settings extends AppCompatActivity {
 

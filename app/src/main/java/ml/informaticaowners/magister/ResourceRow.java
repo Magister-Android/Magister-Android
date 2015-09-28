@@ -1,4 +1,4 @@
-package com.sibren.magister;
+package ml.informaticaowners.magister;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 
 /**
  * Created by max on 24-9-15.
