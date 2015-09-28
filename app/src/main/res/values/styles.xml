@@ -1,4 +1,11 @@
 <resources>
+	<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+		<item name="colorPrimary">@color/primary</item> <!-- Blue 500, actionbar color -->
+		<item name="colorPrimaryDark">@color/primaryDark</item> <!-- Blue 700, statusbar color -->
+
+	</style>
+
 	<style name="divider">
 		<item name="android:background">#000000</item>
 		<item name="android:alpha">0.12</item>
