@@ -4,15 +4,14 @@ import android.content.Context;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import org.solovyev.android.views.llm.LinearLayoutManager; // Andere linear layout manager voor wrap_content op recycler view
 
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
+import android.widget.Adapter;
+import android.widget.LinearLayout;
 
 
 public class DashboardFragment extends Fragment
@@ -27,14 +26,11 @@ public class DashboardFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         Context c = getActivity();
 
-        RecyclerView uren = (RecyclerView) view.findViewById(R.id.volgende_uur_container);
-        uren.setLayoutManager(new LinearLayoutManager(c));
+        LinearLayout uurView = (LinearLayout) view.findViewById(R.id.volgende_uur_container);
+        populateLinearLayout(uurView, new ResourceAdapter(c, getTestUren()));
 
-        uren.setAdapter(new ResourceAdapter(getTestUren()));
-
-        RecyclerView cijfers = (RecyclerView) view.findViewById(R.id.laatste_cijfers_container);
-        cijfers.setLayoutManager(new LinearLayoutManager(c));
-        cijfers.setAdapter(new ResourceAdapter(getTestCijfers()));
+        LinearLayout cijferView = (LinearLayout) view.findViewById(R.id.laatste_cijfers_container);
+        populateLinearLayout(cijferView, new ResourceAdapter(c, getTestCijfers()));
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.dasboard_swipeview);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
@@ -54,6 +50,16 @@ public class DashboardFragment extends Fragment
 
         return view;
 
+    }
+
+    protected void populateLinearLayout(LinearLayout layout, Adapter adapter)
+    {
+        int count = adapter.getCount();
+
+        for (int i = 0; i < count; i++)
+        {
+            layout.addView(adapter.getView(i, null, null));
+        }
     }
 
     public ResourceRow.Resource[] getTestUren()
