@@ -1,9 +1,9 @@
 <resources>
 	<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-
 		<item name="colorPrimary">@color/primary</item> <!-- Blue 500, actionbar color -->
 		<item name="colorPrimaryDark">@color/primaryDark</item> <!-- Blue 700, statusbar color -->
 
+		<item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
 	</style>
 
 	<style name="divider">

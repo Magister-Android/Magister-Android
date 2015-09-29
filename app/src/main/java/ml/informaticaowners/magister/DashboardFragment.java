@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListAdapter;
 
 
 public class DashboardFragment extends Fragment
@@ -28,6 +29,7 @@ public class DashboardFragment extends Fragment
 
         RecyclerView uren = (RecyclerView) view.findViewById(R.id.volgende_uur_container);
         uren.setLayoutManager(new LinearLayoutManager(c));
+
         uren.setAdapter(new ResourceAdapter(getTestUren()));
 
         RecyclerView cijfers = (RecyclerView) view.findViewById(R.id.laatste_cijfers_container);
@@ -72,7 +74,26 @@ public class DashboardFragment extends Fragment
         return new ResourceRow.Resource[] {
             new ResourceRow.Resource("Scheikunde", "7.3", "R. Habich", "19 minuten geleden"),
             new ResourceRow.Resource("Wiskunde B", "8.3", "M. Traas", "2 uur geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden")
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
+            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
         };
     }
 
