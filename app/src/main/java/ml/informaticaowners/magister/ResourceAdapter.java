@@ -26,9 +26,11 @@ public class ResourceAdapter extends ArrayAdapter<ResourceRow.Resource>
     {
         ResourceRow.Resource row = getItem(position);
 
+        int resourceId = row.warning ? R.layout.resource_row_warning : R.layout.resource_row;
+
         if (convertView == null)
         {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.resource_row, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
         }
 
         TextView vak = (TextView) convertView.findViewById(R.id.text_vak);

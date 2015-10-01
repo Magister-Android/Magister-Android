@@ -69,9 +69,7 @@ public class DashboardFragment extends Fragment
             new ResourceRow.Resource("Scheikunde", "K009", "R. Habich", "10.30 - 11.30"),
             new ResourceRow.Resource("Wiskunde B", "K235", "M. Traas", "11.50 - 12.50"),
             new ResourceRow.Resource("Wiskunde B", "K235", "M. Traas", "11.50 - 12.50"),
-            new ResourceRow.Resource("Wiskunde B", "K235", "M. Traas", "11.50 - 12.50"),
-            new ResourceRow.Resource("Wiskunde B", "K235", "M. Traas", "11.50 - 12.50"),
-            new ResourceRow.Resource("Informagica", "K169", "M. de Krosse", "12.50 - 13.50")
+            new ResourceRow.Resource("Informagica", "K169", "M. de Krosse", "12.50 - 13.50", true),
         };
     }
 
@@ -80,24 +78,6 @@ public class DashboardFragment extends Fragment
         return new ResourceRow.Resource[] {
             new ResourceRow.Resource("Scheikunde", "7.3", "R. Habich", "19 minuten geleden"),
             new ResourceRow.Resource("Wiskunde B", "8.3", "M. Traas", "2 uur geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
             new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
             new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
         };

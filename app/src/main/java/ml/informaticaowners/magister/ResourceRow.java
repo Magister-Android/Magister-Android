@@ -19,13 +19,20 @@ public class ResourceRow extends Fragment
         public String title;
         public String docent;
         public String time;
+        public boolean warning = false;
 
-        public Resource(String vak, String title, String docent, String time)
+        public Resource(String vak, String title, String docent, String time, Boolean warning)
         {
             this.vak = vak;
             this.title = title;
             this.docent = docent;
             this.time = time;
+            this.warning = warning;
+        }
+
+        public Resource(String vak, String title, String docent, String time)
+        {
+            this(vak, title, docent, time, false);
         }
     }
 
