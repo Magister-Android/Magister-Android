@@ -1,4 +1,4 @@
-package ml.informaticaowners.magister;
+package eu.magisterapp.magister;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
