@@ -1,12 +1,15 @@
 package ml.informaticaowners.magister;
 
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -91,9 +94,32 @@ public class Main extends AppCompatActivity{
 		DrawerLayout dlayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle abdtoggle = new ActionBarDrawerToggle(this, dlayout, toolbar, R.string.nav_open, R.string.nav_close);
 		dlayout.setDrawerListener(abdtoggle);
+
+		// Set a correct drawer width
+		ListView drawerList = (ListView) findViewById(R.id.left_drawer);
+
+		DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) drawerList.getLayoutParams();
+		params.width = getDrawerWidth();
+
+		drawerList.setLayoutParams(params);
+
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
 		abdtoggle.syncState();
+	}
+
+	private int getDrawerWidth()
+	{
+		int screenwidth = getResources().getDisplayMetrics().widthPixels;
+
+		TypedValue tv = new TypedValue();
+
+		getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
+
+		int actionbarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+
+		return Math.min(screenwidth - actionbarHeight, actionbarHeight * 6);
 	}
 
 	@Override
