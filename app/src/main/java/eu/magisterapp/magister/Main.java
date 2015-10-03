@@ -1,4 +1,4 @@
-package ml.informaticaowners.magister;
+package eu.magisterapp.magister;
 
 import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;

@@ -13,4 +13,6 @@
 	<item name="textSecondary" type="color">#FF727272</item>
 	<item name="background" type="color">@color/white</item>
 	<item name="darkbg" type="color">#FF111111</item>
+
+	<item name="uitval_bg" type="color">#FF8A80</item>
 </resources>
