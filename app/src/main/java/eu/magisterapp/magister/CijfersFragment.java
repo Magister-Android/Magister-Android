@@ -3,6 +3,7 @@ package eu.magisterapp.magister;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,8 @@ public class CijfersFragment extends Fragment
         RecyclerView cijferContainer = (RecyclerView) view.findViewById(R.id.cijfer_container);
 
         ResourceAdapter adapter = new ResourceAdapter(getCijfers());
+
+        cijferContainer.setLayoutManager(new LinearLayoutManager(getContext()));
         cijferContainer.setAdapter(adapter);
 
         return view;
