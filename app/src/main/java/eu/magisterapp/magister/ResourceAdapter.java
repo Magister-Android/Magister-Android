@@ -1,48 +1,69 @@
 package eu.magisterapp.magister;
 
-import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import eu.magisterapp.magister.ResourceRow;
 
-public class ResourceAdapter extends ArrayAdapter<ResourceRow.Resource>
+
+public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHolder>
 {
     /**
-     * Created by max on 29-9-15.
+     * Created by max on 24-9-15.
      */
-    public ResourceRow.Resource[] resources;
 
-    public ResourceAdapter(Context context, ResourceRow.Resource[] resources)
+    public ResourceRow.Resource[] data;
+
+    public static class ViewHolder extends RecyclerView.ViewHolder
     {
-        super(context, 0, resources);
-        this.resources = resources;
+        public TextView vak;
+        public TextView title;
+        public TextView docent;
+        public TextView time;
+
+        public ViewHolder(LinearLayout row)
+        {
+            super(row);
+
+            vak = (TextView) row.findViewById(R.id.text_vak);
+            title = (TextView) row.findViewById(R.id.text_title);
+            docent = (TextView) row.findViewById(R.id.text_docent);
+            time = (TextView) row.findViewById(R.id.text_time);
+        }
+    }
+
+    public ResourceAdapter(ResourceRow.Resource[] rijenMetShit)
+    {
+        data = rijenMetShit;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent)
+    public ResourceAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        ResourceRow.Resource row = getItem(position);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        int resourceId = row.warning ? R.layout.resource_row_warning : R.layout.resource_row;
+        LinearLayout row = (LinearLayout) inflater.inflate(R.layout.resource_row, parent, false);
 
-        if (convertView == null)
-        {
-            convertView = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
-        }
+        return new ViewHolder(row);
+    }
 
-        TextView vak = (TextView) convertView.findViewById(R.id.text_vak);
-        TextView title = (TextView) convertView.findViewById(R.id.text_title);
-        TextView docent = (TextView) convertView.findViewById(R.id.text_docent);
-        TextView time = (TextView) convertView.findViewById(R.id.text_time);
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position)
+    {
+        ResourceRow.Resource row = data[position];
 
-        vak.setText(row.vak);
-        title.setText(row.title);
-        docent.setText(row.docent);
-        time.setText(row.time);
+        holder.vak.setText(row.vak);
+        holder.title.setText(row.title);
+        holder.docent.setText(row.docent);
+        holder.time.setText(row.time);
 
-        return convertView;
+    }
+
+    @Override
+    public int getItemCount() {
+        return data.length;
     }
 }

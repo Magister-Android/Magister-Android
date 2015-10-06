@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,10 +28,10 @@ public class DashboardFragment extends Fragment
         Context c = getActivity();
 
         LinearLayout uurView = (LinearLayout) view.findViewById(R.id.volgende_uur_container);
-        populateLinearLayout(uurView, new ResourceAdapter(c, getTestUren()));
+        populateLinearLayout(uurView, new ResourceAdapter(getTestUren()));
 
         LinearLayout cijferView = (LinearLayout) view.findViewById(R.id.laatste_cijfers_container);
-        populateLinearLayout(cijferView, new ResourceAdapter(c, getTestCijfers()));
+        populateLinearLayout(cijferView, new ResourceAdapter(getTestCijfers()));
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.dasboard_swipeview);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
@@ -52,13 +53,16 @@ public class DashboardFragment extends Fragment
 
     }
 
-    protected void populateLinearLayout(LinearLayout layout, Adapter adapter)
+    protected void populateLinearLayout(LinearLayout layout, RecyclerView.Adapter adapter)
     {
-        int count = adapter.getCount();
+        int count = adapter.getItemCount();
 
         for (int i = 0; i < count; i++)
         {
-            layout.addView(adapter.getView(i, null, null));
+            RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(layout, i);
+            adapter.onBindViewHolder(holder, i);
+
+            layout.addView(holder.itemView);
         }
     }
 
