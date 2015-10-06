@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.0"
 
     defaultConfig {
-        applicationId "ml.informaticaowners.magister"
+        applicationId "eu.magisterapp.magister"
         minSdkVersion 11
         targetSdkVersion 23
         versionCode 1
