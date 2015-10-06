@@ -8,6 +8,8 @@
 	<string name="nav_close">Close</string>
 
 	<string name="volgende_uur">Volgende uur</string>
+	<string name="laatste_cijfers">Laatste Cijfers</string>
+	<string name="alle_cijfers">Alle Cijfers</string>
 	<string name="title_activity_settings">Settings</string>
 
 	<string name="hello_world">Hello world!</string>

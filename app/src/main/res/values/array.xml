@@ -2,6 +2,7 @@
 <resources>
 	<string-array name="nav_items">
 		<item>Dashboard</item>
-		<item>Schedule</item>
+		<item>Rooster</item>
+		<item>Alle Cijfers</item>
 	</string-array>
 </resources>

@@ -69,6 +69,10 @@ public class Main extends AppCompatActivity{
 			case 1:
 				transaction.replace(container, new RoosterFragment());
 				break;
+
+			case 2:
+				transaction.replace(container, new RoosterFragment());
+				break;
 			case 0:
 			default:
 				transaction.replace(container, new DashboardFragment());

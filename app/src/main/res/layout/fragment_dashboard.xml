@@ -83,7 +83,7 @@
 							android:alpha="0.54" />
 
 						<TextView
-							android:text="Laatste cijfers"
+							android:text="@string/laatste_cijfers"
 							android:textSize="@dimen/card_text_primary_size"
 							android:textColor="@color/textCardPrimary"
 							android:gravity="top|right"
