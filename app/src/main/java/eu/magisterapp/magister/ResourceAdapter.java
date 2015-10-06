@@ -6,8 +6,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import eu.magisterapp.magister.ResourceRow;
-
 
 public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHolder>
 {
