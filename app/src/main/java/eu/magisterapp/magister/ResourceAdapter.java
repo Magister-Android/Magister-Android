@@ -45,7 +45,9 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
     {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        LinearLayout row = (LinearLayout) inflater.inflate(R.layout.resource_row, parent, false);
+        int resourceType = data[viewType].warning ? R.layout.resource_row_warning : R.layout.resource_row;
+
+        LinearLayout row = (LinearLayout) inflater.inflate(resourceType, parent, false);
 
         return new ViewHolder(row);
     }

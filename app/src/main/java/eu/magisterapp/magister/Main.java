@@ -71,7 +71,7 @@ public class Main extends AppCompatActivity{
 				break;
 
 			case 2:
-				transaction.replace(container, new RoosterFragment());
+				transaction.replace(container, new CijfersFragment());
 				break;
 			case 0:
 			default:
