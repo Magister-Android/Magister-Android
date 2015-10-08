@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.support.v7.widget.Toolbar;
 
 
 public class Main extends AppCompatActivity{
@@ -89,8 +90,13 @@ public class Main extends AppCompatActivity{
 		dlayout.closeDrawers();
 	}
 
+	public void changeTitle(String title)
+	{
+		getSupportActionBar().setTitle(title);
+	}
+
 	private void setupToolbar(){
-		android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
 		DrawerLayout dlayout = (DrawerLayout) findViewById(R.id.drawer_layout);
