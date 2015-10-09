@@ -7,12 +7,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+/**
+ * @author  Max Verbeek <m4xv3rb33k@gmail.com>
+ * @version 1.0
+ * @since   24-9-15
+ */
 public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHolder>
 {
-    /**
-     * Created by max on 24-9-15.
-     */
-
     public ResourceRow.Resource[] data;
 
     public static class ViewHolder extends RecyclerView.ViewHolder

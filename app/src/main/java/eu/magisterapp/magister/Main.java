@@ -16,6 +16,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
+/**
+ * @author  Max Verbeek <m4xv3rb33k@gmail.com>
+ * @version 1.0
+ * @since   20-9-15
+ */
 public class Main extends AppCompatActivity{
 	String[] items;
 	ArrayAdapter<String> adapter;
@@ -89,6 +94,9 @@ public class Main extends AppCompatActivity{
 		dlayout.closeDrawers();
 	}
 
+	/**
+	 * Setup the ToolBar
+	 */
 	private void setupToolbar(){
 		android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -111,6 +119,10 @@ public class Main extends AppCompatActivity{
 		abdtoggle.syncState();
 	}
 
+	/**
+	 * Get the width of the drawer based on the ActionBar width
+	 * @return int The width of the drawer
+	 */
 	private int getDrawerWidth()
 	{
 		int screenwidth = getResources().getDisplayMetrics().widthPixels;

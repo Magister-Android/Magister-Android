@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+	android:layout_height="match_parent"
+	android:layout_width="match_parent"
+	android:orientation="vertical"
+	xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:padding="@dimen/layout_cardpadding"
-        android:gravity="center">
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:orientation="horizontal"
+		android:padding="@dimen/layout_cardpadding"
+		android:gravity="center">
 
-        <ImageView
-            android:src="@drawable/ic_query_builder_amber_a700_36dp"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_gravity="left"
-            android:alpha="0.54" />
+		<ImageView
+			android:src="@drawable/ic_query_builder_amber_a700_36dp"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_gravity="left"
+			android:alpha="0.54" />
 
-        <TextView
-            android:text="@string/alle_cijfers"
-            android:textSize="@dimen/card_text_primary_size"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:gravity="right"/>
+		<TextView
+			android:text="@string/alle_cijfers"
+			android:textSize="@dimen/card_text_primary_size"
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent"
+			android:gravity="right"/>
 
-    </LinearLayout>
-    <View
-        android:layout_height="1dp"
-        android:layout_width="match_parent"
-        android:background="@android:color/black"
-        android:alpha="0.12"/>
+	</LinearLayout>
+	<View
+		android:layout_height="1dp"
+		android:layout_width="match_parent"
+		android:background="@android:color/black"
+		android:alpha="0.12"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/cijfer_container"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"/>
+	<android.support.v7.widget.RecyclerView
+		android:id="@+id/cijfer_container"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"/>
 
 </LinearLayout>

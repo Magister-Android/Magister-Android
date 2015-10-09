@@ -5,7 +5,11 @@ import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.view.View;
 
-
+/**
+ * @author  Sibren Talens <sibrentalens@gmail.com>
+ * @version 1.0
+ * @since   24-9-15
+ */
 public class Settings extends AppCompatActivity {
 
 	@Override
@@ -22,7 +26,6 @@ public class Settings extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				finish();
-				// TODO Ik weet niet of dit een goede manier is, dit stopt de activity, misschien kunnen we beter terug in de backstack
 			}
 		});
 	}
