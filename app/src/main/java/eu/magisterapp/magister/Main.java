@@ -24,10 +24,17 @@ public class Main extends AppCompatActivity{
 	ListView vlist;
 	DrawerLayout dlayout;
 	Toolbar toolbar;
+	int fragmentPosition = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		if (savedInstanceState != null)
+		{
+			fragmentPosition = savedInstanceState.getInt("current_fragment", 0);
+		}
+
 		setContentView(R.layout.activity_main);
 		setupToolbar();
 		dlayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -44,7 +51,14 @@ public class Main extends AppCompatActivity{
 			}
 		});
 
-		selectItem(0, false);
+		selectItem(fragmentPosition, false);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		outState.putInt("current_fragment", fragmentPosition);
 	}
 
 	@Override
@@ -56,13 +70,15 @@ public class Main extends AppCompatActivity{
 			super.onBackPressed();
 	}
 
-	private void selectItem(int position) {
-
+	private void selectItem(int position)
+	{
 		selectItem(position, true);
 	}
 
 	private void selectItem(int position, boolean backstack)
 	{
+		fragmentPosition = position;
+
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		int container = R.id.fragment_container;
 
