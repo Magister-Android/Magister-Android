@@ -2,7 +2,6 @@ package eu.magisterapp.magister;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 
-public class DashboardFragment extends Fragment
+public class DashboardFragment extends TitledFragment
 {
     protected SwipeRefreshLayout mSwipeRefreshLayout;
 
