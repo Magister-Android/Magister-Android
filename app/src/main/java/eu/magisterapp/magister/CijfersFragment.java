@@ -25,9 +25,6 @@ public class CijfersFragment extends Fragment
         cijferContainer.setLayoutManager(new LinearLayoutManager(getContext()));
         cijferContainer.setAdapter(adapter);
 
-        Toolbar toolbar = (Toolbar) (view.findViewById(R.id.toolbar));
-        toolbar.setTitle(getResources().getString(R.string.alle_cijfers));
-
         ((Main) getActivity()).changeTitle(getResources().getString(R.string.alle_cijfers));
 
         return view;
