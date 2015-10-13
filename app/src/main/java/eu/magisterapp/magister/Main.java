@@ -23,6 +23,7 @@ public class Main extends AppCompatActivity{
 
 	ListView vlist;
 	DrawerLayout dlayout;
+	Toolbar toolbar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,11 +93,11 @@ public class Main extends AppCompatActivity{
 
 	public void changeTitle(String title)
 	{
-		getSupportActionBar().setTitle(title);
+		toolbar.setTitle(title);
 	}
 
 	private void setupToolbar(){
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
 		DrawerLayout dlayout = (DrawerLayout) findViewById(R.id.drawer_layout);
