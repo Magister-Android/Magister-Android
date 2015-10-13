@@ -93,6 +93,11 @@ public class Main extends AppCompatActivity{
 
 	public void changeTitle(String title)
 	{
+		if (toolbar == null)
+		{
+			return;
+		}
+
 		toolbar.setTitle(title);
 	}
 
