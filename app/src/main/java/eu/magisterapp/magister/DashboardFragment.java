@@ -1,10 +1,12 @@
 package eu.magisterapp.magister;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Bundle;
 
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,10 +14,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import org.joda.time.LocalDate;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import eu.magisterapp.magisterapi.Afspraak;
+import eu.magisterapp.magisterapi.AfspraakCollection;
+import eu.magisterapp.magisterapi.BadResponseException;
+import eu.magisterapp.magisterapi.Utils;
+
 
 public class DashboardFragment extends TitledFragment
 {
     protected SwipeRefreshLayout mSwipeRefreshLayout;
+    protected LinearLayout uurView;
+    protected LinearLayout cijferView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -25,10 +42,10 @@ public class DashboardFragment extends TitledFragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         Context c = getActivity();
 
-        LinearLayout uurView = (LinearLayout) view.findViewById(R.id.volgende_uur_container);
+        uurView = (LinearLayout) view.findViewById(R.id.volgende_uur_container);
         populateLinearLayout(uurView, new ResourceAdapter(getTestUren()));
 
-        LinearLayout cijferView = (LinearLayout) view.findViewById(R.id.laatste_cijfers_container);
+        cijferView = (LinearLayout) view.findViewById(R.id.laatste_cijfers_container);
         populateLinearLayout(cijferView, new ResourceAdapter(getTestCijfers()));
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.dasboard_swipeview);
@@ -53,6 +70,8 @@ public class DashboardFragment extends TitledFragment
 
     protected void populateLinearLayout(LinearLayout layout, RecyclerView.Adapter adapter)
     {
+        layout.removeAllViews();
+
         int count = adapter.getItemCount();
 
         for (int i = 0; i < count; i++)
@@ -87,12 +106,67 @@ public class DashboardFragment extends TitledFragment
 
     public void refreshDashboard()
     {
-        new Handler().postDelayed(new Runnable() {
+
+        mSwipeRefreshLayout.setRefreshing(true);
+
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(false);
+
+                Main main = (Main) getContext();
+
+                try
+                {
+                    LocalDate now = Utils.now();
+                    AfspraakCollection afspraken = main.api.getAfspraken(now, now);
+
+                    updateRoosterView(afspraken);
+                }
+
+                catch (IOException | ParseException e)
+                {
+                    makeAlertDialog(e.getMessage()).show();
+                }
             }
-        }, 2000);
+        });
+
+        thread.start();
+    }
+
+    private AlertDialog makeAlertDialog(String body)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(body);
+        builder.setCancelable(true);
+        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        return builder.create();
+    }
+
+    private void updateRoosterView(AfspraakCollection afspraken)
+    {
+        List<ResourceRow.Resource> array = new ArrayList<ResourceRow.Resource>();
+
+        for (Afspraak afspraak : afspraken) // we doen nu gwn 1 dag, dit is het dashboard. fck jou jurryt.
+        {
+            array.add(makeResourceRow(afspraak));
+        }
+
+        populateLinearLayout(uurView, new ResourceAdapter(array.toArray(new ResourceRow.Resource[array.size()])));
+
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    private ResourceRow.Resource makeResourceRow(Afspraak a)
+    {
+        String tijd = a.Start.toString("HH:mm") + " - " + a.Einde.toString("HH:mm");
+
+        return new ResourceRow.Resource(a.getVakken(), a.getLokalen(), a.getDocenten(), tijd, a.valtUit());
     }
 
 }

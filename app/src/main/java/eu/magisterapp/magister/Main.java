@@ -16,6 +16,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
 
+import eu.magisterapp.magisterapi.Afspraak;
+import eu.magisterapp.magisterapi.MagisterAPI;
+
 
 public class Main extends AppCompatActivity{
 	String[] items;
@@ -25,6 +28,8 @@ public class Main extends AppCompatActivity{
 	DrawerLayout dlayout;
 	Toolbar toolbar;
 	int fragmentPosition = 0;
+
+	MagisterAPI api = new MagisterAPI("zernike", "mverbeek", "ah3zenvy");
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

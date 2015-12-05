@@ -1,0 +1,3 @@
+[submodule "magister-api"]
+	path = magister-api
+	url = git@github.com:Magister-Android/magister-api

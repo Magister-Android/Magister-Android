@@ -14,11 +14,6 @@ public class TitledFragment extends Fragment
 
     Boolean attached = false;
 
-    public TitledFragment()
-    {
-        main = (Main) getActivity();
-    }
-
     protected void setTitle(String title)
     {
         // Als dit nog niet geattached is, is er nog geen Main
