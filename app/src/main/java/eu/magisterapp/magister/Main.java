@@ -29,7 +29,7 @@ public class Main extends AppCompatActivity{
 	Toolbar toolbar;
 	int fragmentPosition = 0;
 
-	MagisterAPI api = new MagisterAPI("zernike", "mverbeek", "ah3zenvy");
+	MagisterAPI api = new MagisterAPI("zernike", "mverbeek", "jemoeder6969");
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -2,6 +2,7 @@ package eu.magisterapp.magister;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Bundle;
 
@@ -14,7 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -25,6 +27,7 @@ import java.util.List;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.BadResponseException;
+import eu.magisterapp.magisterapi.MagisterAPI;
 import eu.magisterapp.magisterapi.Utils;
 
 
@@ -106,31 +109,48 @@ public class DashboardFragment extends TitledFragment
 
     public void refreshDashboard()
     {
-
         mSwipeRefreshLayout.setRefreshing(true);
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new HaalRoosterOpTask().execute((Void[]) null);
+    }
 
-                Main main = (Main) getContext();
+    private class HaalRoosterOpTask extends AsyncTask<Void, Void, Void>
+    {
+        AfspraakCollection afspraken;
 
-                try
-                {
-                    LocalDate now = Utils.now();
-                    AfspraakCollection afspraken = main.api.getAfspraken(now, now);
+        @Override
+        protected Void doInBackground(Void... params) {
 
-                    updateRoosterView(afspraken);
-                }
+            MagisterAPI api = ((Main) getContext()).api;
 
-                catch (IOException | ParseException e)
-                {
-                    makeAlertDialog(e.getMessage()).show();
-                }
+            try
+            {
+                Log.i("Afspraken", "Afspraken ophalen");
+
+                afspraken = api.getAfspraken(Utils.now(), Utils.deltaDays(1)); // omdat het morgen pas maandag is.
+
+                Log.i("Afspraken", "Afspraken opgehaald.");
+
+
             }
-        });
 
-        thread.start();
+            catch (IOException | ParseException | JSONException e)
+            {
+                Log.e("Rooster", String.format("Iets is verneukt (%s)", e.getClass()));
+                e.printStackTrace();
+                // makeAlertDialog("Something went wrong while getting your data.");
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (afspraken == null)
+                makeAlertDialog("Fout bij het ophalen van je rooster.");
+            else
+                updateRoosterView(afspraken);
+        }
     }
 
     private AlertDialog makeAlertDialog(String body)
