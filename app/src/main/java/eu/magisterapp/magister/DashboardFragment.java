@@ -60,9 +60,6 @@ public class DashboardFragment extends TitledFragment
             {
                 Log.i("Refresh", "Refresh gesture made, refreshing");
                 refreshDashboard();
-                Log.i("Refresh", "Refresh finished");
-
-                // mDashSwipeView.setRefreshing(false);
             }
 
         });
@@ -112,6 +109,8 @@ public class DashboardFragment extends TitledFragment
         mSwipeRefreshLayout.setRefreshing(true);
 
         new HaalRoosterOpTask().execute((Void[]) null);
+
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     private class HaalRoosterOpTask extends AsyncTask<Void, Void, Void>
@@ -131,8 +130,6 @@ public class DashboardFragment extends TitledFragment
                 afspraken = api.getAfspraken(Utils.now(), Utils.now()); // omdat het morgen pas maandag is.
 
                 Log.i("Afspraken", "Afspraken opgehaald.");
-
-
             }
 
             catch (IOException | ParseException | JSONException e)
@@ -155,8 +152,6 @@ public class DashboardFragment extends TitledFragment
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            mSwipeRefreshLayout.setRefreshing(false);
-
             if (afspraken == null)
                 makeAlertDialog(message).show();
             else
