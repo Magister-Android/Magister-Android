@@ -117,6 +117,7 @@ public class DashboardFragment extends TitledFragment
     private class HaalRoosterOpTask extends AsyncTask<Void, Void, Void>
     {
         AfspraakCollection afspraken;
+        private String message;
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -127,7 +128,7 @@ public class DashboardFragment extends TitledFragment
             {
                 Log.i("Afspraken", "Afspraken ophalen");
 
-                afspraken = api.getAfspraken(Utils.now(), Utils.deltaDays(1)); // omdat het morgen pas maandag is.
+                afspraken = api.getAfspraken(Utils.now(), Utils.now()); // omdat het morgen pas maandag is.
 
                 Log.i("Afspraken", "Afspraken opgehaald.");
 
@@ -136,9 +137,17 @@ public class DashboardFragment extends TitledFragment
 
             catch (IOException | ParseException | JSONException e)
             {
-                Log.e("Rooster", String.format("Iets is verneukt (%s)", e.getClass()));
                 e.printStackTrace();
-                // makeAlertDialog("Something went wrong while getting your data.");
+
+                if (e instanceof BadResponseException)
+                {
+                    message = e.getMessage();
+                }
+
+                else
+                {
+                    message = "Er is iets fout gegaan.";
+                }
             }
 
             return null;
@@ -146,8 +155,10 @@ public class DashboardFragment extends TitledFragment
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            mSwipeRefreshLayout.setRefreshing(false);
+
             if (afspraken == null)
-                makeAlertDialog("Fout bij het ophalen van je rooster.");
+                makeAlertDialog(message).show();
             else
                 updateRoosterView(afspraken);
         }
@@ -178,8 +189,6 @@ public class DashboardFragment extends TitledFragment
         }
 
         populateLinearLayout(uurView, new ResourceAdapter(array.toArray(new ResourceRow.Resource[array.size()])));
-
-        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     private ResourceRow.Resource makeResourceRow(Afspraak a)
