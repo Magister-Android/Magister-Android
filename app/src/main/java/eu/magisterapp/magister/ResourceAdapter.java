@@ -66,4 +66,10 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
     public int getItemCount() {
         return data.length;
     }
+
+    public void setRijenMetShit(ResourceRow.Resource[] shit)
+    {
+        data = shit;
+        notifyDataSetChanged();
+    }
 }
