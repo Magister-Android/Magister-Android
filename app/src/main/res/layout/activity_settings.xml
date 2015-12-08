@@ -20,9 +20,10 @@
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent">
 			<android.support.v7.widget.AppCompatEditText
+				android:id="@+id/username_input"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:hint="Name"/>
+				android:hint="@string/username_text"/>
 
 		</android.support.design.widget.TextInputLayout>
 
@@ -30,11 +31,29 @@
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent">
 			<android.support.v7.widget.AppCompatEditText
+				android:id="@+id/password_input"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:hint="Password"/>
+				android:hint="@string/password_text"/>
 
 		</android.support.design.widget.TextInputLayout>
+
+		<android.support.design.widget.TextInputLayout
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent">
+			<android.support.v7.widget.AppCompatEditText
+				android:id="@+id/school_input"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/school_text"/>
+
+		</android.support.design.widget.TextInputLayout>
+
+		<Button
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/login_button"
+			android:text="@string/login"/>
 
 	</LinearLayout>
 </LinearLayout>

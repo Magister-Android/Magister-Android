@@ -13,4 +13,9 @@
 	<string name="title_activity_settings">Settings</string>
 
 	<string name="hello_world">Hello world!</string>
+
+	<string name="login">Log in</string>
+	<string name="school_text">School</string>
+	<string name="password_text">Password</string>
+	<string name="username_text">Name</string>
 </resources>

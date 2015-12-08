@@ -1,6 +1,7 @@
 package eu.magisterapp.magister;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,7 +30,7 @@ public class Main extends AppCompatActivity{
 	Toolbar toolbar;
 	int fragmentPosition = 0;
 
-	MagisterAPI api = new MagisterAPI("zernike", "username", "password");
+	MagisterAPI api;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -178,5 +179,18 @@ public class Main extends AppCompatActivity{
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		SharedPreferences settings = getSharedPreferences(Settings.PREFS_NAME, 0);
+
+		String username = settings.getString("username", "");
+		String password = settings.getString("password", "");
+		String school = settings.getString("school", "");
+
+		api = new MagisterAPI(school, username, password);
 	}
 }
