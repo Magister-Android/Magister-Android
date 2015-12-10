@@ -12,13 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
 import eu.magisterapp.magisterapi.AfspraakCollection;
+import eu.magisterapp.magisterapi.BadResponseException;
 import eu.magisterapp.magisterapi.Cijfer;
 import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.Utils;
@@ -33,7 +32,6 @@ public class DashboardFragment extends TitledFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
@@ -116,6 +114,12 @@ public class DashboardFragment extends TitledFragment
 
             catch (IOException e)
             {
+                if (e instanceof BadResponseException && e.getMessage().startsWith("Ongeldig account of verkeerde combinatie van gebruikersnaam en wachtwoord"))
+                    credentialFailure = true;
+
+                else internetFailure = true;
+
+
                 error(e, "Fix je internet.. Bitch.");
             }
 

@@ -82,7 +82,7 @@ public class CijfersFragment extends TitledFragment
 
             if (cijfers == null)
             {
-                Alerts.notify(getContext(), "Er zijn geen cijfers gevonden").show();
+                Alerts.notify(getActivity(), "Er zijn geen cijfers gevonden").show();
             }
 
             else

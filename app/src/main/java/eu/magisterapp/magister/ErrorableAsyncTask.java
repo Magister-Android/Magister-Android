@@ -1,8 +1,13 @@
 package eu.magisterapp.magister;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.View;
 
 import java.io.IOException;
 
@@ -16,13 +21,16 @@ public abstract class ErrorableAsyncTask extends AsyncTask<Void, Void, Void> {
 
     private String message;
     private Context context;
+
     private boolean error = false;
+    protected boolean internetFailure = false;
+    protected boolean credentialFailure = false;
 
     protected MagisterAPI api;
 
-    public ErrorableAsyncTask(Context context)
+    public ErrorableAsyncTask(Context appContext)
     {
-        this.context = context;
+        context = appContext;
 
         api = ((Main) context).api;
 
@@ -35,16 +43,36 @@ public abstract class ErrorableAsyncTask extends AsyncTask<Void, Void, Void> {
         if (error)
         {
             Log.e("Message notification", message);
-            Alerts.notify(context, message).show();
+            Snackbar snackbar = Alerts.notify((Activity) context, message);
+
+            if (internetFailure) snackbar.setAction("INTERNET", new View.OnClickListener ()
+            {
+                @Override
+                public void onClick(View v) {
+                    context.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                }
+            });
+
+            if (credentialFailure) snackbar.setAction("SETTINGS", new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v) {
+                    context.startActivity(new Intent(context, eu.magisterapp.magister.Settings.class));
+                }
+            });
+
+            snackbar.show();
         }
 
         else
         {
             onSuccess();
         }
+
+        onFinish();
     }
 
-    protected void error(Exception e, String fallbackMessage)
+    protected void error(IOException e, String fallbackMessage)
     {
         error = true;
 
@@ -59,8 +87,6 @@ public abstract class ErrorableAsyncTask extends AsyncTask<Void, Void, Void> {
         {
             message = fallbackMessage;
         }
-
-        onFinish();
     }
 
     abstract void onSuccess();

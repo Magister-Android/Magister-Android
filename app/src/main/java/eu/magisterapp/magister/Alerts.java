@@ -1,5 +1,6 @@
 package eu.magisterapp.magister;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.design.widget.CoordinatorLayout;
@@ -15,6 +16,8 @@ import java.lang.reflect.Field;
  */
 public class Alerts {
 
+    private static CoordinatorLayout coordinatorLayout;
+
     public static AlertDialog makeDialogAlert(Context context, String message)
     {
         return new AlertDialog.Builder(context)
@@ -28,29 +31,8 @@ public class Alerts {
                 }).create();
     }
 
-    public static Snackbar notify(Context context, String message)
+    public static Snackbar notify(Activity activity, String message)
     {
-        View view = ((Main) context).findViewById(R.id.drawer_layout);
-
-        return Snackbar.make(view, message, Snackbar.LENGTH_LONG);
-    }
-
-
-    public static void testShit(Object o)
-    {
-        try
-        {
-            Field[] fields = o.getClass().getDeclaredFields();
-            for (int i=0; i<fields.length; i++)
-            {
-                System.out.println(fields[i].getName() + " - " + fields[i].get(o));
-            }
-        }
-
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
+        return Snackbar.make(activity.findViewById(R.id.coordinator_layout), message, Snackbar.LENGTH_LONG);
     }
 }

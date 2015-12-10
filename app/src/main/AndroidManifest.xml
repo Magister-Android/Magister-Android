@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="eu.magisterapp.magister.Settings"
+            android:name=".Settings"
             android:label="@string/title_activity_settings" >
         </activity>
     </application>

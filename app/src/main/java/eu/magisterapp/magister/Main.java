@@ -17,11 +17,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
 
-import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.MagisterAPI;
 
 
-public class Main extends AppCompatActivity{
+public class Main extends AppCompatActivity
+{
 	String[] items;
 	ArrayAdapter<String> adapter;
 
