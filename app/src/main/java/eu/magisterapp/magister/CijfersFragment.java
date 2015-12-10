@@ -15,10 +15,8 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 
 import eu.magisterapp.magisterapi.BadResponseException;
-import eu.magisterapp.magisterapi.Cijfer;
 import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.MagisterAPI;
 
@@ -85,9 +83,9 @@ public class CijfersFragment extends TitledFragment
         @Override
         protected void onPostExecute(Void aVoid) {
 
-            if (cijfers != null)
+            if (cijfers == null)
             {
-                displayAlert("nemoeder");
+                makeAlert("Er zijn geen cijfers gevonden").show();
             }
 
             else
@@ -98,9 +96,9 @@ public class CijfersFragment extends TitledFragment
         }
     }
 
-    private void displayAlert(String message)
+    private AlertDialog makeAlert(String message)
     {
-        new AlertDialog.Builder(getContext())
+        return new AlertDialog.Builder(getContext())
                 .setTitle("Je hebt kutcijfers")
                 .setMessage(message)
                 .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -108,25 +106,13 @@ public class CijfersFragment extends TitledFragment
                     public void onClick(DialogInterface dialog, int which) {
                         // jemoeder
                     }
-                });
+                }).create();
 
     }
 
     private void updateCijferList(CijferList cijfers)
     {
-        ArrayList<ResourceRow.Resource> list = new ArrayList<>();
-
-        for (Cijfer cijfer : cijfers)
-        {
-            list.add(convertToResource(cijfer));
-        }
-
-        adapter.setRijenMetShit(list.toArray(new ResourceRow.Resource[list.size()]));
-    }
-
-    private ResourceRow.Resource convertToResource(Cijfer cijfer)
-    {
-        return new ResourceRow.Resource(cijfer.Vak.Omschrijving, cijfer.CijferStr, cijfer.Docent, cijfer.DatumIngevoerd.toString("yyyy-MM-dd"));
+        adapter.swap(cijfers);
     }
 
     private ResourceRow.Resource[] getCijfers()

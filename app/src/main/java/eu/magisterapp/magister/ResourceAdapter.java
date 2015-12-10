@@ -6,6 +6,16 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.joda.time.DateTime;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import eu.magisterapp.magisterapi.Afspraak;
+import eu.magisterapp.magisterapi.AfspraakCollection;
+import eu.magisterapp.magisterapi.Cijfer;
+import eu.magisterapp.magisterapi.CijferList;
+
 
 public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHolder>
 {
@@ -13,7 +23,7 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
      * Created by max on 24-9-15.
      */
 
-    public ResourceRow.Resource[] data;
+    public List<DataHolder> data;
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -33,9 +43,80 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
         }
     }
 
-    public ResourceAdapter(ResourceRow.Resource[] rijenMetShit)
+    private class DataHolder
     {
-        data = rijenMetShit;
+        public final String vak;
+        public final String title;
+        public final String docent;
+        public final String time;
+
+        public DataHolder(String vak, String title, String docent, String time)
+        {
+            this.vak = vak;
+            this.title = title;
+            this.docent = docent;
+            this.time = time;
+        }
+
+        public DataHolder(String vak, String title, String docent, DateTime start, DateTime end)
+        {
+            String time = start.toString("HH:mm") + " - " + end.toString("HH:mm");
+
+            this.vak = vak;
+            this.title = title;
+            this.docent = docent;
+            this.time = time;
+        }
+    }
+
+    public ResourceAdapter(CijferList cijferList)
+    {
+        data = createCijferHolder(cijferList);
+    }
+
+    public ResourceAdapter(AfspraakCollection afspraakCollection)
+    {
+        data = new ArrayList<>();
+
+
+    }
+
+    public List<DataHolder> createCijferHolder(CijferList cijfers)
+    {
+        List<DataHolder> shit = new ArrayList<>();
+
+        for (Cijfer cijfer : cijfers)
+        {
+            shit.add(new DataHolder(cijfer.Vak.Omschrijving, cijfer.CijferStr, cijfer.Docent, cijfer.DatumIngevoerd.toString("yyyy-MM-dd")));
+        }
+
+        return shit;
+    }
+
+    public List<DataHolder> createAfspraakHolder(AfspraakCollection afspraken)
+    {
+        List<DataHolder> shit = new ArrayList<>();
+
+        for (Afspraak afspraak : afspraken)
+        {
+            shit.add(new DataHolder(afspraak.Omschrijving, afspraak.getLokalen(), afspraak.getDocenten(), afspraak.Start, afspraak.Einde));
+        }
+
+        return shit;
+    }
+
+    public void swap(CijferList cijfers)
+    {
+        data.clear();
+        data.addAll(createCijferHolder(cijfers));
+        notifyDataSetChanged();
+    }
+
+    public void swap(AfspraakCollection afspraken)
+    {
+        data.clear();
+        data.addAll(createAfspraakHolder(afspraken));
+        notifyDataSetChanged();
     }
 
     @Override
@@ -72,4 +153,6 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
         data = shit;
         notifyDataSetChanged();
     }
+
+
 }
