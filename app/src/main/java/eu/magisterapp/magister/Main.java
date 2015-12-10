@@ -183,8 +183,6 @@ public class Main extends AppCompatActivity{
 
 	@Override
 	protected void onStart() {
-		super.onStart();
-
 		SharedPreferences settings = getSharedPreferences(Settings.PREFS_NAME, 0);
 
 		String username = settings.getString("username", "");
@@ -192,5 +190,7 @@ public class Main extends AppCompatActivity{
 		String school = settings.getString("school", "");
 
 		api = new MagisterAPI(school, username, password);
+
+		super.onStart();
 	}
 }

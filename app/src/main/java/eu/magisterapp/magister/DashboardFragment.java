@@ -1,13 +1,10 @@
 package eu.magisterapp.magister;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.os.Bundle;
 
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,17 +13,13 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import org.joda.time.DateTime;
-import org.json.JSONException;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
-import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.BadResponseException;
+import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.MagisterAPI;
 import eu.magisterapp.magisterapi.Utils;
 
@@ -43,13 +36,9 @@ public class DashboardFragment extends TitledFragment
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
-        Context c = getActivity();
 
         uurView = (LinearLayout) view.findViewById(R.id.volgende_uur_container);
-        populateLinearLayout(uurView, new ResourceAdapter(getTestUren()));
-
         cijferView = (LinearLayout) view.findViewById(R.id.laatste_cijfers_container);
-        populateLinearLayout(cijferView, new ResourceAdapter(getTestCijfers()));
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.dasboard_swipeview);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
@@ -63,6 +52,8 @@ public class DashboardFragment extends TitledFragment
             }
 
         });
+
+        refreshDashboard();
 
         return view;
 
@@ -94,103 +85,74 @@ public class DashboardFragment extends TitledFragment
         };
     }
 
-    public ResourceRow.Resource[] getTestCijfers()
+    public ArrayList<ResourceAdapter.DataHolder> getTestCijfers()
     {
-        return new ResourceRow.Resource[] {
-            new ResourceRow.Resource("Scheikunde", "7.3", "R. Habich", "19 minuten geleden"),
-            new ResourceRow.Resource("Wiskunde B", "8.3", "M. Traas", "2 uur geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-            new ResourceRow.Resource("Informatica", "17.3", "M. de Krosse", "2 jaar geleden"),
-        };
+        ArrayList<ResourceAdapter.DataHolder> schijt = new ArrayList<>();
+
+        schijt.add(new ResourceAdapter.DataHolder("Natuurkunde", "69.2", "Doppie dopheide", "eergisteren"));
+        schijt.add(new ResourceAdapter.DataHolder("Scheikunde", "8.6", "R. Habich", "69 jaar geleden"));
+        schijt.add(new ResourceAdapter.DataHolder("Duits", "-15.6", "taaljoker", "morgen"));
+        schijt.add(new ResourceAdapter.DataHolder("Engels", "7.6", "taaljoker", "vandaag"));
+        schijt.add(new ResourceAdapter.DataHolder("Wiskunde B", "6.9", "L. Siekman", "kleine pauze"));
+        schijt.add(new ResourceAdapter.DataHolder("Informagica", "696969", "Marc de baas", "geskipt"));
+
+        return schijt;
     }
 
     public void refreshDashboard()
     {
         mSwipeRefreshLayout.setRefreshing(true);
 
-        new HaalRoosterOpTask().execute((Void[]) null);
-
-        mSwipeRefreshLayout.setRefreshing(false);
+        new DashboardFixerTask().execute((Void[]) null);
     }
 
-    private class HaalRoosterOpTask extends AsyncTask<Void, Void, Void>
+    private class DashboardFixerTask extends ErrorableAsyncTask
     {
-        AfspraakCollection afspraken;
-        private String message;
+        private CijferList cijfers;
+        private AfspraakCollection afspraken;
+
+        public DashboardFixerTask()
+        {
+            super(getContext());
+        }
 
         @Override
-        protected Void doInBackground(Void... params) {
-
-            MagisterAPI api = ((Main) getContext()).api;
-
+        protected Void doInBackground(Void... params)
+        {
             try
             {
-                Log.i("Afspraken", "Afspraken ophalen");
-
-                afspraken = api.getAfspraken(Utils.now(), Utils.now()); // omdat het morgen pas maandag is.
-
-                Log.i("Afspraken", "Afspraken opgehaald.");
+                afspraken = api.getAfspraken(Utils.now(), Utils.now());
+                // cijfers = api.getCijfers(); // Dit geeft nog een Nullpointer, kan zijn dat ik iets heb verneukt in API / ResourceAdapter..
             }
 
-            catch (IOException | ParseException | JSONException e)
+            catch (IOException e)
             {
-                e.printStackTrace();
-
-                if (e instanceof BadResponseException)
-                {
-                    message = e.getMessage();
-                }
-
-                else
-                {
-                    message = "Er is iets fout gegaan.";
-                }
+                error(e, "Fix je internet.. Bitch.");
             }
 
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            if (afspraken == null)
-                makeAlertDialog(message).show();
-            else
-                updateRoosterView(afspraken);
+        void onSuccess()
+        {
+            updateRoosterView(afspraken);
+            updateCijferView();
         }
-    }
 
-    private AlertDialog makeAlertDialog(String body)
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage(body);
-        builder.setCancelable(true);
-        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        return builder.create();
+        @Override
+        public void onFinish() {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     private void updateRoosterView(AfspraakCollection afspraken)
     {
-        List<ResourceRow.Resource> array = new ArrayList<ResourceRow.Resource>();
-
-        for (Afspraak afspraak : afspraken) // we doen nu gwn 1 dag, dit is het dashboard. fck jou jurryt.
-        {
-            array.add(makeResourceRow(afspraak));
-        }
-
-        populateLinearLayout(uurView, new ResourceAdapter(array.toArray(new ResourceRow.Resource[array.size()])));
+        populateLinearLayout(uurView, new ResourceAdapter(afspraken));
     }
 
-    private ResourceRow.Resource makeResourceRow(Afspraak a)
+    private void updateCijferView()
     {
-        String tijd = a.Start.toString("HH:mm") + " - " + a.Einde.toString("HH:mm");
-
-        return new ResourceRow.Resource(a.getVakken(), a.getLokalen(), a.getDocenten(), tijd, a.valtUit());
+        populateLinearLayout(cijferView, new ResourceAdapter(getTestCijfers()));
     }
-
 }

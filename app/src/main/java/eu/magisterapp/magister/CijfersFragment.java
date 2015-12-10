@@ -33,10 +33,7 @@ public class CijfersFragment extends TitledFragment
 
         cijferContainer = (RecyclerView) view.findViewById(R.id.cijfer_container);
 
-        adapter = new ResourceAdapter(getCijfers());
-
         cijferContainer.setLayoutManager(new LinearLayoutManager(getContext()));
-        cijferContainer.setAdapter(adapter);
 
         setTitle("Alle Cijfers");
 
@@ -64,7 +61,7 @@ public class CijfersFragment extends TitledFragment
                 cijfers = api.getCijfers();
             }
 
-            catch (IOException | ParseException | JSONException e)
+            catch (IOException e)
             {
                 if (e instanceof BadResponseException)
                 {
@@ -85,49 +82,21 @@ public class CijfersFragment extends TitledFragment
 
             if (cijfers == null)
             {
-                makeAlert("Er zijn geen cijfers gevonden").show();
+                Alerts.notify(getContext(), "Er zijn geen cijfers gevonden").show();
             }
 
             else
             {
-                updateCijferList(cijfers);
+                if (adapter == null) adapter = new ResourceAdapter(cijfers);
+
+                else adapter.swap(cijfers);
             }
 
         }
     }
 
-    private AlertDialog makeAlert(String message)
-    {
-        return new AlertDialog.Builder(getContext())
-                .setTitle("Je hebt kutcijfers")
-                .setMessage(message)
-                .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // jemoeder
-                    }
-                }).create();
-
-    }
-
     private void updateCijferList(CijferList cijfers)
     {
         adapter.swap(cijfers);
-    }
-
-    private ResourceRow.Resource[] getCijfers()
-    {
-        return new ResourceRow.Resource[] {
-
-            new ResourceRow.Resource("Informatica", "8,7", "M. de Krosse", "2 uur geleden"),
-            new ResourceRow.Resource("Informatica", "8,7", "M. de Krosse", "2 uur geleden"),
-            new ResourceRow.Resource("Informatica", "8,7", "M. de Krosse", "2 uur geleden"),
-            new ResourceRow.Resource("Informatica", "8,7", "M. de Krosse", "2 uur geleden"),
-            new ResourceRow.Resource("Informatica", "8,7", "M. de Krosse", "2 uur geleden"),
-            new ResourceRow.Resource("Informatica", "8,7", "M. de Krosse", "2 uur geleden"),
-            new ResourceRow.Resource("Informatica", "8,7", "M. de Krosse", "2 uur geleden"),
-            new ResourceRow.Resource("Informatica", "8,7", "M. de Krosse", "2 uur geleden"),
-
-        };
     }
 }

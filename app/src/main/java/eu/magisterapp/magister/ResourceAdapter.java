@@ -1,6 +1,7 @@
 package eu.magisterapp.magister;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -43,12 +44,13 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
         }
     }
 
-    private class DataHolder
+    public static class DataHolder
     {
         public final String vak;
         public final String title;
         public final String docent;
         public final String time;
+        public final boolean warning;
 
         public DataHolder(String vak, String title, String docent, String time)
         {
@@ -56,9 +58,15 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
             this.title = title;
             this.docent = docent;
             this.time = time;
+            this.warning = false;
         }
 
         public DataHolder(String vak, String title, String docent, DateTime start, DateTime end)
+        {
+            this(vak, title, docent, start, end, false);
+        }
+
+        public DataHolder(String vak, String title, String docent, DateTime start, DateTime end, boolean warning)
         {
             String time = start.toString("HH:mm") + " - " + end.toString("HH:mm");
 
@@ -66,6 +74,7 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
             this.title = title;
             this.docent = docent;
             this.time = time;
+            this.warning = warning;
         }
     }
 
@@ -74,11 +83,14 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
         data = createCijferHolder(cijferList);
     }
 
-    public ResourceAdapter(AfspraakCollection afspraakCollection)
+    public ResourceAdapter(AfspraakCollection afspraken)
     {
-        data = new ArrayList<>();
+        data = createAfspraakHolder(afspraken);
+    }
 
-
+    public ResourceAdapter(List<DataHolder> raw)
+    {
+        data = raw;
     }
 
     public List<DataHolder> createCijferHolder(CijferList cijfers)
@@ -124,7 +136,7 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
     {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        int resourceType = data[viewType].warning ? R.layout.resource_row_warning : R.layout.resource_row;
+        int resourceType = data.get(viewType).warning ? R.layout.resource_row_warning : R.layout.resource_row;
 
         LinearLayout row = (LinearLayout) inflater.inflate(resourceType, parent, false);
 
@@ -134,25 +146,17 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position)
     {
-        ResourceRow.Resource row = data[position];
+        DataHolder row = data.get(position);
 
         holder.vak.setText(row.vak);
         holder.title.setText(row.title);
         holder.docent.setText(row.docent);
         holder.time.setText(row.time);
-
     }
 
     @Override
     public int getItemCount() {
-        return data.length;
+        return data.size();
     }
-
-    public void setRijenMetShit(ResourceRow.Resource[] shit)
-    {
-        data = shit;
-        notifyDataSetChanged();
-    }
-
 
 }
