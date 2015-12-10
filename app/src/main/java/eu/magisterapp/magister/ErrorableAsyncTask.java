@@ -30,7 +30,8 @@ public abstract class ErrorableAsyncTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(Void aVoid)
+    {
         if (error)
         {
             Log.e("Message notification", message);
@@ -43,9 +44,11 @@ public abstract class ErrorableAsyncTask extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    protected void error(IOException e, String fallbackMessage)
+    protected void error(Exception e, String fallbackMessage)
     {
         error = true;
+
+        e.printStackTrace();
 
         if (e instanceof BadResponseException)
         {

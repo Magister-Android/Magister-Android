@@ -12,15 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import org.joda.time.DateTime;
+import org.json.JSONException;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import eu.magisterapp.magisterapi.AfspraakCollection;
-import eu.magisterapp.magisterapi.BadResponseException;
+import eu.magisterapp.magisterapi.Cijfer;
 import eu.magisterapp.magisterapi.CijferList;
-import eu.magisterapp.magisterapi.MagisterAPI;
 import eu.magisterapp.magisterapi.Utils;
 
 
@@ -74,17 +74,6 @@ public class DashboardFragment extends TitledFragment
         }
     }
 
-    public ResourceRow.Resource[] getTestUren()
-    {
-        return new ResourceRow.Resource[] {
-            new ResourceRow.Resource("Natuurkunde", "K109", "C. Dopheide", "9.30 - 10.30"),
-            new ResourceRow.Resource("Scheikunde", "K009", "R. Habich", "10.30 - 11.30"),
-            new ResourceRow.Resource("Wiskunde B", "K235", "M. Traas", "11.50 - 12.50"),
-            new ResourceRow.Resource("Wiskunde B", "K235", "M. Traas", "11.50 - 12.50"),
-            new ResourceRow.Resource("Informagica", "K169", "M. de Krosse", "12.50 - 13.50", true),
-        };
-    }
-
     public ArrayList<ResourceAdapter.DataHolder> getTestCijfers()
     {
         ArrayList<ResourceAdapter.DataHolder> schijt = new ArrayList<>();
@@ -122,7 +111,7 @@ public class DashboardFragment extends TitledFragment
             try
             {
                 afspraken = api.getAfspraken(Utils.now(), Utils.now());
-                // cijfers = api.getCijfers(); // Dit geeft nog een Nullpointer, kan zijn dat ik iets heb verneukt in API / ResourceAdapter..
+                cijfers = api.getCijfers();
             }
 
             catch (IOException e)
@@ -134,10 +123,10 @@ public class DashboardFragment extends TitledFragment
         }
 
         @Override
-        void onSuccess()
+        public void onSuccess()
         {
             updateRoosterView(afspraken);
-            updateCijferView();
+            updateCijferView(cijfers);
         }
 
         @Override
@@ -151,8 +140,8 @@ public class DashboardFragment extends TitledFragment
         populateLinearLayout(uurView, new ResourceAdapter(afspraken));
     }
 
-    private void updateCijferView()
+    private void updateCijferView(CijferList cijfers)
     {
-        populateLinearLayout(cijferView, new ResourceAdapter(getTestCijfers()));
+        populateLinearLayout(cijferView, new ResourceAdapter(cijfers));
     }
 }
