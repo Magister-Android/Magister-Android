@@ -33,8 +33,6 @@ public abstract class ErrorableAsyncTask extends AsyncTask<Void, Void, Void> {
         context = appContext;
 
         api = ((Main) context).api;
-
-        Log.i("Set API", api.getClass().toString());
     }
 
     @Override

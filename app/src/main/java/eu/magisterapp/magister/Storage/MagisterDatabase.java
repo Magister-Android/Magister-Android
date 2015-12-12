@@ -65,7 +65,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
         public static final String INSTANCE = "instance"; // Dit is het geserializede object.
 
         public static final String CREATE_TABLE_SQL = "CREATE TABLE " + TABLE + " ("
-                + ID + " integer primary key "
+                + ID + " integer primary key, "
                 + OWNER + " text, "
                 + START  + " integer, "
                 + EINDE  + " integer, "
@@ -122,7 +122,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
         public static final String OWNER = "owner";
         public static final String INSTANCE = "instance";
 
-        public static final String CREATE_TABLE_SQL = "CREATE TABLE" + TABLE + " ("
+        public static final String CREATE_TABLE_SQL = "CREATE TABLE " + TABLE + " ("
                 + ID + " integer primary key, "
                 + OWNER + " text, "
                 + INSTANCE + " BLOB"
@@ -216,13 +216,11 @@ public class MagisterDatabase extends SQLiteOpenHelper
         }
     }
 
-    public AfspraakCollection queryAfspaken(String query, String[] params) throws IOException
+    public AfspraakCollection queryAfspraken(String query, String[] params) throws IOException
     {
         Cursor cursor = getReadableDatabase().rawQuery(query, params);
 
         AfspraakCollection collection = new AfspraakCollection();
-
-        cursor.moveToFirst();
 
         while (cursor.moveToNext())
         {
@@ -253,5 +251,10 @@ public class MagisterDatabase extends SQLiteOpenHelper
         stmt.bindBlob(5, serialize(afspraak));
 
         stmt.executeInsert();
+    }
+
+    public void nuke()
+    {
+        onUpgrade(getWritableDatabase(), 0, 1);
     }
 }

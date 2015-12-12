@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
+import eu.magisterapp.magister.Storage.MagisterDatabase;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.BadResponseException;
 import eu.magisterapp.magisterapi.Cijfer;
@@ -108,8 +109,20 @@ public class DashboardFragment extends TitledFragment
         {
             try
             {
-                afspraken = api.getAfspraken(Utils.now(), Utils.now());
-                cijfers = api.getCijfers();
+                AfspraakCollection httpAfspraken = api.getAfspraken(Utils.now(), Utils.deltaDays(7)); // comment dit als je je shit 1 keer hebt opgehaald.
+
+                // Dit dips ik even om de DB te testen.
+                MagisterDatabase db = new MagisterDatabase(getContext());
+
+                db.nuke(); // comment dit als je je shit 1 keer hebt opgehaald.
+
+                db.insertAfspraken(api.getMainSessie().id, httpAfspraken); // comment dit als je je shit 1 keer hebt opgehaald.
+
+                afspraken = db.queryAfspraken("SELECT * FROM afspraken WHERE Start > ? ORDER BY Start ASC LIMIT ?",
+                        new String[] {String.valueOf(Utils.now().getMillis()), "5"});
+
+
+                // cijfers = api.getCijfers(); // Nog geen DB implementatie voor cijfers..
             }
 
             catch (IOException e)
@@ -130,7 +143,7 @@ public class DashboardFragment extends TitledFragment
         public void onSuccess()
         {
             updateRoosterView(afspraken);
-            updateCijferView(cijfers);
+//            updateCijferView(cijfers); // Nog geen DB implementatie voor cijfers./
         }
 
         @Override
