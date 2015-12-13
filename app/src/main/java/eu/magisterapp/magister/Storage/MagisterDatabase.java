@@ -15,7 +15,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import eu.magisterapp.magisterapi.Afspraak;
@@ -218,7 +221,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
 
     public AfspraakCollection queryAfspraken(String query, String[] params) throws IOException
     {
-        Cursor cursor = getReadableDatabase().rawQuery(query, params);
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT instance FROM " + Afspraken.TABLE + " " + query, params);
 
         AfspraakCollection collection = new AfspraakCollection();
 

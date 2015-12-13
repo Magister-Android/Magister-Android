@@ -26,13 +26,9 @@ public abstract class ErrorableAsyncTask extends AsyncTask<Void, Void, Void> {
     protected boolean internetFailure = false;
     protected boolean credentialFailure = false;
 
-    protected MagisterAPI api;
-
     public ErrorableAsyncTask(Context appContext)
     {
         context = appContext;
-
-        api = ((Main) context).api;
     }
 
     @Override

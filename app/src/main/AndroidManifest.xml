@@ -3,11 +3,13 @@
     package="eu.magisterapp.magister" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_logoapp"
         android:label="@string/app_name"
+        android:name=".MagisterApp"
         android:theme="@style/AppTheme" >
         <activity
             android:name="eu.magisterapp.magister.Main"

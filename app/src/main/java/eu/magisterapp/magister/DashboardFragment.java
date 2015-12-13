@@ -21,6 +21,7 @@ import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.BadResponseException;
 import eu.magisterapp.magisterapi.Cijfer;
 import eu.magisterapp.magisterapi.CijferList;
+import eu.magisterapp.magisterapi.MagisterAPI;
 import eu.magisterapp.magisterapi.Utils;
 
 
@@ -99,6 +100,10 @@ public class DashboardFragment extends TitledFragment
         private CijferList cijfers;
         private AfspraakCollection afspraken;
 
+        private MagisterApp application = (MagisterApp) getActivity().getApplication();
+
+        private MagisterAPI api = application.getApi();
+
         public DashboardFixerTask()
         {
             super(getContext());
@@ -119,7 +124,7 @@ public class DashboardFragment extends TitledFragment
                 db.insertAfspraken(api.getMainSessie().id, httpAfspraken); // comment dit als je je shit 1 keer hebt opgehaald.
 
                 afspraken = db.queryAfspraken("SELECT * FROM afspraken WHERE Start > ? ORDER BY Start ASC LIMIT ?",
-                        new String[] {String.valueOf(Utils.now().getMillis()), "5"});
+                        new String[] {String.valueOf(Utils.now().getMillis()), "12"});
 
 
                 // cijfers = api.getCijfers(); // Nog geen DB implementatie voor cijfers..

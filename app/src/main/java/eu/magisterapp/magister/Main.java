@@ -180,17 +180,4 @@ public class Main extends AppCompatActivity
 				return super.onOptionsItemSelected(item);
 		}
 	}
-
-	@Override
-	protected void onStart() {
-		SharedPreferences settings = getSharedPreferences(Settings.PREFS_NAME, 0);
-
-		String username = settings.getString("username", "");
-		String password = settings.getString("password", "");
-		String school = settings.getString("school", "");
-
-		api = new MagisterAPI(school, username, password);
-
-		super.onStart();
-	}
 }

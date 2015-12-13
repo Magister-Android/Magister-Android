@@ -8,18 +8,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import eu.magisterapp.magister.Storage.DataFixer;
+
 
 public class Settings extends AppCompatActivity {
-
-	public static final String PREFS_NAME = "OnzeGeheimeMhit";
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
 
-		final SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		final SharedPreferences settings = getSharedPreferences(MagisterApp.PREFS_NAME, 0);
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -44,14 +43,15 @@ public class Settings extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				SharedPreferences.Editor editor = settings.edit();
-				editor.putString("username", username.getText().toString());
-				editor.putString("password", password.getText().toString());
-				editor.putString("school", school.getText().toString());
+				editor.putString(MagisterApp.PREFS_USERNAME, username.getText().toString());
+				editor.putString(MagisterApp.PREFS_PASSWORD, password.getText().toString());
+				editor.putString(MagisterApp.PREFS_SCHOOL, school.getText().toString());
 
 				editor.apply();
 
+				((MagisterApp) getApplication()).notifyCredentialsUpdated();
 
-
+				finish();
 			}
 		});
 
