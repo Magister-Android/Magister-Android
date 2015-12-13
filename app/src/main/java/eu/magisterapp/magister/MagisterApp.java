@@ -50,8 +50,30 @@ public class MagisterApp extends Application {
         );
     }
 
-    private boolean isAuthenticated()
+    public void notifyCredentialsUpdated(String school, String username, String password)
+    {
+        if (api == null) return;
+
+        getApi().reconnect(school, username, password);
+    }
+
+    public void updateCredentials(String school, String username, String password)
+    {
+        SharedPreferences prefs = this.getSharedPreferences(PREFS_NAME, 0);
+
+        prefs.edit()
+                .putString(PREFS_SCHOOL, school)
+                .putString(PREFS_USERNAME, username)
+                .putString(PREFS_PASSWORD, password)
+                .apply();
+
+        notifyCredentialsUpdated(school, username, password);
+    }
+
+    public boolean isAuthenticated()
     {
         return ! this.getSharedPreferences(PREFS_NAME, 0).getString(PREFS_SCHOOL, "").isEmpty();
     }
+
+
 }

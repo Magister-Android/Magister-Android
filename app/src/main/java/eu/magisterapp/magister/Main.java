@@ -1,13 +1,16 @@
 package eu.magisterapp.magister;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 import eu.magisterapp.magisterapi.MagisterAPI;
 
@@ -57,7 +61,75 @@ public class Main extends AppCompatActivity
 			}
 		});
 
+
+		// Als je nog niet ingelogd bent, maak een login scherm
+		if (! ((MagisterApp) getApplication()).isAuthenticated())
+		{
+			createAuthDialog().show();
+		}
+
+		// Als je dat al wel bent, ga dan gwn verder naar het 1e fragment.
+		else
+		{
+			selectItem(fragmentPosition, false);
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+		Log.i("Pause", "Pausing main activity");
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		Log.i("Pause", "Unpausing main activity");
+	}
+
+	public AlertDialog createAuthDialog()
+	{
+		final View dialogView = getLayoutInflater().inflate(R.layout.dialog_login, null);
+
+		return new AlertDialog.Builder(this)
+				.setTitle(R.string.login)
+				.setView(dialogView)
+				.setCancelable(false)
+				.setPositiveButton(R.string.login, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+						TextView schoolView = (TextView) dialogView.findViewById(R.id.school_input);
+						TextView usernameView = (TextView) dialogView.findViewById(R.id.username_input);
+						TextView passwordView = (TextView) dialogView.findViewById(R.id.password_input);
+
+						String school = schoolView.getText().toString();
+						String username = usernameView.getText().toString();
+						String password = passwordView.getText().toString();
+
+						login(school, username, password);
+
+						dialog.dismiss();
+					}
+				})
+				.create();
+	}
+
+	public void login(String school, String username, String password)
+	{
+		Log.i("Logging in: ", "School: " + school + ", Username: " + username);
+
+		getMagisterApplication().updateCredentials(school, username, password);
+
+		// TODO: hier moet nog worden gecontroleerd of je shit klopt voordat het ding verder gaat. Klopt het niet, geef dan het ding opnieuw weer zonder verder te gaan.
 		selectItem(fragmentPosition, false);
+	}
+
+	public MagisterApp getMagisterApplication()
+	{
+		return (MagisterApp) getApplication();
 	}
 
 	@Override
