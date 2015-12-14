@@ -1,8 +1,8 @@
 package eu.magisterapp.magister;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -22,11 +22,6 @@ import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.InvalidObjectException;
-
-import eu.magisterapp.magisterapi.MagisterAPI;
-
 
 public class Main extends AppCompatActivity
 {
@@ -37,10 +32,6 @@ public class Main extends AppCompatActivity
 	DrawerLayout dlayout;
 	Toolbar toolbar;
 	int fragmentPosition = 0;
-
-	MagisterAPI api;
-
-	Main me = this;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +58,11 @@ public class Main extends AppCompatActivity
 			}
 		});
 
+		doLoginSequence();
+	}
+
+	private void doLoginSequence()
+	{
 		// Als je nog niet ingelogd bent, maak een login scherm
 		if (! ((MagisterApp) getApplication()).isAuthenticated())
 		{
@@ -76,22 +72,13 @@ public class Main extends AppCompatActivity
 		// Als je dat al wel bent, ga dan gwn verder naar het 1e fragment.
 		else
 		{
-			selectItem(fragmentPosition, false);
+			postLogin();
 		}
 	}
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-
-		Log.i("Pause", "Pausing main activity");
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-		Log.i("Pause", "Unpausing main activity");
+	private void postLogin()
+	{
+		selectItem(fragmentPosition, false);
 	}
 
 	public AlertDialog createAuthDialog()
@@ -114,9 +101,9 @@ public class Main extends AppCompatActivity
 						String username = usernameView.getText().toString();
 						String password = passwordView.getText().toString();
 
-						login(school, username, password);
-
 						dialog.dismiss();
+
+						login(school, username, password);
 					}
 				})
 				.create();
@@ -126,52 +113,93 @@ public class Main extends AppCompatActivity
 	{
 		Log.i("Logging in: ", "School: " + school + ", Username: " + username);
 
-		// TODO: maak een laad ding.
+		if (! getMagisterApplication().hasInternet())
+		{
+			new AlertDialog.Builder(this)
+					.setMessage(R.string.no_internet)
+					.setCancelable(true)
+					.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
 
-		new LoginTask().execute(school, username, password);
+							doLoginSequence();
+						}
+					})
+					.create().show();
+		}
+
+		else
+		{
+			new LoginTask().execute(school, username, password);
+		}
+
 	}
 
-	private class LoginTask extends AsyncTask<String, Void, Void>
+	private class LoginTask extends AsyncTask<String, Void, Boolean>
 	{
-		MagisterApp app = me.getMagisterApplication();
+		private ProgressDialog progress;
 
-		String message;
+		private Main main;
 
 		@Override
-		protected Void doInBackground(String... params) {
+		protected void onPreExecute()
+		{
+			main = Main.this;
+
+			progress = new ProgressDialog(Main.this);
+			progress.setMessage(getString(R.string.login));
+			progress.setIndeterminate(true);
+			progress.setCancelable(false);
+
+			progress.show();
+		}
+
+		@Override
+		protected Boolean doInBackground(String... params) {
 
 			String school = params[0];
 			String username = params[1];
 			String password = params[2];
 
-			if (! app.hasInternet())
+			if (main.getMagisterApplication().validateCredentials(school, username, password))
 			{
-				message = "Je hebt geen internet. Probeer het later opnieuw.";
-			}
+				main.getMagisterApplication().updateCredentials(school, username, password);
 
-			else if (app.validateCredentials(school, username, password))
-			{
-				app.updateCredentials(school, username, password);
+				return true;
 			}
 
 			else
 			{
-				message = "De ingevoerde gegevens kloppen niet.";
+				return false;
 			}
-
-			return null;
 		}
 
 		@Override
-		protected void onPostExecute(Void aVoid) {
-			if (message != null)
+		protected void onPostExecute(Boolean success)
+		{
+			progress.dismiss();
+
+			if (! success)
 			{
-				Alerts.notify(me, message);
+				new AlertDialog.Builder(main)
+						.setTitle(R.string.login)
+						.setMessage(R.string.credential_failure)
+						.setCancelable(false)
+						.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+
+								doLoginSequence();
+							}
+						})
+						.create().show();
 			}
 
 			else
 			{
-				selectItem(fragmentPosition, false);
+				postLogin();
 			}
 		}
 	}
@@ -260,7 +288,6 @@ public class Main extends AppCompatActivity
 
 		drawerList.setLayoutParams(params);
 
-
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
 		abdtoggle.syncState();
@@ -294,7 +321,14 @@ public class Main extends AppCompatActivity
 		switch(item.getItemId()){
 			case R.id.action_settings:
 				Intent settingsactivity = new Intent(this, Settings.class);
-				this.startActivity(settingsactivity);
+				startActivity(settingsactivity);
+				return true;
+
+			case R.id.action_logout:
+				getMagisterApplication().getApi().disconnect();
+				getMagisterApplication().voidCredentails();
+				startActivity(new Intent(this, this.getClass()));
+				finish();
 				return true;
 
 			default:

@@ -75,6 +75,18 @@ public class MagisterApp extends Application {
         notifyCredentialsUpdated(school, username, password);
     }
 
+    public void voidCredentails()
+    {
+        SharedPreferences prefs = this.getSharedPreferences(PREFS_NAME, 0);
+
+        prefs.edit()
+                .remove(PREFS_SCHOOL)
+                .remove(PREFS_USERNAME)
+                .remove(PREFS_PASSWORD)
+                .apply();
+
+    }
+
     public boolean isAuthenticated()
     {
         return ! this.getSharedPreferences(PREFS_NAME, 0).getString(PREFS_SCHOOL, "").isEmpty();

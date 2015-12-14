@@ -35,4 +35,18 @@ public class Alerts {
     {
         return Snackbar.make(activity.findViewById(R.id.coordinator_layout), message, Snackbar.LENGTH_LONG);
     }
+
+    public static AlertDialog notifyBig(Context context, String message)
+    {
+        return new AlertDialog.Builder(context)
+                .setMessage(message)
+                .setCancelable(true)
+                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+    }
 }
