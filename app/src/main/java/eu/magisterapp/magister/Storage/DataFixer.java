@@ -1,8 +1,6 @@
 package eu.magisterapp.magister.Storage;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import org.joda.time.DateTime;
 

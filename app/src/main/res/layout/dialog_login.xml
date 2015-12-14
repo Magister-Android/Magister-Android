@@ -13,8 +13,10 @@
         android:layout_marginTop="@dimen/dialog_text_vertical_spacing"
         android:layout_width="match_parent">
 
-        <android.support.v7.widget.AppCompatEditText
+        <EditText
             android:id="@+id/school_input"
+            android:nextFocusForward="@+id/username_input"
+            android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/school_text"/>
@@ -26,8 +28,10 @@
         android:layout_marginTop="@dimen/dialog_text_vertical_spacing"
         android:layout_width="match_parent">
 
-        <android.support.v7.widget.AppCompatEditText
+        <EditText
             android:id="@+id/username_input"
+            android:nextFocusForward="@+id/password_input"
+            android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/username_text"/>
@@ -39,8 +43,11 @@
         android:layout_marginTop="@dimen/dialog_text_vertical_spacing"
         android:layout_width="match_parent">
 
-        <android.support.v7.widget.AppCompatEditText
+        <EditText
             android:id="@+id/password_input"
+            android:singleLine="true"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/password_text"/>

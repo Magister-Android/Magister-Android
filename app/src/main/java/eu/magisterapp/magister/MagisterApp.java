@@ -26,7 +26,7 @@ public class MagisterApp extends Application {
 
     private MagisterAPI api;
 
-    public MagisterAPI getApi()
+    public synchronized MagisterAPI getApi()
     {
         if (api == null)
         {
@@ -71,8 +71,6 @@ public class MagisterApp extends Application {
                 .putString(PREFS_USERNAME, username)
                 .putString(PREFS_PASSWORD, password)
                 .apply();
-
-        notifyCredentialsUpdated(school, username, password);
     }
 
     public void voidCredentails()

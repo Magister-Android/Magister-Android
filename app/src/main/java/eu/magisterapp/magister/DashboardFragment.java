@@ -116,6 +116,8 @@ public class DashboardFragment extends TitledFragment
             {
                 AfspraakCollection httpAfspraken = api.getAfspraken(Utils.now(), Utils.deltaDays(7)); // comment dit als je je shit 1 keer hebt opgehaald.
 
+                Log.i("username", api.getMainSessie().username);
+
                 // Dit dips ik even om de DB te testen.
                 MagisterDatabase db = new MagisterDatabase(getContext());
 
