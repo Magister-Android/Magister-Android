@@ -123,7 +123,7 @@ public class DashboardFragment extends TitledFragment
 
                 db.insertAfspraken(api.getMainSessie().id, httpAfspraken); // comment dit als je je shit 1 keer hebt opgehaald.
 
-                afspraken = db.queryAfspraken("SELECT * FROM afspraken WHERE Start > ? ORDER BY Start ASC LIMIT ?",
+                afspraken = db.queryAfspraken("WHERE Einde > ? ORDER BY Start ASC LIMIT ?",
                         new String[] {String.valueOf(Utils.now().getMillis()), "12"});
 
 

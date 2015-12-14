@@ -1,7 +1,12 @@
 package eu.magisterapp.magister;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
+import java.io.IOException;
 
 import eu.magisterapp.magisterapi.MagisterAPI;
 
@@ -75,5 +80,27 @@ public class MagisterApp extends Application {
         return ! this.getSharedPreferences(PREFS_NAME, 0).getString(PREFS_SCHOOL, "").isEmpty();
     }
 
+    public boolean validateCredentials(String school, String username, String password)
+    {
+        try
+        {
+            getApi().reconnect(school, username, password).login();
 
+            return true;
+        }
+
+        catch (IOException e)
+        {
+            return false;
+        }
+    }
+
+    public boolean hasInternet()
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 }

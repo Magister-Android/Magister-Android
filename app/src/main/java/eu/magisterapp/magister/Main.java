@@ -3,6 +3,7 @@ package eu.magisterapp.magister;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -21,6 +22,9 @@ import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InvalidObjectException;
+
 import eu.magisterapp.magisterapi.MagisterAPI;
 
 
@@ -35,6 +39,8 @@ public class Main extends AppCompatActivity
 	int fragmentPosition = 0;
 
 	MagisterAPI api;
+
+	Main me = this;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +66,6 @@ public class Main extends AppCompatActivity
 				selectItem(position);
 			}
 		});
-
 
 		// Als je nog niet ingelogd bent, maak een login scherm
 		if (! ((MagisterApp) getApplication()).isAuthenticated())
@@ -121,10 +126,54 @@ public class Main extends AppCompatActivity
 	{
 		Log.i("Logging in: ", "School: " + school + ", Username: " + username);
 
-		getMagisterApplication().updateCredentials(school, username, password);
+		// TODO: maak een laad ding.
 
-		// TODO: hier moet nog worden gecontroleerd of je shit klopt voordat het ding verder gaat. Klopt het niet, geef dan het ding opnieuw weer zonder verder te gaan.
-		selectItem(fragmentPosition, false);
+		new LoginTask().execute(school, username, password);
+	}
+
+	private class LoginTask extends AsyncTask<String, Void, Void>
+	{
+		MagisterApp app = me.getMagisterApplication();
+
+		String message;
+
+		@Override
+		protected Void doInBackground(String... params) {
+
+			String school = params[0];
+			String username = params[1];
+			String password = params[2];
+
+			if (! app.hasInternet())
+			{
+				message = "Je hebt geen internet. Probeer het later opnieuw.";
+			}
+
+			else if (app.validateCredentials(school, username, password))
+			{
+				app.updateCredentials(school, username, password);
+			}
+
+			else
+			{
+				message = "De ingevoerde gegevens kloppen niet.";
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			if (message != null)
+			{
+				Alerts.notify(me, message);
+			}
+
+			else
+			{
+				selectItem(fragmentPosition, false);
+			}
+		}
 	}
 
 	public MagisterApp getMagisterApplication()

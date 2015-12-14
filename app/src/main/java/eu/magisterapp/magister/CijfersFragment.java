@@ -33,7 +33,10 @@ public class CijfersFragment extends TitledFragment
 
         cijferContainer = (RecyclerView) view.findViewById(R.id.cijfer_container);
 
+        adapter = new ResourceAdapter();
+
         cijferContainer.setLayoutManager(new LinearLayoutManager(getContext()));
+        cijferContainer.setAdapter(adapter);
 
         setTitle("Alle Cijfers");
 
@@ -51,7 +54,7 @@ public class CijfersFragment extends TitledFragment
     {
         private CijferList cijfers;
         private String message;
-        private MagisterAPI api = ((Main) getContext()).api;
+        private MagisterAPI api = ((MagisterApp) getActivity().getApplication()).getApi();
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -86,11 +89,7 @@ public class CijfersFragment extends TitledFragment
             }
 
             else
-            {
-                if (adapter == null) adapter = new ResourceAdapter(cijfers);
-
-                else adapter.swap(cijfers);
-            }
+                adapter.swap(cijfers);
 
         }
     }

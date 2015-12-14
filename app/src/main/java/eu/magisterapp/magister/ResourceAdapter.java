@@ -93,6 +93,12 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
         data = raw;
     }
 
+    public ResourceAdapter()
+    {
+        data = new ArrayList<>();
+    }
+
+
     public List<DataHolder> createCijferHolder(CijferList cijfers)
     {
         List<DataHolder> shit = new ArrayList<>();

@@ -20,6 +20,7 @@ public class DataFixer {
 
     private MagisterAPI api;
     private MagisterDatabase db;
+    private MagisterApp app;
 
     private Context context;
 
@@ -29,15 +30,9 @@ public class DataFixer {
         db = new MagisterDatabase(context);
 
         this.context = context;
-    }
 
-    private boolean hasInternet()
-    {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        app = (MagisterApp) context.getApplicationContext();
 
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     public int getDaysInAdvance()
@@ -50,7 +45,7 @@ public class DataFixer {
         DateTime van = Utils.now();
         DateTime tot = Utils.deltaDays(days);
 
-        if (! hasInternet())
+        if (! app.hasInternet())
         {
             // zernike
             return getLocalAfspraken(van, tot);
@@ -75,7 +70,7 @@ public class DataFixer {
     private AfspraakCollection getLocalAfspraken(DateTime van, DateTime tot) throws IOException
     {
         return db.queryAfspraken(
-                        " WHERE " + MagisterDatabase.Afspraken.START + " > ? AND "
+                        "WHERE " + MagisterDatabase.Afspraken.START + " > ? AND "
                         + MagisterDatabase.Afspraken.EINDE + " < ?"
                 ,
                 new String[] {
