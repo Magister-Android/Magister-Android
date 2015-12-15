@@ -76,7 +76,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
 
                 + ")";
 
-        public static final String INSERT_SQL = "INSERT INTO " + TABLE + " ("
+        public static final String INSERT_SQL = "INSERT OR REPLACE INTO " + TABLE + " ("
                 + ID + ", " + OWNER + ", " + START + ", " + EINDE + ", " + INSTANCE
                 + ") VALUES (?, ?, ?, ?, ?)";
     }

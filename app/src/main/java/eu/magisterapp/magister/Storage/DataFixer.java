@@ -1,11 +1,13 @@
 package eu.magisterapp.magister.Storage;
 
+import android.app.Activity;
 import android.content.Context;
 
 import org.joda.time.DateTime;
 
 import java.io.IOException;
 
+import eu.magisterapp.magister.Alerts;
 import eu.magisterapp.magister.MagisterApp;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.MagisterAPI;
@@ -18,6 +20,7 @@ public class DataFixer {
 
     private MagisterAPI api;
     private MagisterDatabase db;
+
     private MagisterApp app;
 
     private Context context;
@@ -81,4 +84,24 @@ public class DataFixer {
     {
         return api.getAfspraken(van, tot);
     }
+
+    public AfspraakCollection getVandaagAfspraken() throws IOException
+    {
+        DateTime now = Utils.now();
+
+        if (app.hasInternet())
+        {
+            db.insertAfspraken(api.getMainSessie().id, getOnlineAfspraken(now, Utils.deltaDays(app.getDaysInAdvance())));
+        }
+
+        AfspraakCollection afspraken = getLocalAfspraken(now, now.plusDays(1).withTime(0, 0, 0, 0));
+
+        if (afspraken.afspraken.size() == 0)
+        {
+            afspraken = getLocalAfspraken(now.plusDays(1), now.plusDays(2).withTime(0, 0, 0, 0));
+        }
+
+        return afspraken;
+    }
+
 }
