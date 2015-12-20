@@ -96,7 +96,7 @@ public class DataFixer {
 
         AfspraakCollection afspraken = getLocalAfspraken(now, now.plusDays(1).withTime(0, 0, 0, 0));
 
-        if (afspraken.afspraken.size() == 0)
+        if (afspraken.size() == 0)
         {
             afspraken = getLocalAfspraken(now.plusDays(1), now.plusDays(2).withTime(0, 0, 0, 0));
         }
