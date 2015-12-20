@@ -26,6 +26,13 @@ public class MagisterApp extends Application {
 
     private MagisterAPI api;
 
+    public int getDaysInAdvance()
+    {
+        SharedPreferences prefs = this.getSharedPreferences(PREFS_NAME, 0);
+
+        return prefs.getInt(PREFS_DAYS_IN_ADVANCE, PREFS_DAYS_IN_ADVANCE_DEFAULT);
+    }
+
     public synchronized MagisterAPI getApi()
     {
         if (api == null)

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
+import eu.magisterapp.magister.Storage.DataFixer;
 import eu.magisterapp.magister.Storage.MagisterDatabase;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.BadResponseException;
@@ -31,6 +32,12 @@ public class DashboardFragment extends TitledFragment
     protected LinearLayout uurView;
     protected LinearLayout cijferView;
 
+    protected MagisterApp application;
+    protected DataFixer data;
+
+    private MagisterAPI api;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -39,6 +46,10 @@ public class DashboardFragment extends TitledFragment
 
         uurView = (LinearLayout) view.findViewById(R.id.volgende_uur_container);
         cijferView = (LinearLayout) view.findViewById(R.id.laatste_cijfers_container);
+        application = (MagisterApp) getActivity().getApplication();
+
+        data = new DataFixer(application.getApi(), getContext());
+        api = application.getApi();
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.dasboard_swipeview);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
@@ -86,9 +97,7 @@ public class DashboardFragment extends TitledFragment
         private CijferList cijfers;
         private AfspraakCollection afspraken;
 
-        private MagisterApp application = (MagisterApp) getActivity().getApplication();
 
-        private MagisterAPI api = application.getApi();
 
         public DashboardFixerTask()
         {
