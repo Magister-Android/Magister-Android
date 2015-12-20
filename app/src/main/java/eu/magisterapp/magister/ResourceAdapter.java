@@ -1,21 +1,15 @@
 package eu.magisterapp.magister;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.joda.time.DateTime;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.magisterapp.magisterapi.Afspraak;
-import eu.magisterapp.magisterapi.AfspraakCollection;
-import eu.magisterapp.magisterapi.Cijfer;
-import eu.magisterapp.magisterapi.CijferList;
+import eu.magisterapp.magisterapi.Displayable;
 
 
 public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHolder>
@@ -24,7 +18,7 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
      * Created by max on 24-9-15.
      */
 
-    public List<DataHolder> data;
+    public List<? extends Displayable> displayables;
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -44,96 +38,19 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
         }
     }
 
-    public static class DataHolder
+    public ResourceAdapter(List<? extends Displayable> displayables)
     {
-        public final String vak;
-        public final String title;
-        public final String docent;
-        public final String time;
-        public final boolean warning;
-
-        public DataHolder(String vak, String title, String docent, String time)
-        {
-            this.vak = vak;
-            this.title = title;
-            this.docent = docent;
-            this.time = time;
-            this.warning = false;
-        }
-
-        public DataHolder(String vak, String title, String docent, DateTime start, DateTime end)
-        {
-            this(vak, title, docent, start, end, false);
-        }
-
-        public DataHolder(String vak, String title, String docent, DateTime start, DateTime end, boolean warning)
-        {
-            String time = start.toString("HH:mm") + " - " + end.toString("HH:mm");
-
-            this.vak = vak;
-            this.title = title;
-            this.docent = docent;
-            this.time = time;
-            this.warning = warning;
-        }
-    }
-
-    public ResourceAdapter(CijferList cijferList)
-    {
-        data = createCijferHolder(cijferList);
-    }
-
-    public ResourceAdapter(AfspraakCollection afspraken)
-    {
-        data = createAfspraakHolder(afspraken);
-    }
-
-    public ResourceAdapter(List<DataHolder> raw)
-    {
-        data = raw;
+        this.displayables = displayables;
     }
 
     public ResourceAdapter()
     {
-        data = new ArrayList<>();
+        displayables = new ArrayList<>();
     }
 
-
-    public List<DataHolder> createCijferHolder(CijferList cijfers)
+    public void swap(List<? extends Displayable> newData)
     {
-        List<DataHolder> shit = new ArrayList<>();
-
-        for (Cijfer cijfer : cijfers)
-        {
-            shit.add(new DataHolder(cijfer.Vak.Omschrijving, cijfer.CijferStr, cijfer.Docent, cijfer.DatumIngevoerd.toString("yyyy-MM-dd")));
-        }
-
-        return shit;
-    }
-
-    public List<DataHolder> createAfspraakHolder(AfspraakCollection afspraken)
-    {
-        List<DataHolder> shit = new ArrayList<>();
-
-        for (Afspraak afspraak : afspraken)
-        {
-            shit.add(new DataHolder(afspraak.Omschrijving, afspraak.getLokalen(), afspraak.getDocenten(), afspraak.Start, afspraak.Einde));
-        }
-
-        return shit;
-    }
-
-    public void swap(CijferList cijfers)
-    {
-        data.clear();
-        data.addAll(createCijferHolder(cijfers));
-        notifyDataSetChanged();
-    }
-
-    public void swap(AfspraakCollection afspraken)
-    {
-        data.clear();
-        data.addAll(createAfspraakHolder(afspraken));
+        displayables = newData;
         notifyDataSetChanged();
     }
 
@@ -142,7 +59,22 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
     {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        int resourceType = data.get(viewType).warning ? R.layout.resource_row_warning : R.layout.resource_row;
+        int resourceType;
+
+        switch (displayables.get(viewType).getType())
+        {
+
+            case INVALID:
+            case NOTICE:
+            case WARNING:
+                resourceType = R.layout.resource_row_warning;
+                break;
+
+            case NORMAL:
+            default:
+                resourceType = R.layout.resource_row;
+                break;
+        }
 
         LinearLayout row = (LinearLayout) inflater.inflate(resourceType, parent, false);
 
@@ -152,17 +84,17 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position)
     {
-        DataHolder row = data.get(position);
+        Displayable row = displayables.get(position);
 
-        holder.vak.setText(row.vak);
-        holder.title.setText(row.title);
-        holder.docent.setText(row.docent);
-        holder.time.setText(row.time);
+        holder.vak.setText(row.getVak());
+        holder.title.setText(row.getTitle());
+        holder.docent.setText(row.getDocent());
+        holder.time.setText(row.getTime());
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return displayables.size();
     }
 
 }

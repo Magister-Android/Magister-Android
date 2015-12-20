@@ -74,20 +74,6 @@ public class DashboardFragment extends TitledFragment
         }
     }
 
-    public ArrayList<ResourceAdapter.DataHolder> getTestCijfers()
-    {
-        ArrayList<ResourceAdapter.DataHolder> schijt = new ArrayList<>();
-
-        schijt.add(new ResourceAdapter.DataHolder("Natuurkunde", "69.2", "Doppie dopheide", "eergisteren"));
-        schijt.add(new ResourceAdapter.DataHolder("Scheikunde", "8.6", "R. Habich", "69 jaar geleden"));
-        schijt.add(new ResourceAdapter.DataHolder("Duits", "-15.6", "taaljoker", "morgen"));
-        schijt.add(new ResourceAdapter.DataHolder("Engels", "7.6", "taaljoker", "vandaag"));
-        schijt.add(new ResourceAdapter.DataHolder("Wiskunde B", "6.9", "L. Siekman", "kleine pauze"));
-        schijt.add(new ResourceAdapter.DataHolder("Informagica", "696969", "Marc de baas", "geskipt"));
-
-        return schijt;
-    }
-
     public void refreshDashboard()
     {
         mSwipeRefreshLayout.setRefreshing(true);
@@ -115,8 +101,6 @@ public class DashboardFragment extends TitledFragment
             try
             {
                 AfspraakCollection httpAfspraken = api.getAfspraken(Utils.now(), Utils.deltaDays(7)); // comment dit als je je shit 1 keer hebt opgehaald.
-
-                Log.i("username", api.getMainSessie().username);
 
                 // Dit dips ik even om de DB te testen.
                 MagisterDatabase db = new MagisterDatabase(getContext());
