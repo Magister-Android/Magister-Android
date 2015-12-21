@@ -1,8 +1,9 @@
 package eu.magisterapp.magister;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -11,19 +12,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
+import java.util.List;
 
 import eu.magisterapp.magister.Storage.DataFixer;
-import eu.magisterapp.magister.Storage.MagisterDatabase;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.BadResponseException;
-import eu.magisterapp.magisterapi.Cijfer;
 import eu.magisterapp.magisterapi.CijferList;
+import eu.magisterapp.magisterapi.Displayable;
 import eu.magisterapp.magisterapi.MagisterAPI;
-import eu.magisterapp.magisterapi.Utils;
 
 
 public class DashboardFragment extends TitledFragment
@@ -31,6 +30,9 @@ public class DashboardFragment extends TitledFragment
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     protected LinearLayout uurView;
     protected LinearLayout cijferView;
+
+    protected ResourceAdapter uurAdapter;
+    protected ResourceAdapter cijferAdapter;
 
     protected MagisterApp application;
     protected DataFixer data;
@@ -45,7 +47,11 @@ public class DashboardFragment extends TitledFragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         uurView = (LinearLayout) view.findViewById(R.id.volgende_uur_container);
+        uurAdapter = new ResourceAdapter();
+
         cijferView = (LinearLayout) view.findViewById(R.id.laatste_cijfers_container);
+        cijferAdapter = new ResourceAdapter();
+
         application = (MagisterApp) getActivity().getApplication();
 
         data = new DataFixer(application.getApi(), getContext());
@@ -89,76 +95,128 @@ public class DashboardFragment extends TitledFragment
     {
         mSwipeRefreshLayout.setRefreshing(true);
 
-        new DashboardFixerTask().execute((Void[]) null);
+        new DashboardFixerTask().execute();
     }
 
-    private class DashboardFixerTask extends ErrorableAsyncTask
+    public class DashboardFixerTask extends AsyncTask<Void, AfspraakCollection, Boolean>
     {
-        private CijferList cijfers;
-        private AfspraakCollection afspraken;
+        AfspraakCollection afspraken;
 
+        IOException e;
 
-
-        public DashboardFixerTask()
-        {
-            super(getContext());
-        }
+        boolean noInternet;
 
         @Override
-        protected Void doInBackground(Void... params)
+        protected Boolean doInBackground(Void... args)
         {
             try
             {
-                AfspraakCollection httpAfspraken = api.getAfspraken(Utils.now(), Utils.deltaDays(7)); // comment dit als je je shit 1 keer hebt opgehaald.
-
-                // Dit dips ik even om de DB te testen.
-                MagisterDatabase db = new MagisterDatabase(getContext());
-
-                db.nuke(); // comment dit als je je shit 1 keer hebt opgehaald.
-
-                db.insertAfspraken(api.getMainSessie().id, httpAfspraken); // comment dit als je je shit 1 keer hebt opgehaald.
-
-                afspraken = db.queryAfspraken("WHERE Einde > ? ORDER BY Start ASC LIMIT ?",
-                        new String[] {String.valueOf(Utils.now().getMillis()), "12"});
-
-
-                // cijfers = api.getCijfers(); // Nog geen DB implementatie voor cijfers..
+                // haal eerst snel cache op zodat je niet hoeft te wachten op je shit.
+                publishProgress(data.getNextDayFromCache());
             }
 
             catch (IOException e)
             {
-                if (e instanceof BadResponseException && e.getMessage().startsWith("Ongeldig account of verkeerde combinatie van gebruikersnaam en wachtwoord"))
-                    credentialFailure = true;
-
-                else internetFailure = true;
-
-
-                error(e, "Fix je internet.. Bitch.");
+                // jammer als er hier wat mis gaat. is niet erg, wachten ze maar even.
             }
 
-            return null;
+            // probeer hierna wel gwn je rooster op te halen.
+
+            if (! application.hasInternet())
+            {
+                noInternet = true;
+            }
+
+            else
+            {
+                try
+                {
+                    afspraken = data.getNextDay();
+
+                    return true;
+                }
+
+                catch (IOException e)
+                {
+                    this.e = e;
+
+                    return false;
+                }
+            }
+
+            try
+            {
+                afspraken = data.getNextDayFromCache();
+
+                return true;
+            }
+
+            catch (IOException e)
+            {
+                this.e = e;
+
+                return false;
+            }
         }
 
         @Override
-        public void onSuccess()
-        {
-            updateRoosterView(afspraken);
-//            updateCijferView(cijfers); // Nog geen DB implementatie voor cijfers./
+        protected void onProgressUpdate(AfspraakCollection... values) {
+
+            if (values.length == 1)
+
+                updateRoosterView(values[0]);
+
         }
 
         @Override
-        public void onFinish() {
+        protected void onPostExecute(Boolean success) {
+
+            Log.i("DashBoardFixer", "Hij is klaar.");
+
+            if (noInternet)
+            {
+                Log.i("DashBoardFixer", "Geen internet");
+
+                Alerts.notify(getActivity(), R.string.no_internet_cache).setAction("INTERNET", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getActivity().startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                    }
+                }).show();
+            }
+
+            if (success)
+            {
+                Log.i("DashBoardFixer", "Success");
+                updateRoosterView(afspraken);
+            }
+
+            else if (e != null)
+            {
+                if (e instanceof BadResponseException)
+                {
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+                else
+                {
+                    Toast.makeText(getContext(), R.string.error_generic, Toast.LENGTH_LONG).show();
+                }
+            }
+
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 
     private void updateRoosterView(AfspraakCollection afspraken)
     {
-        populateLinearLayout(uurView, new ResourceAdapter(afspraken));
+        uurAdapter.swap(afspraken);
+        populateLinearLayout(uurView, uurAdapter);
     }
 
     private void updateCijferView(CijferList cijfers)
     {
-        populateLinearLayout(cijferView, new ResourceAdapter(cijfers));
+        cijferAdapter.swap(cijfers);
+        populateLinearLayout(cijferView, cijferAdapter);
     }
 }

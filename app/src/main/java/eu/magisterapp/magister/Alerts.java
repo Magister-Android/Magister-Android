@@ -36,6 +36,11 @@ public class Alerts {
         return Snackbar.make(activity.findViewById(R.id.coordinator_layout), message, Snackbar.LENGTH_LONG);
     }
 
+    public static Snackbar notify(Activity activity, int message)
+    {
+        return Snackbar.make(activity.findViewById(R.id.coordinator_layout), message, Snackbar.LENGTH_LONG);
+    }
+
     public static AlertDialog notifyBig(Context context, String message)
     {
         return new AlertDialog.Builder(context)

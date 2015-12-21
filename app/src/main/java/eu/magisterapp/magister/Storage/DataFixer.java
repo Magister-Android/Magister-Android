@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import eu.magisterapp.magister.Alerts;
 import eu.magisterapp.magister.MagisterApp;
+import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.MagisterAPI;
 import eu.magisterapp.magisterapi.Utils;
@@ -85,23 +86,46 @@ public class DataFixer {
         return api.getAfspraken(van, tot);
     }
 
-    public AfspraakCollection getVandaagAfspraken() throws IOException
+    public AfspraakCollection getNextDay() throws IOException
     {
-        DateTime now = Utils.now();
-
         if (app.hasInternet())
         {
-            db.insertAfspraken(api.getMainSessie().id, getOnlineAfspraken(now, Utils.deltaDays(app.getDaysInAdvance())));
+            try
+            {
+                db.insertAfspraken("", api.getAfspraken(Utils.now(), Utils.deltaDays(getDaysInAdvance())));
+            }
+
+            catch (IOException e)
+            {
+                // het is jammer.
+            }
         }
 
-        AfspraakCollection afspraken = getLocalAfspraken(now, now.plusDays(1).withTime(0, 0, 0, 0));
+        return getNextDayFromCache();
+    }
 
-        if (afspraken.size() == 0)
-        {
-            afspraken = getLocalAfspraken(now.plusDays(1), now.plusDays(2).withTime(0, 0, 0, 0));
-        }
+    public AfspraakCollection getNextDayFromCache() throws IOException
+    {
+        AfspraakCollection afspraken = db.queryAfspraken("WHERE Start > ? LIMIT ?", getNowMillis(), "1");
+        Afspraak eerste;
 
-        return afspraken;
+        if (afspraken.size() > 0) eerste = afspraken.get(0);
+        else return afspraken;
+
+        DateTime start = eerste.Start.withTime(0, 0, 0, 0);
+        DateTime end = start.plusDays(1);
+
+        return db.queryAfspraken("WHERE Start > ? AND Einde < ?", toMillis(start), toMillis(end));
+    }
+
+    private String getNowMillis()
+    {
+        return String.valueOf(Utils.now().getMillis());
+    }
+
+    private String toMillis(DateTime time)
+    {
+        return String.valueOf(time.getMillis());
     }
 
 }

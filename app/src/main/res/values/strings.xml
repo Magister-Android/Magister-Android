@@ -2,24 +2,26 @@
 	<string name="app_name">Magister</string>
 	<string name="author">Max Verbeek, Sibren Talens</string>
 
-	<string name="action_settings">Settings</string>
-	<string name="action_refresh">Refresh</string>
+	<string name="action_settings">Instellingen</string>
+	<string name="action_refresh">Ververs</string>
 	<string name="logout">Log uit</string>
 	<string name="nav_open">Open</string>
-	<string name="nav_close">Close</string>
+	<string name="nav_close">Sluit</string>
 
 	<string name="volgende_uur">Volgende uur</string>
 	<string name="laatste_cijfers">Laatste Cijfers</string>
 	<string name="alle_cijfers">Alle Cijfers</string>
-	<string name="title_activity_settings">Settings</string>
+	<string name="title_activity_settings">Instellingen</string>
 
 	<string name="hello_world">Hello world!</string>
 
 	<string name="login">Log in</string>
 	<string name="school_text">School</string>
-	<string name="password_text">Password</string>
+	<string name="password_text">Wachtwoord</string>
 	<string name="username_text">Gebruikersnaam</string>
 
 	<string name="no_internet">Je hebt momenteel geen internet. Probeer het later opnieuw.</string>
+	<string name="error_generic">Er is iets mis gegaan. Probeer het later opnieuw.</string>
+	<string name="no_internet_cache">Je hebt nu geen internet. Dit zijn oude gegevens.</string>
 	<string name="credential_failure">De gegevens die je hebt ingevuld zijn onjuist.</string>
 </resources>
