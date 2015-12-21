@@ -106,6 +106,7 @@ public class DashboardFragment extends TitledFragment
     public class DashboardFixerTask extends AsyncTask<Void, AfspraakCollection, Boolean>
     {
         AfspraakCollection afspraken;
+        CijferList cijfers;
 
         IOException e;
 
@@ -137,6 +138,7 @@ public class DashboardFragment extends TitledFragment
                 try
                 {
                     afspraken = data.getNextDay();
+                    cijfers = application.getApi().getRecentCijfers();
 
                     return true;
                 }
@@ -176,12 +178,8 @@ public class DashboardFragment extends TitledFragment
         @Override
         protected void onPostExecute(Boolean success) {
 
-            Log.i("DashBoardFixer", "Hij is klaar.");
-
             if (noInternet)
             {
-                Log.i("DashBoardFixer", "Geen internet");
-
                 Alerts.notify(getActivity(), R.string.no_internet_cache).setAction("INTERNET", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -192,8 +190,8 @@ public class DashboardFragment extends TitledFragment
 
             if (success)
             {
-                Log.i("DashBoardFixer", "Success");
                 updateRoosterView(afspraken);
+                updateCijferView(cijfers);
             }
 
             else if (e != null)
@@ -223,8 +221,6 @@ public class DashboardFragment extends TitledFragment
             Afspraak eerste = afspraken.get(0);
 
             int daydiff = Days.daysBetween(Utils.now().withTimeAtStartOfDay(), eerste.Start.withTimeAtStartOfDay()).getDays();
-
-            Log.i("DashBoardFixer", "Er zitten " + String.valueOf(daydiff) + " dagen tussen.");
 
             switch (daydiff)
             {

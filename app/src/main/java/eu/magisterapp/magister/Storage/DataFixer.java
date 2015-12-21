@@ -69,8 +69,6 @@ public class DataFixer {
         if (afspraken.size() > 0) eerste = afspraken.get(0);
         else return afspraken;
 
-        Log.i("afspraak", eerste.getDocenten() + eerste.getVakken() + eerste.getLokalen() + eerste.Start.toString("MM-dd") + eerste.Einde.toString("MM-dd"));
-
         DateTime start = eerste.Start; // Begin van 1e afspraak
         DateTime end = start.withTimeAtStartOfDay().plusDays(1); // begin van volgende dag.
 

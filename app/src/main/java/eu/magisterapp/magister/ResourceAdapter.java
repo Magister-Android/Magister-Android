@@ -65,13 +65,13 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
         switch (displayables.get(viewType).getType())
         {
 
-            case INVALID:
-            case NOTICE:
-            case WARNING:
+            case INVALID: // doorstreepte tekst
+            case NOTICE: // rode tekst
+            case WARNING: // rode achtergrond
                 resourceType = R.layout.resource_row_warning;
                 break;
 
-            case NORMAL:
+            case NORMAL: // normaal
             default:
                 resourceType = R.layout.resource_row;
                 break;
@@ -93,6 +93,7 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
 
         if (row.getTimeInstance().getMillis() - System.currentTimeMillis() < 3600 * 1000)
         {
+            // Dit geldt dus altijd voor cijfers, want die hebben altijd een timestamp uit het verleden.
             holder.time.setText(DateUtils.getRelativeTimeSpanString(row.getTimeInstance().getMillis(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS));
         }
 
