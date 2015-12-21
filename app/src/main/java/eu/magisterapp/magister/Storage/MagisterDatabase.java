@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Base64;
 
+import org.joda.time.DateTime;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,6 +26,7 @@ import java.util.NoSuchElementException;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.Module;
+import eu.magisterapp.magisterapi.Utils;
 
 /**
  * Created by max on 11-12-15.
@@ -259,5 +262,15 @@ public class MagisterDatabase extends SQLiteOpenHelper
     public void nuke()
     {
         onUpgrade(getWritableDatabase(), 0, 1);
+    }
+
+    public String ms(DateTime time)
+    {
+        return String.valueOf(time.getMillis());
+    }
+
+    public String now()
+    {
+        return ms(Utils.now());
     }
 }

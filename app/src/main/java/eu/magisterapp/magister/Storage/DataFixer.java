@@ -2,6 +2,7 @@ package eu.magisterapp.magister.Storage;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import org.joda.time.DateTime;
 
@@ -39,51 +40,7 @@ public class DataFixer {
 
     public int getDaysInAdvance()
     {
-        return context.getSharedPreferences(MagisterApp.PREFS_NAME, 0).getInt(MagisterApp.PREFS_DAYS_IN_ADVANCE, 7);
-    }
-
-    public AfspraakCollection getAfspraken(int days) throws IOException
-    {
-        DateTime van = Utils.now();
-        DateTime tot = Utils.deltaDays(days);
-
-        if (! app.hasInternet())
-        {
-            // zernike
-            return getLocalAfspraken(van, tot);
-        }
-
-        else
-        {
-            try
-            {
-                return getOnlineAfspraken(van, tot);
-            }
-
-            catch (IOException e)
-            {
-                e.printStackTrace();
-
-                return getLocalAfspraken(van, tot);
-            }
-        }
-    }
-
-    private AfspraakCollection getLocalAfspraken(DateTime van, DateTime tot) throws IOException
-    {
-        return db.queryAfspraken(
-                        "WHERE " + MagisterDatabase.Afspraken.START + " > ? AND "
-                        + MagisterDatabase.Afspraken.EINDE + " < ?"
-                ,
-                new String[] {
-                        String.valueOf(van.getMillis()),
-                        String.valueOf(tot.getMillis())
-                });
-    }
-
-    private AfspraakCollection getOnlineAfspraken(DateTime van, DateTime tot) throws IOException
-    {
-        return api.getAfspraken(van, tot);
+        return context.getSharedPreferences(MagisterApp.PREFS_NAME, 0).getInt(MagisterApp.PREFS_DAYS_IN_ADVANCE, 21);
     }
 
     public AfspraakCollection getNextDay() throws IOException
@@ -106,26 +63,23 @@ public class DataFixer {
 
     public AfspraakCollection getNextDayFromCache() throws IOException
     {
-        AfspraakCollection afspraken = db.queryAfspraken("WHERE Start > ? LIMIT ?", getNowMillis(), "1");
+        AfspraakCollection afspraken = db.queryAfspraken("WHERE Einde >= ? ORDER BY Start ASC LIMIT ?", db.now(), "1");
         Afspraak eerste;
 
         if (afspraken.size() > 0) eerste = afspraken.get(0);
         else return afspraken;
 
-        DateTime start = eerste.Start.withTime(0, 0, 0, 0);
-        DateTime end = start.plusDays(1);
+        Log.i("afspraak", eerste.getDocenten() + eerste.getVakken() + eerste.getLokalen() + eerste.Start.toString("MM-dd") + eerste.Einde.toString("MM-dd"));
 
-        return db.queryAfspraken("WHERE Start > ? AND Einde < ?", toMillis(start), toMillis(end));
-    }
+        DateTime start = eerste.Start; // Begin van 1e afspraak
+        DateTime end = start.withTimeAtStartOfDay().plusDays(1); // begin van volgende dag.
 
-    private String getNowMillis()
-    {
-        return String.valueOf(Utils.now().getMillis());
-    }
+        return db.queryAfspraken("WHERE (Start <= @now AND Einde >= @end) " +
+                "OR (Start >= @now AND Einde <= @end) " +
+                "OR (@now BETWEEN Start AND Einde) " +
+                "OR (@end BETWEEN Start AND Einde) " +
+                "ORDER BY Start ASC", db.now(), db.ms(end));
 
-    private String toMillis(DateTime time)
-    {
-        return String.valueOf(time.getMillis());
     }
 
 }

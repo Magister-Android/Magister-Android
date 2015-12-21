@@ -7,22 +7,28 @@ import android.provider.Settings;
 
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.joda.time.Days;
 
 import java.io.IOException;
 import java.util.List;
 
 import eu.magisterapp.magister.Storage.DataFixer;
+import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.BadResponseException;
 import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.Displayable;
 import eu.magisterapp.magisterapi.MagisterAPI;
+import eu.magisterapp.magisterapi.Utils;
 
 
 public class DashboardFragment extends TitledFragment
@@ -37,14 +43,14 @@ public class DashboardFragment extends TitledFragment
     protected MagisterApp application;
     protected DataFixer data;
 
-    private MagisterAPI api;
+    protected View view;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         uurView = (LinearLayout) view.findViewById(R.id.volgende_uur_container);
         uurAdapter = new ResourceAdapter();
@@ -55,7 +61,6 @@ public class DashboardFragment extends TitledFragment
         application = (MagisterApp) getActivity().getApplication();
 
         data = new DataFixer(application.getApi(), getContext());
-        api = application.getApi();
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.dasboard_swipeview);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
@@ -210,6 +215,53 @@ public class DashboardFragment extends TitledFragment
 
     private void updateRoosterView(AfspraakCollection afspraken)
     {
+        if (afspraken.size() > 0)
+        {
+            // verander het kopje "R.string.volgende_uur" naar iets anders
+            TextView header = (TextView) view.findViewById(R.id.volgende_uur_text);
+
+            Afspraak eerste = afspraken.get(0);
+
+            int daydiff = Days.daysBetween(Utils.now().withTimeAtStartOfDay(), eerste.Start.withTimeAtStartOfDay()).getDays();
+
+            Log.i("DashBoardFixer", "Er zitten " + String.valueOf(daydiff) + " dagen tussen.");
+
+            switch (daydiff)
+            {
+                case 0:
+                    // eerste uur is op zelfde dag
+                    header.setText(R.string.volgende_uur);
+                    break;
+
+                case 1:
+                    // morgen
+                    String tomorrow = DateUtils.getRelativeTimeSpanString(
+                            eerste.Start.getMillis(),
+                            System.currentTimeMillis(),
+                            DateUtils.DAY_IN_MILLIS
+                    ).toString();
+
+                    // Uppercase first letter
+                    tomorrow = tomorrow.substring(0, 1).toUpperCase() + tomorrow.substring(1);
+
+                    header.setText(tomorrow);
+                    break;
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    // eerste uur valt nog in deze week
+                    header.setText(eerste.Start.toString("EEEE"));
+                    break;
+
+                default:
+                    // meer dan 1 week
+                    header.setText(eerste.Start.toString("d MMMM")); // dit fixt automagisch in de goede taal.. wow
+                    break;
+            }
+        }
+
         uurAdapter.swap(afspraken);
         populateLinearLayout(uurView, uurAdapter);
     }
@@ -217,6 +269,14 @@ public class DashboardFragment extends TitledFragment
     private void updateCijferView(CijferList cijfers)
     {
         cijferAdapter.swap(cijfers);
+        populateLinearLayout(cijferView, cijferAdapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        populateLinearLayout(uurView, uurAdapter);
         populateLinearLayout(cijferView, cijferAdapter);
     }
 }

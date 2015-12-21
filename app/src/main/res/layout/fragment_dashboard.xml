@@ -39,6 +39,7 @@
 
 						<TextView
 							android:text="@string/volgende_uur"
+							android:id="@+id/volgende_uur_text"
 							android:textSize="@dimen/card_text_primary_size"
 							android:textColor="@color/textCardPrimary"
 							android:gravity="top|right"

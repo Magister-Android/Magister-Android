@@ -1,6 +1,7 @@
 package eu.magisterapp.magister;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -89,7 +90,16 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
         holder.vak.setText(row.getVak());
         holder.title.setText(row.getTitle());
         holder.docent.setText(row.getDocent());
-        holder.time.setText(row.getTime());
+
+        if (row.getTimeInstance().getMillis() - System.currentTimeMillis() < 3600 * 1000)
+        {
+            holder.time.setText(DateUtils.getRelativeTimeSpanString(row.getTimeInstance().getMillis(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS));
+        }
+
+        else
+        {
+            holder.time.setText(row.getTime());
+        }
     }
 
     @Override
