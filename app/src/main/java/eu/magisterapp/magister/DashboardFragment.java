@@ -44,11 +44,14 @@ public class DashboardFragment extends TitledFragment
     protected DataFixer data;
 
     protected View view;
+    protected LayoutInflater inflater;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        this.inflater = inflater;
+
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
@@ -258,14 +261,43 @@ public class DashboardFragment extends TitledFragment
             }
         }
 
+        else
+        {
+            // Maak hier een custom view, die zegt dat je geen afspraken hebt, en flikker dat in de linearlayout.
+            View view = inflater.inflate(R.layout.resource_row_empty, null);
+
+            TextView tv = (TextView) view.findViewById(R.id.empty_text);
+            tv.setText(R.string.empty_afspraken);
+
+            uurView.removeAllViews();
+            uurView.addView(view);
+
+            return;
+        }
+
         uurAdapter.swap(afspraken);
         populateLinearLayout(uurView, uurAdapter);
     }
 
     private void updateCijferView(CijferList cijfers)
     {
-        cijferAdapter.swap(cijfers);
-        populateLinearLayout(cijferView, cijferAdapter);
+        if (cijfers.size() == 0)
+        {
+            // Maak hier een custom "empty" view, en zet dat in die linearLayout.
+            View view = inflater.inflate(R.layout.resource_row_empty, null);
+
+            TextView tv = (TextView) view.findViewById(R.id.empty_text);
+            tv.setText(R.string.empty_cijfers_recent);
+
+            cijferView.removeAllViews();
+            cijferView.addView(view);
+        }
+
+        else
+        {
+            cijferAdapter.swap(cijfers);
+            populateLinearLayout(cijferView, cijferAdapter);
+        }
     }
 
     @Override

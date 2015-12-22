@@ -13,6 +13,10 @@
 	<string name="alle_cijfers">Alle Cijfers</string>
 	<string name="title_activity_settings">Instellingen</string>
 
+	<string name="empty_cijfers">Er zijn geen cijfers gevonden.</string>
+	<string name="empty_cijfers_recent">Je hebt onlangs geen cijfers terug gekregen.</string>
+	<string name="empty_afspraken">Er zijn geen lessen gevonden.</string>
+
 	<string name="hello_world">Jemoeder is gay!</string>
 
 	<string name="login">Log in</string>
