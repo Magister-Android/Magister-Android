@@ -2,6 +2,7 @@ package eu.magisterapp.magister;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -60,26 +61,27 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
     {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        int resourceType;
+        LinearLayout row = (LinearLayout) inflater.inflate(viewType, parent, false);
 
-        switch (displayables.get(viewType).getType())
+        return new ViewHolder(row);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        switch (displayables.get(position).getType())
         {
-
             case INVALID: // doorstreepte tekst
             case NOTICE: // rode tekst
+                return R.layout.resource_row_notice;
+
             case WARNING: // rode achtergrond
-                resourceType = R.layout.resource_row_warning;
-                break;
+                return R.layout.resource_row_warning;
 
             case NORMAL: // normaal
             default:
-                resourceType = R.layout.resource_row;
-                break;
+                return R.layout.resource_row;
         }
-
-        LinearLayout row = (LinearLayout) inflater.inflate(resourceType, parent, false);
-
-        return new ViewHolder(row);
     }
 
     @Override

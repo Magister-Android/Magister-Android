@@ -101,6 +101,23 @@ public class MagisterDatabase extends SQLiteOpenHelper
                 + ")";
     }
 
+    public static class RecentCijfers
+    {
+        public static final String TABLE = "cijfers_recent";
+        public static final String ID = "Id";
+        public static final String OWNER = "owner";
+        public static final String DATUMINGEVOERD = "DatumIngevoerd";
+        public static final String INSTANCE = "instance";
+
+        public static final String CREATE_TABLE_SQL = "CREATE TABLE " + TABLE + " ("
+                + ID + " integer primary key, "
+                + OWNER + " text, "
+                + DATUMINGEVOERD + " integer, "
+                + INSTANCE + " BLOB"
+
+                + ")";
+    }
+
     public static class Aanmeldingen
     {
         public static final String TABLE = "aanmeldingen";
@@ -160,6 +177,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
         db.execSQL(Accounts.CREATE_TABLE_SQL);
         db.execSQL(Afspraken.CREATE_TABLE_SQL);
         db.execSQL(Cijfers.CREATE_TABLE_SQL);
+        db.execSQL(RecentCijfers.CREATE_TABLE_SQL);
         db.execSQL(Vakken.CREATE_TABLE_SQL);
     }
 
@@ -171,6 +189,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
         db.execSQL("DROP TABLE IF EXISTS " + Accounts.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + Afspraken.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + Cijfers.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + RecentCijfers.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + Vakken.TABLE);
 
         // En maak hem opnieuw.

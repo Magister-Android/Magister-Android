@@ -9,6 +9,7 @@
 	<item name="textPrimary" type="color">#DDFFFFFF</item>
 	<item name="textCardPrimary" type="color">#86000000</item>
 	<item name="textCardSecondary" type="color">#54000000</item>
+	<item name="textNotice" type="color">#EF5350</item>
 	<item name="divider" type="color">#1F000000</item>
 	<item name="textSecondary" type="color">#FF727272</item>
 	<item name="background" type="color">@color/white</item>

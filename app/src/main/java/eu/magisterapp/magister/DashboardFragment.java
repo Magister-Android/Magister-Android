@@ -92,7 +92,7 @@ public class DashboardFragment extends TitledFragment
 
         for (int i = 0; i < count; i++)
         {
-            RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(layout, i);
+            RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(layout, adapter.getItemViewType(i));
             adapter.onBindViewHolder(holder, i);
 
             layout.addView(holder.itemView);
@@ -304,7 +304,10 @@ public class DashboardFragment extends TitledFragment
     public void onResume() {
         super.onResume();
 
-        populateLinearLayout(uurView, uurAdapter);
-        populateLinearLayout(cijferView, cijferAdapter);
+        if (uurAdapter.getItemCount() > 0)
+            populateLinearLayout(uurView, uurAdapter);
+
+        if (cijferAdapter.getItemCount() > 0)
+            populateLinearLayout(cijferView, cijferAdapter);
     }
 }
