@@ -19,12 +19,14 @@ import android.widget.Toast;
 import org.joda.time.Days;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import eu.magisterapp.magister.Storage.DataFixer;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.BadResponseException;
 import eu.magisterapp.magisterapi.CijferList;
+import eu.magisterapp.magisterapi.Displayable;
 import eu.magisterapp.magisterapi.Utils;
 
 
@@ -106,7 +108,7 @@ public class DashboardFragment extends TitledFragment
         new DashboardFixerTask().execute();
     }
 
-    public class DashboardFixerTask extends AsyncTask<Void, AfspraakCollection, Boolean>
+    public class DashboardFixerTask extends AsyncTask<Void, ArrayList<? extends Displayable>, Boolean>
     {
         AfspraakCollection afspraken;
         CijferList cijfers;
@@ -122,6 +124,7 @@ public class DashboardFragment extends TitledFragment
             {
                 // haal eerst snel cache op zodat je niet hoeft te wachten op je shit.
                 publishProgress(data.getNextDayFromCache());
+                publishProgress(data.getRecentCijfersFromCache());
             }
 
             catch (IOException e)
@@ -141,7 +144,7 @@ public class DashboardFragment extends TitledFragment
                 try
                 {
                     afspraken = data.getNextDay();
-                    cijfers = application.getApi().getRecentCijfers();
+                    cijfers = data.getRecentCijfers();
 
                     return true;
                 }
@@ -157,6 +160,7 @@ public class DashboardFragment extends TitledFragment
             try
             {
                 afspraken = data.getNextDayFromCache();
+                cijfers = data.getRecentCijfersFromCache();
 
                 return true;
             }
@@ -169,13 +173,21 @@ public class DashboardFragment extends TitledFragment
             }
         }
 
+        @SafeVarargs
         @Override
-        protected void onProgressUpdate(AfspraakCollection... values) {
-
+        protected final void onProgressUpdate(ArrayList<? extends Displayable>... values) {
             if (values.length == 1)
+            {
+                if (values[0] instanceof AfspraakCollection)
+                {
+                    updateRoosterView((AfspraakCollection) values[0]);
+                }
 
-                updateRoosterView(values[0]);
-
+                if (values[0] instanceof CijferList)
+                {
+                    updateCijferView((CijferList) values[0]);
+                }
+            }
         }
 
         @Override

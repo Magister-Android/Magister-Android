@@ -25,6 +25,8 @@ import java.util.NoSuchElementException;
 
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
+import eu.magisterapp.magisterapi.Cijfer;
+import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.Module;
 import eu.magisterapp.magisterapi.Utils;
 
@@ -44,7 +46,8 @@ public class MagisterDatabase extends SQLiteOpenHelper
      *       Iets waarmee elke user apart mee kan worden geidentificeerd.
      *       Dit kan uit Sessie.id worden gehaald.
      *
-     *       Dit is nodig zodat we mensen hun records op kunnen zoeken dmv hun naam.
+     *       Dit is nodig zodat we mensen hun records op kunnen zoeken dmv hun naam,
+     *       en zodat mensen niet dingen van anderen krijgen te zien.
      *
      *     - Enkele belangrijke velden voor de individuele module.
      *       Dit zijn velden zoals Begin, en Einde. Velden waarvan ik denk dat ze
@@ -87,7 +90,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
     public static class Cijfers
     {
         public static final String TABLE = "cijfers";
-        public static final String ID = "Id";
+        public static final String ID = "CijferId";
         public static final String OWNER = "owner";
         public static final String DATUMINGEVOERD = "DatumIngevoerd";
         public static final String INSTANCE = "instance";
@@ -99,23 +102,35 @@ public class MagisterDatabase extends SQLiteOpenHelper
                 + INSTANCE + " BLOB"
 
                 + ")";
+
+        public static final String INSERT_SQL = "INSERT OR REPLACE INTO " + TABLE + " ("
+                + ID + ", " + OWNER + ", " + DATUMINGEVOERD + ", " + INSTANCE
+                + ") VALUES (?, ?, ?, ?)";
     }
 
     public static class RecentCijfers
     {
+        /**
+         * Dit is verneukt. Schoolmaster heeft recente cijfers geen ID gegeven, dus
+         * ga ik er vanuit dat docenten niet op precies dezelfde seconde een cijfer
+         * invullen, en DatumIngevoerd primary key maken.
+         *
+         */
         public static final String TABLE = "cijfers_recent";
-        public static final String ID = "Id";
         public static final String OWNER = "owner";
         public static final String DATUMINGEVOERD = "DatumIngevoerd";
         public static final String INSTANCE = "instance";
 
         public static final String CREATE_TABLE_SQL = "CREATE TABLE " + TABLE + " ("
-                + ID + " integer primary key, "
+                + DATUMINGEVOERD + " integer primary key, "
                 + OWNER + " text, "
-                + DATUMINGEVOERD + " integer, "
                 + INSTANCE + " BLOB"
 
                 + ")";
+
+        public static final String INSERT_SQL = "INSERT OR REPLACE INTO " + TABLE + " ("
+                + DATUMINGEVOERD + ", " + OWNER + ", " + INSTANCE
+                + ") VALUES (?, ?, ?)";
     }
 
     public static class Aanmeldingen
@@ -274,6 +289,77 @@ public class MagisterDatabase extends SQLiteOpenHelper
         stmt.bindLong(3, afspraak.Start.getMillis());
         stmt.bindLong(4, afspraak.Einde.getMillis());
         stmt.bindBlob(5, serialize(afspraak));
+
+        stmt.executeInsert();
+    }
+
+    public CijferList queryCijfers(String query, String... params) throws IOException
+    {
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT instance FROM " + Cijfers.TABLE + " " + query, params);
+
+        CijferList cijfers = new CijferList();
+
+        while (cursor.moveToNext())
+        {
+            cijfers.add((Cijfer) deserialize(cursor.getBlob(cursor.getColumnIndexOrThrow(Cijfers.INSTANCE))));
+        }
+
+        cursor.close();
+
+        return cijfers;
+    }
+
+    public void insertCijfers(String owner, CijferList cijfers) throws SerializeException
+    {
+        for (Cijfer cijfer : cijfers)
+        {
+            insertCijfer(owner, cijfer);
+        }
+    }
+
+    public void insertCijfer(String owner, Cijfer cijfer) throws SerializeException
+    {
+        SQLiteStatement stmt = getWritableDatabase().compileStatement(Cijfers.INSERT_SQL);
+
+        stmt.bindLong(1, cijfer.CijferId);
+        stmt.bindString(2, owner);
+        stmt.bindLong(3, cijfer.DatumIngevoerd.getMillis());
+        stmt.bindBlob(4, serialize(cijfer));
+
+        stmt.executeInsert();
+    }
+
+    public CijferList queryRecentCijfers(String query, String... params) throws IOException
+    {
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT instance FROM " + RecentCijfers.TABLE + " " + query, params);
+
+        CijferList cijfers = new CijferList();
+
+        while (cursor.moveToNext())
+        {
+            cijfers.add((Cijfer) deserialize(cursor.getBlob(cursor.getColumnIndexOrThrow(Cijfers.INSTANCE))));
+        }
+
+        cursor.close();
+
+        return cijfers;
+    }
+
+    public void insertRecentCijfers(String owner, CijferList cijfers) throws SerializeException
+    {
+        for (Cijfer cijfer : cijfers)
+        {
+            insertRecentCijfer(owner, cijfer);
+        }
+    }
+
+    public void insertRecentCijfer(String owner, Cijfer cijfer) throws SerializeException
+    {
+        SQLiteStatement stmt = getWritableDatabase().compileStatement(RecentCijfers.INSERT_SQL);
+
+        stmt.bindLong(1, cijfer.DatumIngevoerd.getMillis());
+        stmt.bindString(2, owner);
+        stmt.bindBlob(3, serialize(cijfer));
 
         stmt.executeInsert();
     }

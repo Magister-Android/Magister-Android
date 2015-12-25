@@ -26,9 +26,14 @@ public class CijfersFragment extends TitledFragment
     private RecyclerView cijferContainer;
     private ResourceAdapter adapter;
 
+    private View view;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        if (view != null) return view;
+
         View view = inflater.inflate(R.layout.fragment_cijfers, container, false);
 
         cijferContainer = (RecyclerView) view.findViewById(R.id.cijfer_container);

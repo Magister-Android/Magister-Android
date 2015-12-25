@@ -120,4 +120,10 @@ public class MagisterApp extends Application {
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
+    public String getOwner()
+    {
+        // TODO: misschien account manager - meerdere accounts en shit
+        return getApi().getMainSessie().id;
+    }
 }

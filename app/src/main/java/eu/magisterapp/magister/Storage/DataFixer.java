@@ -1,17 +1,15 @@
 package eu.magisterapp.magister.Storage;
 
-import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import org.joda.time.DateTime;
 
 import java.io.IOException;
 
-import eu.magisterapp.magister.Alerts;
 import eu.magisterapp.magister.MagisterApp;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
+import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.MagisterAPI;
 import eu.magisterapp.magisterapi.Utils;
 
@@ -49,7 +47,7 @@ public class DataFixer {
         {
             try
             {
-                db.insertAfspraken("", api.getAfspraken(Utils.now(), Utils.deltaDays(getDaysInAdvance())));
+                db.insertAfspraken(app.getOwner(), api.getAfspraken(Utils.now(), Utils.deltaDays(getDaysInAdvance())));
             }
 
             catch (IOException e)
@@ -63,7 +61,7 @@ public class DataFixer {
 
     public AfspraakCollection getNextDayFromCache() throws IOException
     {
-        AfspraakCollection afspraken = db.queryAfspraken("WHERE Einde >= ? ORDER BY Start ASC LIMIT ?", db.now(), "1");
+        AfspraakCollection afspraken = db.queryAfspraken("WHERE Einde >= ? AND owner = ? ORDER BY Start ASC LIMIT ?", db.now(), app.getOwner(), "1");
         Afspraak eerste;
 
         if (afspraken.size() > 0) eerste = afspraken.get(0);
@@ -72,12 +70,54 @@ public class DataFixer {
         DateTime start = eerste.Start; // Begin van 1e afspraak
         DateTime end = start.withTimeAtStartOfDay().plusDays(1); // begin van volgende dag.
 
-        return db.queryAfspraken("WHERE (Start <= @now AND Einde >= @end) " +
+        return db.queryAfspraken("WHERE ((Start <= @now AND Einde >= @end) " +
                 "OR (Start >= @now AND Einde <= @end) " +
                 "OR (@now BETWEEN Start AND Einde) " +
-                "OR (@end BETWEEN Start AND Einde) " +
-                "ORDER BY Start ASC", db.now(), db.ms(end));
+                "OR (@end BETWEEN Start AND Einde)) " +
+                "AND owner = ? " +
+                "ORDER BY Start ASC", db.now(), db.ms(end), app.getOwner());
 
+    }
+
+    public CijferList getCijfers() throws IOException
+    {
+        if (app.hasInternet())
+        {
+            // TODO: meerdere accounts: stop sessie van huidige account hierin, ipv mainsessie.
+            CijferList cijfers = app.getApi().getCijfers();
+
+            db.insertCijfers(app.getOwner(), cijfers);
+
+            return cijfers;
+        }
+
+        return getCijfersFromCache();
+    }
+
+    public CijferList getCijfersFromCache() throws IOException
+    {
+        return db.queryCijfers("WHERE owner = ?", app.getOwner());
+    }
+
+    public CijferList getRecentCijfers() throws IOException
+    {
+        if (app.hasInternet())
+        {
+            // TODO: meerdere accounts: stop sessie van huidige account hierin, ipv mainsessie.
+            CijferList cijfers = app.getApi().getRecentCijfers();
+
+            db.insertRecentCijfers(app.getOwner(), cijfers);
+
+            return cijfers;
+        }
+
+        return getRecentCijfersFromCache();
+    }
+
+    public CijferList getRecentCijfersFromCache() throws IOException
+    {
+        // TODO: misschien een "seen" flag erop tyfen, zodat je niet zo vaak naar je 1.3 op duits hoeft te kijken.
+        return db.queryRecentCijfers("WHERE owner = ?", app.getOwner());
     }
 
 }
