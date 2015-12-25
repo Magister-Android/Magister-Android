@@ -19,15 +19,12 @@ import android.widget.Toast;
 import org.joda.time.Days;
 
 import java.io.IOException;
-import java.util.List;
 
 import eu.magisterapp.magister.Storage.DataFixer;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.BadResponseException;
 import eu.magisterapp.magisterapi.CijferList;
-import eu.magisterapp.magisterapi.Displayable;
-import eu.magisterapp.magisterapi.MagisterAPI;
 import eu.magisterapp.magisterapi.Utils;
 
 
@@ -50,6 +47,8 @@ public class DashboardFragment extends TitledFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        if (view != null) return view;
+
         this.inflater = inflater;
 
         // Inflate the layout for this fragment
@@ -70,8 +69,7 @@ public class DashboardFragment extends TitledFragment
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
-            public void onRefresh()
-            {
+            public void onRefresh() {
                 Log.i("Refresh", "Refresh gesture made, refreshing");
                 refreshDashboard();
             }
@@ -79,6 +77,8 @@ public class DashboardFragment extends TitledFragment
         });
 
         refreshDashboard();
+
+        Log.i("Create", "DashboardFragment.onCreateView");
 
         return view;
 

@@ -1,6 +1,7 @@
 package eu.magisterapp.magister;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -27,6 +28,13 @@ public class Main extends AppCompatActivity
 	DrawerLayout dlayout;
 	Toolbar toolbar;
 	int fragmentPosition = 0;
+
+	Fragment currentFragment;
+
+	// Al onze fragments
+	DashboardFragment dashboardFragment;
+	CijfersFragment cijfersFragment;
+	RoosterFragment roosterFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,18 +102,21 @@ public class Main extends AppCompatActivity
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		int container = R.id.fragment_container;
 
+		if (currentFragment != null)
+			transaction.remove(currentFragment);
+
 		switch (position)
 		{
 			case 1:
-				transaction.replace(container, new RoosterFragment());
+				transaction.replace(container, currentFragment = getRoosterFragment());
 				break;
 
 			case 2:
-				transaction.replace(container, new CijfersFragment());
+				transaction.replace(container, currentFragment = getCijfersFragment());
 				break;
 			case 0:
 			default:
-				transaction.replace(container, new DashboardFragment());
+				transaction.replace(container, currentFragment = getDashboardFragment());
 				break;
 		}
 
@@ -117,6 +128,36 @@ public class Main extends AppCompatActivity
 		transaction.commit();
 
 		dlayout.closeDrawers();
+	}
+
+	private RoosterFragment getRoosterFragment()
+	{
+		if (roosterFragment == null)
+		{
+			roosterFragment = new RoosterFragment();
+		}
+
+		return roosterFragment;
+	}
+
+	private CijfersFragment getCijfersFragment()
+	{
+		if (cijfersFragment == null)
+		{
+			cijfersFragment = new CijfersFragment();
+		}
+
+		return cijfersFragment;
+	}
+
+	private DashboardFragment getDashboardFragment()
+	{
+		if (dashboardFragment == null)
+		{
+			dashboardFragment = new DashboardFragment();
+		}
+
+		return dashboardFragment;
 	}
 
 	public void changeTitle(String title)
