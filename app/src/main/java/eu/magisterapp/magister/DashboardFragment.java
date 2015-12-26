@@ -45,6 +45,8 @@ public class DashboardFragment extends TitledFragment
     protected View view;
     protected LayoutInflater inflater;
 
+    private boolean showRefreshAnimation = false;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -78,13 +80,14 @@ public class DashboardFragment extends TitledFragment
 
         });
 
-        refreshDashboard();
-
         Log.i("Create", "DashboardFragment.onCreateView");
 
-        return view;
+        showRefreshAnimation = true;
 
+        return view;
     }
+
+
 
     protected void populateLinearLayout(LinearLayout layout, RecyclerView.Adapter adapter)
     {
@@ -101,11 +104,22 @@ public class DashboardFragment extends TitledFragment
         }
     }
 
-    public void refreshDashboard()
+    public void refreshDashboard(boolean silent)
     {
-        mSwipeRefreshLayout.setRefreshing(true);
+        if (! silent)
+            mSwipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            });
 
         new DashboardFixerTask().execute();
+    }
+
+    public void refreshDashboard()
+    {
+        refreshDashboard(true);
     }
 
     public class DashboardFixerTask extends AsyncTask<Void, ArrayList<? extends Displayable>, Boolean>
@@ -316,10 +330,16 @@ public class DashboardFragment extends TitledFragment
     public void onResume() {
         super.onResume();
 
-        if (uurAdapter.getItemCount() > 0)
-            populateLinearLayout(uurView, uurAdapter);
+        if (showRefreshAnimation)
+        {
+            refreshDashboard(false);
 
-        if (cijferAdapter.getItemCount() > 0)
-            populateLinearLayout(cijferView, cijferAdapter);
+            showRefreshAnimation = false;
+        }
+
+        else
+        {
+            refreshDashboard();
+        }
     }
 }
