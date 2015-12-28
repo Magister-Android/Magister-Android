@@ -258,6 +258,8 @@ public class MagisterDatabase extends SQLiteOpenHelper
 
     public AfspraakCollection queryAfspraken(String query, String... params) throws IOException
     {
+        cleanAfspraken();
+
         Cursor cursor = getReadableDatabase().rawQuery("SELECT instance FROM " + Afspraken.TABLE + " " + query, params);
 
         AfspraakCollection collection = new AfspraakCollection();
@@ -291,6 +293,16 @@ public class MagisterDatabase extends SQLiteOpenHelper
         stmt.bindBlob(5, serialize(afspraak));
 
         stmt.executeInsert();
+    }
+
+    public void cleanAfspraken()
+    {
+        // tyf alles weg wat al afgelopen is.
+        SQLiteStatement stmt = getWritableDatabase().compileStatement("DELETE FROM " + Afspraken.TABLE + " WHERE " + Afspraken.EINDE + " < ?");
+
+        stmt.bindLong(1, System.currentTimeMillis());
+
+        stmt.executeUpdateDelete();
     }
 
     public CijferList queryCijfers(String query, String... params) throws IOException
@@ -331,6 +343,8 @@ public class MagisterDatabase extends SQLiteOpenHelper
 
     public CijferList queryRecentCijfers(String query, String... params) throws IOException
     {
+        cleanRecentCijfers();
+
         Cursor cursor = getReadableDatabase().rawQuery("SELECT instance FROM " + RecentCijfers.TABLE + " " + query, params);
 
         CijferList cijfers = new CijferList();
@@ -362,6 +376,17 @@ public class MagisterDatabase extends SQLiteOpenHelper
         stmt.bindBlob(3, serialize(cijfer));
 
         stmt.executeInsert();
+    }
+
+    public void cleanRecentCijfers()
+    {
+        // tyf alles van een week geleden weg.
+        SQLiteStatement stmt = getWritableDatabase().compileStatement("DELETE FROM " + RecentCijfers.TABLE
+                + " WHERE " + RecentCijfers.DATUMINGEVOERD + " < ?");
+
+        stmt.bindLong(1, Utils.deltaDays(-7).getMillis());
+
+        stmt.executeUpdateDelete();
     }
 
     public void nuke()
