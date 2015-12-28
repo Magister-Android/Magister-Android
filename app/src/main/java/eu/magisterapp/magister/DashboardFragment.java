@@ -66,7 +66,7 @@ public class DashboardFragment extends TitledFragment
 
         application = (MagisterApp) getActivity().getApplication();
 
-        data = new DataFixer(application.getApi(), getContext());
+        data = application.getDataStore();
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.dasboard_swipeview);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);

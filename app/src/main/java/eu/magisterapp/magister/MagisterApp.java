@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 
 import java.io.IOException;
 
+import eu.magisterapp.magister.Storage.DataFixer;
 import eu.magisterapp.magisterapi.MagisterAPI;
 
 /**
@@ -25,6 +26,7 @@ public class MagisterApp extends Application {
     public static final String PREFS_SCHOOL = "school";
 
     private MagisterAPI api;
+    private DataFixer data;
 
     public int getDaysInAdvance()
     {
@@ -125,5 +127,15 @@ public class MagisterApp extends Application {
     {
         // TODO: misschien account manager - meerdere accounts en shit
         return getApi().getMainSessie().id;
+    }
+
+    public DataFixer getDataStore()
+    {
+        if (data == null)
+        {
+            data = new DataFixer(getApi(), getApplicationContext());
+        }
+
+        return data;
     }
 }

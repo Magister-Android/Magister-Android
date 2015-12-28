@@ -87,25 +87,23 @@ public class MagisterDatabase extends SQLiteOpenHelper
                 + ") VALUES (?, ?, ?, ?, ?)";
     }
 
+    // TODO: fix iets waarmee je elke cijfer collection kan indexen per jaarlaag-owner
     public static class Cijfers
     {
         public static final String TABLE = "cijfers";
-        public static final String ID = "CijferId";
         public static final String OWNER = "owner";
-        public static final String DATUMINGEVOERD = "DatumIngevoerd";
         public static final String INSTANCE = "instance";
 
         public static final String CREATE_TABLE_SQL = "CREATE TABLE " + TABLE + " ("
-                + ID + " integer primary key, "
-                + OWNER + " text, "
-                + DATUMINGEVOERD + " integer, "
+                + OWNER + " text primary key, "
                 + INSTANCE + " BLOB"
 
                 + ")";
 
         public static final String INSERT_SQL = "INSERT OR REPLACE INTO " + TABLE + " ("
-                + ID + ", " + OWNER + ", " + DATUMINGEVOERD + ", " + INSTANCE
-                + ") VALUES (?, ?, ?, ?)";
+                + OWNER + ", " + INSTANCE
+                + ") VALUES (?, ?)";
+
     }
 
     public static class RecentCijfers
@@ -211,7 +209,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
         onCreate(db);
     }
 
-    private byte[] serialize(Module module) throws SerializeException
+    private byte[] serialize(Serializable serializable) throws SerializeException
     {
         try
         {
@@ -219,7 +217,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
 
             ObjectOutputStream objectOutput = new ObjectOutputStream(byteOutput);
 
-            objectOutput.writeObject(module);
+            objectOutput.writeObject(serializable);
             objectOutput.close();
 
             return byteOutput.toByteArray();
@@ -309,34 +307,15 @@ public class MagisterDatabase extends SQLiteOpenHelper
     {
         Cursor cursor = getReadableDatabase().rawQuery("SELECT instance FROM " + Cijfers.TABLE + " " + query, params);
 
-        CijferList cijfers = new CijferList();
-
-        while (cursor.moveToNext())
-        {
-            cijfers.add((Cijfer) deserialize(cursor.getBlob(cursor.getColumnIndexOrThrow(Cijfers.INSTANCE))));
-        }
-
-        cursor.close();
-
-        return cijfers;
+        return (CijferList) deserialize(cursor.getBlob(cursor.getColumnIndexOrThrow(Cijfers.INSTANCE)));
     }
 
     public void insertCijfers(String owner, CijferList cijfers) throws SerializeException
     {
-        for (Cijfer cijfer : cijfers)
-        {
-            insertCijfer(owner, cijfer);
-        }
-    }
-
-    public void insertCijfer(String owner, Cijfer cijfer) throws SerializeException
-    {
         SQLiteStatement stmt = getWritableDatabase().compileStatement(Cijfers.INSERT_SQL);
 
-        stmt.bindLong(1, cijfer.CijferId);
-        stmt.bindString(2, owner);
-        stmt.bindLong(3, cijfer.DatumIngevoerd.getMillis());
-        stmt.bindBlob(4, serialize(cijfer));
+        stmt.bindString(1, owner);
+        stmt.bindBlob(2, serialize(cijfers));
 
         stmt.executeInsert();
     }
