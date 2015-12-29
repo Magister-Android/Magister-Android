@@ -30,7 +30,7 @@ import eu.magisterapp.magisterapi.MagisterAPI;
 public class CijfersFragment extends TitledFragment
 {
     private RecyclerView cijferContainer;
-    private ResourceAdapter adapter;
+    private CijferAdapter adapter;
     private MagisterApp app;
     private DataFixer data;
 
@@ -45,7 +45,7 @@ public class CijfersFragment extends TitledFragment
         view = inflater.inflate(R.layout.fragment_cijfers, container, false);
 
         cijferContainer = (RecyclerView) view.findViewById(R.id.cijfer_container);
-        adapter = new ResourceAdapter();
+        adapter = new CijferAdapter();
 
         cijferContainer.setLayoutManager(new LinearLayoutManager(getContext()));
         cijferContainer.setAdapter(adapter);
@@ -158,10 +158,6 @@ public class CijfersFragment extends TitledFragment
 
     public void updateCijferList(CijferList cijfers)
     {
-        for (Cijfer cijfer : cijfers)
-        {
-            Log.i("Cijfer", cijfer.CijferStr + " (" + cijfer.info.Weging + "x) " + cijfer.info.KolomOmschrijving);
-        }
-
+        adapter.setData(cijfers);
     }
 }
