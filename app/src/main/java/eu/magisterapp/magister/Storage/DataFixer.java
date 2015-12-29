@@ -1,16 +1,20 @@
 package eu.magisterapp.magister.Storage;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import eu.magisterapp.magister.MagisterApp;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
+import eu.magisterapp.magisterapi.Cijfer;
 import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.MagisterAPI;
+import eu.magisterapp.magisterapi.Sessie;
 import eu.magisterapp.magisterapi.Utils;
 
 /**
@@ -84,9 +88,20 @@ public class DataFixer {
         if (app.hasInternet())
         {
             // TODO: meerdere accounts: stop sessie van huidige account hierin, ipv mainsessie.
-            CijferList cijfers = app.getApi().getCijfers();
+            Sessie sessie = app.getApi().getMainSessie();
+            CijferList cijfers = sessie.getCijfers();
 
-            db.insertCijfers(app.getOwner(), cijfers);
+            ArrayList<Cijfer.CijferInfo> info = new ArrayList<>();
+
+            for (Cijfer cijfer : cijfers)
+            {
+                Cijfer.CijferInfo cijferInfo = getCijferInfo(cijfer, sessie);
+                info.add(cijferInfo);
+                cijfer.setInfo(cijferInfo);
+            }
+
+            db.insertCijfers(sessie.id, cijfers);
+            db.insertCijferInfo(info);
 
             return cijfers;
         }
@@ -96,8 +111,30 @@ public class DataFixer {
 
     public CijferList getCijfersFromCache() throws IOException
     {
-        return db.queryCijfers("WHERE owner = ?", app.getOwner());
+        CijferList cijfers = db.queryCijfers("WHERE owner = ?", app.getOwner());
+
+        for (Cijfer cijfer : cijfers)
+        {
+            // query in een loop.. kan vast wel beter.
+            cijfer.setInfo(getCijferInfo(cijfer, null));
+        }
+
+        return cijfers;
     }
+
+    private Cijfer.CijferInfo getCijferInfo(Cijfer cijfer, Sessie sessie) throws IOException
+    {
+        Cijfer.CijferInfo dbInfo = db.getCijferInfo(cijfer);
+
+        if (dbInfo != null) return dbInfo;
+
+        // Geen sessie beschikbaar, en het staat niet in de database. Als het goed is
+        // komt dit nooit voor, want zonder sessie en zonder cache zijn er ook geen cijfers.
+        if (sessie == null) return null;
+
+        return sessie.getCijferInfo(cijfer);
+    }
+
 
     public CijferList getRecentCijfers() throws IOException
     {

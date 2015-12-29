@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import java.text.ParseException;
 
 import eu.magisterapp.magister.Storage.DataFixer;
 import eu.magisterapp.magisterapi.BadResponseException;
+import eu.magisterapp.magisterapi.Cijfer;
 import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.MagisterAPI;
 
@@ -52,6 +54,8 @@ public class CijfersFragment extends TitledFragment
         data = app.getDataStore();
 
         setTitle("Alle Cijfers");
+
+        new CijferFixerTask().execute();
 
         return view;
     }
@@ -154,6 +158,10 @@ public class CijfersFragment extends TitledFragment
 
     public void updateCijferList(CijferList cijfers)
     {
+        for (Cijfer cijfer : cijfers)
+        {
+            Log.i("Cijfer", cijfer.CijferStr + " (" + cijfer.info.Weging + "x) " + cijfer.info.KolomOmschrijving);
+        }
 
     }
 }

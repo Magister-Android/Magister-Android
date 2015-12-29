@@ -91,17 +91,38 @@ public class MagisterDatabase extends SQLiteOpenHelper
     public static class Cijfers
     {
         public static final String TABLE = "cijfers";
+        public static final String ID = "CijferId";
         public static final String OWNER = "owner";
+        public static final String DATUMINGEVOERD = "DatumIngevoerd";
         public static final String INSTANCE = "instance";
 
         public static final String CREATE_TABLE_SQL = "CREATE TABLE " + TABLE + " ("
-                + OWNER + " text primary key, "
+                + ID + " integer primary key, "
+                + OWNER + " text, "
+                + DATUMINGEVOERD + " integer, "
                 + INSTANCE + " BLOB"
 
                 + ")";
 
         public static final String INSERT_SQL = "INSERT OR REPLACE INTO " + TABLE + " ("
-                + OWNER + ", " + INSTANCE
+                + ID + ", " + OWNER + ", " + DATUMINGEVOERD + ", " + INSTANCE
+                + ") VALUES (?, ?, ?, ?)";
+    }
+
+    public static class CijferInfo
+    {
+        public static final String TABLE = "cijfer_info";
+        public static final String PARENT = "parent";
+        public static final String INSTANCE = "instance";
+
+        public static final String CREATE_TABLE_SQL = "CREATE TABLE " + TABLE + " ("
+                + PARENT + " integer primary key, "
+                + INSTANCE + " BLOB"
+
+                + ")";
+
+        public static final String INSERT_SQL = "INSERT OR REPLACE INTO " + TABLE + " ("
+                + PARENT + ", " + INSTANCE
                 + ") VALUES (?, ?)";
 
     }
@@ -190,6 +211,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
         db.execSQL(Accounts.CREATE_TABLE_SQL);
         db.execSQL(Afspraken.CREATE_TABLE_SQL);
         db.execSQL(Cijfers.CREATE_TABLE_SQL);
+        db.execSQL(CijferInfo.CREATE_TABLE_SQL);
         db.execSQL(RecentCijfers.CREATE_TABLE_SQL);
         db.execSQL(Vakken.CREATE_TABLE_SQL);
     }
@@ -202,6 +224,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
         db.execSQL("DROP TABLE IF EXISTS " + Accounts.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + Afspraken.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + Cijfers.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CijferInfo.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + RecentCijfers.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + Vakken.TABLE);
 
@@ -307,15 +330,38 @@ public class MagisterDatabase extends SQLiteOpenHelper
     {
         Cursor cursor = getReadableDatabase().rawQuery("SELECT instance FROM " + Cijfers.TABLE + " " + query, params);
 
-        return (CijferList) deserialize(cursor.getBlob(cursor.getColumnIndexOrThrow(Cijfers.INSTANCE)));
+        CijferList cijfers = new CijferList();
+
+        while (cursor.moveToNext())
+        {
+            Cijfer cijfer = (Cijfer) deserialize(cursor.getBlob(cursor.getColumnIndexOrThrow(Cijfers.INSTANCE)));
+
+            cijfer.setInfo(getCijferInfo(cijfer));
+
+            cijfers.add(cijfer);
+        }
+
+        cursor.close();
+
+        return cijfers;
     }
 
     public void insertCijfers(String owner, CijferList cijfers) throws SerializeException
     {
+        for (Cijfer cijfer : cijfers)
+        {
+            insertCijfer(owner, cijfer);
+        }
+    }
+
+    public void insertCijfer(String owner, Cijfer cijfer) throws SerializeException
+    {
         SQLiteStatement stmt = getWritableDatabase().compileStatement(Cijfers.INSERT_SQL);
 
-        stmt.bindString(1, owner);
-        stmt.bindBlob(2, serialize(cijfers));
+        stmt.bindLong(1, cijfer.CijferId);
+        stmt.bindString(2, owner);
+        stmt.bindLong(3, cijfer.DatumIngevoerd.getMillis());
+        stmt.bindBlob(4, serialize(cijfer));
 
         stmt.executeInsert();
     }
@@ -366,6 +412,37 @@ public class MagisterDatabase extends SQLiteOpenHelper
         stmt.bindLong(1, Utils.deltaDays(-7).getMillis());
 
         stmt.executeUpdateDelete();
+    }
+
+    public void insertCijferInfo(List<Cijfer.CijferInfo> info) throws SerializeException
+    {
+        SQLiteStatement stmt = getWritableDatabase().compileStatement(CijferInfo.INSERT_SQL);
+
+        for (Cijfer.CijferInfo infoPiece : info)
+        {
+            stmt.bindLong(1, infoPiece.parent);
+            stmt.bindBlob(2, serialize(infoPiece));
+
+            stmt.executeInsert();
+        }
+    }
+
+    public Cijfer.CijferInfo getCijferInfo(Cijfer cijfer) throws SerializeException
+    {
+        Integer id = cijfer.CijferId;
+
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT " + CijferInfo.INSTANCE + " FROM " + CijferInfo.TABLE + " WHERE parent = ?",
+                new String[] {String.valueOf(id)});
+
+        if (cursor != null && cursor.moveToFirst())
+        {
+            Cijfer.CijferInfo result = (Cijfer.CijferInfo) deserialize(cursor.getBlob(cursor.getColumnIndexOrThrow(CijferInfo.INSTANCE)));
+            cursor.close();
+
+            return result;
+        }
+
+        return null;
     }
 
     public void nuke()
