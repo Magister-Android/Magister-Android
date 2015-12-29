@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.*;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,9 +28,10 @@ import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.MagisterAPI;
 
 
-public class CijfersFragment extends TitledFragment
+public class CijfersFragment extends TitledFragment implements SwipeRefreshLayout.OnRefreshListener
 {
     private RecyclerView cijferContainer;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private CijferAdapter adapter;
     private MagisterApp app;
     private DataFixer data;
@@ -50,14 +52,32 @@ public class CijfersFragment extends TitledFragment
         cijferContainer.setLayoutManager(new LinearLayoutManager(getContext()));
         cijferContainer.setAdapter(adapter);
 
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.cijfers_swipe_view);
+        swipeRefreshLayout.setColorSchemeResources(R.color.primary);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
         app = ((Main) getActivity()).getMagisterApplication();
         data = app.getDataStore();
 
         setTitle("Alle Cijfers");
 
-        new CijferFixerTask().execute();
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                onRefresh();
+            }
+        });
 
         return view;
+    }
+
+    @Override
+    public void onRefresh() {
+
+        swipeRefreshLayout.setRefreshing(true);
+
+        new CijferFixerTask().execute();
+
     }
 
     private class CijferFixerTask extends AsyncTask<Void, CijferList, Boolean>
@@ -153,6 +173,8 @@ public class CijfersFragment extends TitledFragment
                     Toast.makeText(getContext(), R.string.error_generic, Toast.LENGTH_LONG).show();
                 }
             }
+
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
