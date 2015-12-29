@@ -98,7 +98,7 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
 
         if (holder.gemiddelde != null)
         {
-            holder.gemiddelde.setText(String.format("%.1f", cijfer.Vak.getGemiddelde()));
+            holder.gemiddelde.setText(String.format("%.2f", cijfer.Vak.getGemiddelde()));
             holder.vak.setText(cijfer.getVak());
         }
 
