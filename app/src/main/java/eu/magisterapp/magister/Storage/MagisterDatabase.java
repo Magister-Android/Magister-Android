@@ -334,11 +334,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
 
         while (cursor.moveToNext())
         {
-            Cijfer cijfer = (Cijfer) deserialize(cursor.getBlob(cursor.getColumnIndexOrThrow(Cijfers.INSTANCE)));
-
-            cijfer.setInfo(getCijferInfo(cijfer));
-
-            cijfers.add(cijfer);
+            cijfers.add((Cijfer) deserialize(cursor.getBlob(cursor.getColumnIndexOrThrow(Cijfers.INSTANCE))));
         }
 
         cursor.close();

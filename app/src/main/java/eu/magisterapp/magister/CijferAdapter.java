@@ -45,11 +45,19 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
     {
         if (cijfers == null) return;
 
-        // sort op vak - nodig voor headers
         Collections.sort(cijfers, new Comparator<Cijfer>() {
             @Override
             public int compare(Cijfer lhs, Cijfer rhs) {
-                return lhs.Vak.Id - rhs.Vak.Id;
+                int alfabetisch = lhs.Vak.Omschrijving.compareToIgnoreCase(rhs.Vak.Omschrijving);
+
+                if (alfabetisch != 0) return alfabetisch;
+
+                // voor het geval omschrijving niet beschikbaar is.
+                int vakId = lhs.Vak.Id - rhs.Vak.Id;
+
+                if (vakId != 0) return vakId;
+
+                return lhs.CijferId - rhs.CijferId;
             }
         });
 
