@@ -1,5 +1,6 @@
 package eu.magisterapp.magister;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import eu.magisterapp.magister.Storage.DataFixer;
+import eu.magisterapp.magisterapi.Account;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.BadResponseException;
@@ -86,8 +88,6 @@ public class DashboardFragment extends TitledFragment
 
         return view;
     }
-
-
 
     protected void populateLinearLayout(LinearLayout layout, RecyclerView.Adapter adapter)
     {
@@ -341,5 +341,10 @@ public class DashboardFragment extends TitledFragment
         {
             refreshDashboard();
         }
+    }
+
+    public interface DrawerUpdater
+    {
+        public void setAccount(Account account);
     }
 }

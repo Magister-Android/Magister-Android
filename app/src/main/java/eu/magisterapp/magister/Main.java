@@ -3,29 +3,31 @@ package eu.magisterapp.magister;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
 
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
-public class Main extends AppCompatActivity
+import eu.magisterapp.magisterapi.Account;
+
+
+public class Main extends AppCompatActivity implements DashboardFragment.DrawerUpdater
 {
-	String[] items;
-	ArrayAdapter<String> adapter;
-
-	ListView vlist;
-	DrawerLayout dlayout;
+	Drawer drawer;
+	AccountHeader drawerHeader;
 	Toolbar toolbar;
 	int fragmentPosition = 0;
 
@@ -46,22 +48,62 @@ public class Main extends AppCompatActivity
 		}
 
 		setContentView(R.layout.activity_main);
-		setupToolbar();
-		dlayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		items = getResources().getStringArray(R.array.nav_items);
-		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
-		vlist = (ListView) findViewById(R.id.left_drawer);
-		vlist.setAdapter(adapter);
 
-		vlist.setOnItemClickListener(new ListView.OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				selectItem(position);
-			}
-		});
+		toolbar = makeToolbar();
+		drawer = makeDrawer();
 
 		new LoginFixer(this).startLoginSequence();
+	}
+
+	private Toolbar makeToolbar() {
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+
+		if (getSupportActionBar() != null)
+		{
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+			getSupportActionBar().setHomeButtonEnabled(true);
+			getSupportActionBar().setTitle(R.string.app_name);
+		}
+
+		return toolbar;
+	}
+
+	private Drawer makeDrawer()
+	{
+		drawerHeader = new AccountHeaderBuilder()
+				.withActivity(this)
+				.withHeaderBackground(R.drawable.header)
+				.build();
+
+		return new DrawerBuilder()
+				.withActivity(this)
+				.withAccountHeader(drawerHeader)
+				.withToolbar(toolbar)
+				.addDrawerItems(
+						new PrimaryDrawerItem().withName(R.string.drawer_dashboard).withIcon(GoogleMaterial.Icon.gmd_balance),
+						new PrimaryDrawerItem().withName(R.string.drawer_rooster).withIcon(GoogleMaterial.Icon.gmd_calendar),
+						new PrimaryDrawerItem().withName(R.string.drawer_cijfers).withIcon(GoogleMaterial.Icon.gmd_trending_up),
+						new DividerDrawerItem(),
+						new SecondaryDrawerItem().withName(R.string.drawer_instellingen).withSelectable(false).withIcon(GoogleMaterial.Icon.gmd_settings)
+				)
+				.withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+					@Override
+					public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+
+						selectItem(position);
+
+						return true;
+					}
+				})
+				.build();
+	}
+
+	@Override
+	public void setAccount(Account account) {
+		if (drawerHeader == null) return;
+
+		drawerHeader.setActiveProfile(new ProfileDrawerItem().withName(account.getNaam()));
 	}
 
 	public void postLogin()
@@ -84,10 +126,10 @@ public class Main extends AppCompatActivity
 	@Override
 	public void onBackPressed()
 	{
-		if(dlayout.isDrawerOpen(GravityCompat.START))
-			dlayout.closeDrawers();
-		else if (fragmentPosition != 0)
-			selectItem(0);
+		if(drawer.isDrawerOpen())
+			drawer.closeDrawer();
+		else if (fragmentPosition != 1)
+			drawer.setSelection(1, true);
 		else
 			super.onBackPressed();
 	}
@@ -109,14 +151,18 @@ public class Main extends AppCompatActivity
 
 		switch (position)
 		{
-			case 1:
+			case 2:
 				transaction.replace(container, currentFragment = getRoosterFragment());
 				break;
 
-			case 2:
+			case 3:
 				transaction.replace(container, currentFragment = getCijfersFragment());
 				break;
-			case 0:
+
+			case 4:
+				startActivity(new Intent(this, Settings.class));
+				break;
+			case 1:
 			default:
 				transaction.replace(container, currentFragment = getDashboardFragment());
 				break;
@@ -129,7 +175,7 @@ public class Main extends AppCompatActivity
 
 		transaction.commit();
 
-		dlayout.closeDrawers();
+		drawer.closeDrawer();
 	}
 
 	private RoosterFragment getRoosterFragment()
@@ -170,40 +216,6 @@ public class Main extends AppCompatActivity
 		}
 
 		toolbar.setTitle(title);
-	}
-
-	private void setupToolbar(){
-		toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-
-		DrawerLayout dlayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ActionBarDrawerToggle abdtoggle = new ActionBarDrawerToggle(this, dlayout, toolbar, R.string.nav_open, R.string.nav_close);
-		dlayout.setDrawerListener(abdtoggle);
-
-		// Set a correct drawer width
-		ListView drawerList = (ListView) findViewById(R.id.left_drawer);
-
-		DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) drawerList.getLayoutParams();
-		params.width = getDrawerWidth();
-
-		drawerList.setLayoutParams(params);
-
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		abdtoggle.syncState();
-	}
-
-	private int getDrawerWidth()
-	{
-		int screenwidth = getResources().getDisplayMetrics().widthPixels;
-
-		TypedValue tv = new TypedValue();
-
-		getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
-
-		int actionbarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-
-		return Math.min(screenwidth - actionbarHeight, actionbarHeight * 6);
 	}
 
 	@Override
