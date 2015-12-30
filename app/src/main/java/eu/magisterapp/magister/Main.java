@@ -86,13 +86,15 @@ public class Main extends AppCompatActivity
 	{
 		if(dlayout.isDrawerOpen(GravityCompat.START))
 			dlayout.closeDrawers();
+		else if (fragmentPosition != 0)
+			selectItem(0);
 		else
 			super.onBackPressed();
 	}
 
 	private void selectItem(int position)
 	{
-		selectItem(position, true);
+		selectItem(position, false);
 	}
 
 	private void selectItem(int position, boolean backstack)
