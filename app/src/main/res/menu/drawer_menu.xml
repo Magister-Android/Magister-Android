@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single" android:id="@+id/group_main">
+
+        <item
+            android:id="@+id/nav_dashboard"
+            android:icon="@drawable/ic_dashboard"
+            android:title="@string/nav_dashboard" />
+
+        <item
+            android:id="@+id/nav_rooster"
+            android:icon="@drawable/ic_event"
+            android:title="@string/nav_rooster" />
+
+        <item
+            android:id="@+id/nav_cijfers"
+            android:icon="@drawable/ic_trending_up"
+            android:title="@string/nav_cijfers" />
+
+    </group>
+
+    <group android:checkableBehavior="single" android:id="@+id/group_sub">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/nav_settings" />
+    </group>
+
+
+
+</menu>

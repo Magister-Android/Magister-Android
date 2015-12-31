@@ -1,31 +1,27 @@
 package eu.magisterapp.magister;
 
 import android.content.Intent;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 
-public class Main extends AppCompatActivity
+public class Main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
 {
-	String[] items;
-	ArrayAdapter<String> adapter;
-
-	ListView vlist;
-	DrawerLayout dlayout;
+	DrawerLayout mDrawerLayout;
+	NavigationView navigationView;
 	Toolbar toolbar;
 	int fragmentPosition = 0;
 
@@ -46,27 +42,50 @@ public class Main extends AppCompatActivity
 		}
 
 		setContentView(R.layout.activity_main);
-		setupToolbar();
-		dlayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		items = getResources().getStringArray(R.array.nav_items);
-		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
-		vlist = (ListView) findViewById(R.id.left_drawer);
-		vlist.setAdapter(adapter);
 
-		vlist.setOnItemClickListener(new ListView.OnItemClickListener() {
+		toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
 
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		ActionBarDrawerToggle adbToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.nav_open, R.string.nav_close)
+		{
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				selectItem(position);
+			public void onDrawerSlide(View drawerView, float slideOffset) {
+				// zorgt ervoor dat hij niet draait en in een pijltje verandert.
+				super.onDrawerSlide(drawerView, 0);
 			}
-		});
+		};
+		mDrawerLayout.setDrawerListener(adbToggle);
+
+		navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+		if (navigationView != null)
+		{
+			navigationView.setNavigationItemSelectedListener(this);
+		}
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
+
+		adbToggle.syncState();
 
 		new LoginFixer(this).startLoginSequence();
 	}
 
+	@Override
+	public boolean onNavigationItemSelected(MenuItem item) {
+		Log.i("position", String.valueOf(item.getOrder()));
+
+		setFragment(getFragmentPosition(item.getItemId()));
+
+		mDrawerLayout.closeDrawers();
+
+		return true;
+	}
+
 	public void postLogin()
 	{
-		selectItem(fragmentPosition, false);
+		setFragment(fragmentPosition, false);
 	}
 
 	public MagisterApp getMagisterApplication()
@@ -84,22 +103,40 @@ public class Main extends AppCompatActivity
 	@Override
 	public void onBackPressed()
 	{
-		if(dlayout.isDrawerOpen(GravityCompat.START))
-			dlayout.closeDrawers();
+		if(mDrawerLayout.isDrawerOpen(GravityCompat.START))
+			mDrawerLayout.closeDrawers();
 		else if (fragmentPosition != 0)
-			selectItem(0);
+			setFragment(0);
 		else
 			super.onBackPressed();
 	}
 
-	private void selectItem(int position)
+	private int getFragmentPosition(int res)
 	{
-		selectItem(position, false);
+		switch (res)
+		{
+			case R.id.nav_dashboard:
+				return 0;
+			case R.id.nav_rooster:
+				return 1;
+			case R.id.nav_cijfers:
+				return 2;
+		}
+
+		return 0;
 	}
 
-	private void selectItem(int position, boolean backstack)
+	private void setFragment(int position)
+	{
+		setFragment(position, false);
+	}
+
+	private void setFragment(int position, boolean backstack)
 	{
 		fragmentPosition = position;
+
+		MenuItem item = navigationView.getMenu().getItem(position);
+		if (item != null) item.setChecked(true);
 
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		int container = R.id.fragment_container;
@@ -129,7 +166,7 @@ public class Main extends AppCompatActivity
 
 		transaction.commit();
 
-		dlayout.closeDrawers();
+		mDrawerLayout.closeDrawers();
 	}
 
 	private RoosterFragment getRoosterFragment()
@@ -164,46 +201,12 @@ public class Main extends AppCompatActivity
 
 	public void changeTitle(String title)
 	{
-		if (toolbar == null)
+		if (getSupportActionBar() == null)
 		{
 			return;
 		}
 
-		toolbar.setTitle(title);
-	}
-
-	private void setupToolbar(){
-		toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-
-		DrawerLayout dlayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ActionBarDrawerToggle abdtoggle = new ActionBarDrawerToggle(this, dlayout, toolbar, R.string.nav_open, R.string.nav_close);
-		dlayout.setDrawerListener(abdtoggle);
-
-		// Set a correct drawer width
-		ListView drawerList = (ListView) findViewById(R.id.left_drawer);
-
-		DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) drawerList.getLayoutParams();
-		params.width = getDrawerWidth();
-
-		drawerList.setLayoutParams(params);
-
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		abdtoggle.syncState();
-	}
-
-	private int getDrawerWidth()
-	{
-		int screenwidth = getResources().getDisplayMetrics().widthPixels;
-
-		TypedValue tv = new TypedValue();
-
-		getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
-
-		int actionbarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-
-		return Math.min(screenwidth - actionbarHeight, actionbarHeight * 6);
+		getSupportActionBar().setTitle(title);
 	}
 
 	@Override
