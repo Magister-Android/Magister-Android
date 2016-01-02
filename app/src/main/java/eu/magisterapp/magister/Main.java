@@ -6,12 +6,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.TypedValue;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
@@ -23,14 +21,37 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 	DrawerLayout mDrawerLayout;
 	NavigationView navigationView;
 	Toolbar toolbar;
-	int fragmentPosition = 0;
 
-	Fragment currentFragment;
+	Fragments currentFragment = Fragments.DASHBOARD;
 
-	// Al onze fragments
-	DashboardFragment dashboardFragment;
-	CijfersFragment cijfersFragment;
-	RoosterFragment roosterFragment;
+	static int fragCounter = 0;
+
+	private enum Fragments
+	{
+		DASHBOARD(new DashboardFragment(), R.string.app_name, R.id.nav_dashboard), // 0
+		ROOSTER(new RoosterFragment(), R.string.nav_rooster, R.id.nav_rooster), // 1
+		CIJFERS(new CijfersFragment(), R.string.nav_cijfers, R.id.nav_cijfers); // 2
+
+
+		public final Fragment instance;
+		public final int title;
+		public final int navId;
+		public final int id;
+
+		Fragments(Fragment fragment, int title, int navId)
+		{
+			instance = fragment;
+			this.title = title;
+			this.navId = navId;
+			id = fragCounter++;
+		}
+	}
+
+	private final SparseArray<Fragments> fragmentMap = new SparseArray<Fragments>() {{
+		put(Fragments.DASHBOARD.id, Fragments.DASHBOARD);
+		put(Fragments.ROOSTER.id, Fragments.ROOSTER);
+		put(Fragments.CIJFERS.id, Fragments.CIJFERS);
+	}};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +59,7 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
 		if (savedInstanceState != null)
 		{
-			fragmentPosition = savedInstanceState.getInt("current_fragment", 0);
+			currentFragment = fragmentMap.get(savedInstanceState.getInt("current_fragment", 0));
 		}
 
 		setContentView(R.layout.activity_main);
@@ -74,18 +95,18 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
 	@Override
 	public boolean onNavigationItemSelected(MenuItem item) {
-		Log.i("position", String.valueOf(item.getOrder()));
 
-		setFragment(getFragmentPosition(item.getItemId()));
+		boolean handled = handleAction(item.getItemId());
 
 		mDrawerLayout.closeDrawers();
 
-		return true;
+		return handled;
 	}
 
 	public void postLogin()
 	{
-		setFragment(fragmentPosition, false);
+		setFragment(currentFragment, false);
+		navigationView.getMenu().findItem(currentFragment.navId).setChecked(true);
 	}
 
 	public MagisterApp getMagisterApplication()
@@ -97,7 +118,7 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
-		outState.putInt("current_fragment", fragmentPosition);
+		outState.putInt("current_fragment", currentFragment.id);
 	}
 
 	@Override
@@ -105,98 +126,12 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 	{
 		if(mDrawerLayout.isDrawerOpen(GravityCompat.START))
 			mDrawerLayout.closeDrawers();
-		else if (fragmentPosition != 0)
-			setFragment(0);
+		else if (currentFragment != Fragments.DASHBOARD) {
+			navigationView.getMenu().findItem(R.id.nav_dashboard).setChecked(true);
+			setFragment(Fragments.DASHBOARD);
+		}
 		else
 			super.onBackPressed();
-	}
-
-	private int getFragmentPosition(int res)
-	{
-		switch (res)
-		{
-			case R.id.nav_dashboard:
-				return 0;
-			case R.id.nav_rooster:
-				return 1;
-			case R.id.nav_cijfers:
-				return 2;
-		}
-
-		return 0;
-	}
-
-	private void setFragment(int position)
-	{
-		setFragment(position, false);
-	}
-
-	private void setFragment(int position, boolean backstack)
-	{
-		fragmentPosition = position;
-
-		MenuItem item = navigationView.getMenu().getItem(position);
-		if (item != null) item.setChecked(true);
-
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		int container = R.id.fragment_container;
-
-		if (currentFragment != null)
-			transaction.remove(currentFragment);
-
-		switch (position)
-		{
-			case 1:
-				transaction.replace(container, currentFragment = getRoosterFragment());
-				break;
-
-			case 2:
-				transaction.replace(container, currentFragment = getCijfersFragment());
-				break;
-			case 0:
-			default:
-				transaction.replace(container, currentFragment = getDashboardFragment());
-				break;
-		}
-
-		if (backstack)
-		{
-			transaction.addToBackStack(null);
-		}
-
-		transaction.commit();
-
-		mDrawerLayout.closeDrawers();
-	}
-
-	private RoosterFragment getRoosterFragment()
-	{
-		if (roosterFragment == null)
-		{
-			roosterFragment = new RoosterFragment();
-		}
-
-		return roosterFragment;
-	}
-
-	private CijfersFragment getCijfersFragment()
-	{
-		if (cijfersFragment == null)
-		{
-			cijfersFragment = new CijfersFragment();
-		}
-
-		return cijfersFragment;
-	}
-
-	private DashboardFragment getDashboardFragment()
-	{
-		if (dashboardFragment == null)
-		{
-			dashboardFragment = new DashboardFragment();
-		}
-
-		return dashboardFragment;
 	}
 
 	public void changeTitle(String title)
@@ -217,14 +152,32 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item){
+	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		switch(item.getItemId()){
+		return handleAction(item.getItemId()) || super.onOptionsItemSelected(item);
+	}
+
+	public boolean handleAction(int actionId)
+	{
+		switch (actionId)
+		{
+			case R.id.nav_dashboard:
+				setFragment(Fragments.DASHBOARD);
+				return true;
+
+			case R.id.nav_rooster:
+				setFragment(Fragments.ROOSTER);
+				return true;
+
+			case R.id.nav_cijfers:
+				setFragment(Fragments.CIJFERS);
+				return true;
+
+			case R.id.nav_settings:
 			case R.id.action_settings:
-				Intent settingsactivity = new Intent(this, Settings.class);
-				startActivity(settingsactivity);
+				startActivity(new Intent(this, Settings.class));
 				return true;
 
 			case R.id.action_logout:
@@ -235,7 +188,30 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 				return true;
 
 			default:
-				return super.onOptionsItemSelected(item);
+				return false;
 		}
 	}
+
+	public void setFragment(Fragments fragment)
+	{
+		setFragment(fragment, false);
+	}
+
+	public void setFragment(Fragments fragment, boolean backstack)
+	{
+		int fragmentContainer = R.id.fragment_container;
+
+		currentFragment = fragment;
+
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+		transaction.replace(fragmentContainer, fragment.instance);
+
+		if (backstack) transaction.addToBackStack(null);
+
+		setTitle(getString(fragment.title));
+
+		transaction.commit();
+	}
+
 }

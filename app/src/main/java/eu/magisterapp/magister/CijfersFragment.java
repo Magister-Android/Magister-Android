@@ -59,8 +59,6 @@ public class CijfersFragment extends TitledFragment implements SwipeRefreshLayou
         app = ((Main) getActivity()).getMagisterApplication();
         data = app.getDataStore();
 
-        setTitle("Alle Cijfers");
-
         swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {

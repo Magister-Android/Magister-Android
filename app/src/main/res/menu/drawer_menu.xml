@@ -23,6 +23,7 @@
     <group android:checkableBehavior="single" android:id="@+id/group_sub">
         <item
             android:id="@+id/nav_settings"
+            android:checkable="false"
             android:icon="@drawable/ic_settings"
             android:title="@string/nav_settings" />
     </group>
