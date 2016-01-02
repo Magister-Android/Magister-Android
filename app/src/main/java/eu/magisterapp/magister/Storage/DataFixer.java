@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import eu.magisterapp.magister.MagisterApp;
-import eu.magisterapp.magisterapi.Account;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.Cijfer;
@@ -156,11 +155,6 @@ public class DataFixer {
     {
         // TODO: misschien een "seen" flag erop tyfen, zodat je niet zo vaak naar je 1.3 op duits hoeft te kijken.
         return db.queryRecentCijfers("WHERE owner = ?", app.getOwner());
-    }
-
-    public Account getAccount() throws IOException
-    {
-        return api.getMainSessie().getAccount();
     }
 
 }

@@ -36,8 +36,5 @@ dependencies {
     compile(project(':magister-api')) {
         exclude group: 'org.json'
     }
-    compile 'com.mikepenz:google-material-typeface:2.2.0.1@aar'
-    compile('com.mikepenz:materialdrawer:4.6.3@aar') {
-        transitive = true
-    }
 }
+

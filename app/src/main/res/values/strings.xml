@@ -2,11 +2,6 @@
 	<string name="app_name">Magister</string>
 	<string name="author">Max Verbeek, Sibren Talens</string>
 
-	<string name="drawer_dashboard">Dashboard</string>
-	<string name="drawer_rooster">Rooster</string>
-	<string name="drawer_cijfers">Cijfers</string>
-	<string name="drawer_instellingen">Instellingen</string>
-
 	<string name="action_settings">Instellingen</string>
 	<string name="action_refresh">Ververs</string>
 	<string name="logout">Log uit</string>
