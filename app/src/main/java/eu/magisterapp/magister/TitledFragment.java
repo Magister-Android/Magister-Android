@@ -40,7 +40,7 @@ public class TitledFragment extends Fragment
 
         attached = true;
 
-        setTitle(title != null ? title : getAppName());
+        // setTitle(title != null ? title : getAppName());
     }
 
     protected String getAppName()

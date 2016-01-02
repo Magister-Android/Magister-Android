@@ -1,40 +1,57 @@
 package eu.magisterapp.magister;
 
 import android.content.Intent;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.TypedValue;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 
-public class Main extends AppCompatActivity
+public class Main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
 {
-	String[] items;
-	ArrayAdapter<String> adapter;
-
-	ListView vlist;
-	DrawerLayout dlayout;
+	DrawerLayout mDrawerLayout;
+	NavigationView navigationView;
 	Toolbar toolbar;
-	int fragmentPosition = 0;
 
-	Fragment currentFragment;
+	Fragments currentFragment = Fragments.DASHBOARD;
 
-	// Al onze fragments
-	DashboardFragment dashboardFragment;
-	CijfersFragment cijfersFragment;
-	RoosterFragment roosterFragment;
+	static int fragCounter = 0;
+
+	private enum Fragments
+	{
+		DASHBOARD(new DashboardFragment(), R.string.app_name, R.id.nav_dashboard), // 0
+		ROOSTER(new RoosterFragment(), R.string.nav_rooster, R.id.nav_rooster), // 1
+		CIJFERS(new CijfersFragment(), R.string.nav_cijfers, R.id.nav_cijfers); // 2
+
+
+		public final Fragment instance;
+		public final int title;
+		public final int navId;
+		public final int id;
+
+		Fragments(Fragment fragment, int title, int navId)
+		{
+			instance = fragment;
+			this.title = title;
+			this.navId = navId;
+			id = fragCounter++;
+		}
+	}
+
+	private final SparseArray<Fragments> fragmentMap = new SparseArray<Fragments>() {{
+		put(Fragments.DASHBOARD.id, Fragments.DASHBOARD);
+		put(Fragments.ROOSTER.id, Fragments.ROOSTER);
+		put(Fragments.CIJFERS.id, Fragments.CIJFERS);
+	}};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,31 +59,54 @@ public class Main extends AppCompatActivity
 
 		if (savedInstanceState != null)
 		{
-			fragmentPosition = savedInstanceState.getInt("current_fragment", 0);
+			currentFragment = fragmentMap.get(savedInstanceState.getInt("current_fragment", 0));
 		}
 
 		setContentView(R.layout.activity_main);
-		setupToolbar();
-		dlayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		items = getResources().getStringArray(R.array.nav_items);
-		adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
-		vlist = (ListView) findViewById(R.id.left_drawer);
-		vlist.setAdapter(adapter);
 
-		vlist.setOnItemClickListener(new ListView.OnItemClickListener() {
+		toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
 
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		ActionBarDrawerToggle adbToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.nav_open, R.string.nav_close)
+		{
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				selectItem(position);
+			public void onDrawerSlide(View drawerView, float slideOffset) {
+				// zorgt ervoor dat hij niet draait en in een pijltje verandert.
+				super.onDrawerSlide(drawerView, 0);
 			}
-		});
+		};
+		mDrawerLayout.setDrawerListener(adbToggle);
+
+		navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+		if (navigationView != null)
+		{
+			navigationView.setNavigationItemSelectedListener(this);
+		}
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
+
+		adbToggle.syncState();
 
 		new LoginFixer(this).startLoginSequence();
 	}
 
+	@Override
+	public boolean onNavigationItemSelected(MenuItem item) {
+
+		boolean handled = handleAction(item.getItemId());
+
+		mDrawerLayout.closeDrawers();
+
+		return handled;
+	}
+
 	public void postLogin()
 	{
-		selectItem(fragmentPosition, false);
+		setFragment(currentFragment, false);
+		navigationView.getMenu().findItem(currentFragment.navId).setChecked(true);
 	}
 
 	public MagisterApp getMagisterApplication()
@@ -78,132 +118,30 @@ public class Main extends AppCompatActivity
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
-		outState.putInt("current_fragment", fragmentPosition);
+		outState.putInt("current_fragment", currentFragment.id);
 	}
 
 	@Override
 	public void onBackPressed()
 	{
-		if(dlayout.isDrawerOpen(GravityCompat.START))
-			dlayout.closeDrawers();
-		else if (fragmentPosition != 0)
-			selectItem(0);
+		if(mDrawerLayout.isDrawerOpen(GravityCompat.START))
+			mDrawerLayout.closeDrawers();
+		else if (currentFragment != Fragments.DASHBOARD) {
+			navigationView.getMenu().findItem(R.id.nav_dashboard).setChecked(true);
+			setFragment(Fragments.DASHBOARD);
+		}
 		else
 			super.onBackPressed();
 	}
 
-	private void selectItem(int position)
-	{
-		selectItem(position, false);
-	}
-
-	private void selectItem(int position, boolean backstack)
-	{
-		fragmentPosition = position;
-
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		int container = R.id.fragment_container;
-
-		if (currentFragment != null)
-			transaction.remove(currentFragment);
-
-		switch (position)
-		{
-			case 1:
-				transaction.replace(container, currentFragment = getRoosterFragment());
-				break;
-
-			case 2:
-				transaction.replace(container, currentFragment = getCijfersFragment());
-				break;
-			case 0:
-			default:
-				transaction.replace(container, currentFragment = getDashboardFragment());
-				break;
-		}
-
-		if (backstack)
-		{
-			transaction.addToBackStack(null);
-		}
-
-		transaction.commit();
-
-		dlayout.closeDrawers();
-	}
-
-	private RoosterFragment getRoosterFragment()
-	{
-		if (roosterFragment == null)
-		{
-			roosterFragment = new RoosterFragment();
-		}
-
-		return roosterFragment;
-	}
-
-	private CijfersFragment getCijfersFragment()
-	{
-		if (cijfersFragment == null)
-		{
-			cijfersFragment = new CijfersFragment();
-		}
-
-		return cijfersFragment;
-	}
-
-	private DashboardFragment getDashboardFragment()
-	{
-		if (dashboardFragment == null)
-		{
-			dashboardFragment = new DashboardFragment();
-		}
-
-		return dashboardFragment;
-	}
-
 	public void changeTitle(String title)
 	{
-		if (toolbar == null)
+		if (getSupportActionBar() == null)
 		{
 			return;
 		}
 
-		toolbar.setTitle(title);
-	}
-
-	private void setupToolbar(){
-		toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-
-		DrawerLayout dlayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		ActionBarDrawerToggle abdtoggle = new ActionBarDrawerToggle(this, dlayout, toolbar, R.string.nav_open, R.string.nav_close);
-		dlayout.setDrawerListener(abdtoggle);
-
-		// Set a correct drawer width
-		ListView drawerList = (ListView) findViewById(R.id.left_drawer);
-
-		DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) drawerList.getLayoutParams();
-		params.width = getDrawerWidth();
-
-		drawerList.setLayoutParams(params);
-
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		abdtoggle.syncState();
-	}
-
-	private int getDrawerWidth()
-	{
-		int screenwidth = getResources().getDisplayMetrics().widthPixels;
-
-		TypedValue tv = new TypedValue();
-
-		getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
-
-		int actionbarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-
-		return Math.min(screenwidth - actionbarHeight, actionbarHeight * 6);
+		getSupportActionBar().setTitle(title);
 	}
 
 	@Override
@@ -214,14 +152,32 @@ public class Main extends AppCompatActivity
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item){
+	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		switch(item.getItemId()){
+		return handleAction(item.getItemId()) || super.onOptionsItemSelected(item);
+	}
+
+	public boolean handleAction(int actionId)
+	{
+		switch (actionId)
+		{
+			case R.id.nav_dashboard:
+				setFragment(Fragments.DASHBOARD);
+				return true;
+
+			case R.id.nav_rooster:
+				setFragment(Fragments.ROOSTER);
+				return true;
+
+			case R.id.nav_cijfers:
+				setFragment(Fragments.CIJFERS);
+				return true;
+
+			case R.id.nav_settings:
 			case R.id.action_settings:
-				Intent settingsactivity = new Intent(this, Settings.class);
-				startActivity(settingsactivity);
+				startActivity(new Intent(this, Settings.class));
 				return true;
 
 			case R.id.action_logout:
@@ -232,7 +188,30 @@ public class Main extends AppCompatActivity
 				return true;
 
 			default:
-				return super.onOptionsItemSelected(item);
+				return false;
 		}
 	}
+
+	public void setFragment(Fragments fragment)
+	{
+		setFragment(fragment, false);
+	}
+
+	public void setFragment(Fragments fragment, boolean backstack)
+	{
+		int fragmentContainer = R.id.fragment_container;
+
+		currentFragment = fragment;
+
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+		transaction.replace(fragmentContainer, fragment.instance);
+
+		if (backstack) transaction.addToBackStack(null);
+
+		setTitle(getString(fragment.title));
+
+		transaction.commit();
+	}
+
 }
