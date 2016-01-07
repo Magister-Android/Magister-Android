@@ -20,15 +20,17 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 
 import eu.magisterapp.magister.Storage.DataFixer;
 import eu.magisterapp.magisterapi.BadResponseException;
 import eu.magisterapp.magisterapi.Cijfer;
 import eu.magisterapp.magisterapi.CijferList;
+import eu.magisterapp.magisterapi.Displayable;
 import eu.magisterapp.magisterapi.MagisterAPI;
 
 
-public class CijfersFragment extends TitledFragment implements SwipeRefreshLayout.OnRefreshListener
+public class CijfersFragment extends TitledFragment implements SwipeRefreshLayout.OnRefreshListener, Refreshable
 {
     private RecyclerView cijferContainer;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -179,5 +181,32 @@ public class CijfersFragment extends TitledFragment implements SwipeRefreshLayou
     public void updateCijferList(CijferList cijfers)
     {
         adapter.setData(cijfers);
+    }
+
+    private CijferList cijfers;
+
+    @Override
+    public List<? extends Displayable> refresh(MagisterApp app) throws IOException {
+        cijfers = app.getDataStore().getCijfers();
+
+        return null;
+    }
+
+    @Override
+    public List<? extends Displayable> quickRefresh(MagisterApp app) throws IOException {
+        cijfers = app.getDataStore().getCijfersFromCache();
+
+        return null;
+    }
+
+    @Override
+    public void pushToUI(List<? extends Displayable> displayables) {
+
+        if (cijfers == null) return;
+
+        if (displayables instanceof CijferList)
+        {
+            updateCijferList((CijferList) displayables);
+        }
     }
 }

@@ -279,8 +279,6 @@ public class MagisterDatabase extends SQLiteOpenHelper
 
     public AfspraakCollection queryAfspraken(String query, String... params) throws IOException
     {
-        cleanAfspraken();
-
         Cursor cursor = getReadableDatabase().rawQuery("SELECT instance FROM " + Afspraken.TABLE + " " + query, params);
 
         AfspraakCollection collection = new AfspraakCollection();
@@ -291,6 +289,8 @@ public class MagisterDatabase extends SQLiteOpenHelper
         }
 
         cursor.close();
+
+        cleanAfspraken();
 
         return collection;
     }
@@ -318,10 +318,10 @@ public class MagisterDatabase extends SQLiteOpenHelper
 
     public void cleanAfspraken()
     {
-        // tyf alles weg wat al afgelopen is.
+        // tyf alles weg wat meer dan 2 weken oud is.
         SQLiteStatement stmt = getWritableDatabase().compileStatement("DELETE FROM " + Afspraken.TABLE + " WHERE " + Afspraken.EINDE + " < ?");
 
-        stmt.bindLong(1, System.currentTimeMillis());
+        stmt.bindLong(1, Utils.deltaDays(-14).getMillis());
 
         stmt.executeUpdateDelete();
     }

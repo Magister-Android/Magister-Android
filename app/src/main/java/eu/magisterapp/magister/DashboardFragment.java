@@ -20,6 +20,7 @@ import org.joda.time.Days;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import eu.magisterapp.magister.Storage.DataFixer;
 import eu.magisterapp.magisterapi.Afspraak;
@@ -30,7 +31,7 @@ import eu.magisterapp.magisterapi.Displayable;
 import eu.magisterapp.magisterapi.Utils;
 
 
-public class DashboardFragment extends TitledFragment
+public class DashboardFragment extends TitledFragment implements Refreshable
 {
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     protected LinearLayout uurView;
@@ -341,5 +342,20 @@ public class DashboardFragment extends TitledFragment
         {
             refreshDashboard();
         }
+    }
+
+    @Override
+    public List<? extends Displayable> refresh(MagisterApp app) throws IOException {
+        return null;
+    }
+
+    @Override
+    public List<? extends Displayable> quickRefresh(MagisterApp app) throws IOException {
+        return null;
+    }
+
+    @Override
+    public void pushToUI(List<? extends Displayable> displayables) {
+
     }
 }

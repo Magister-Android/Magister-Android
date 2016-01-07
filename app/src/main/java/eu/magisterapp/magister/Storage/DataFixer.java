@@ -6,9 +6,11 @@ import android.util.Log;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 
 import eu.magisterapp.magister.MagisterApp;
+import eu.magisterapp.magister.NoInternetException;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.Cijfer;
@@ -81,6 +83,22 @@ public class DataFixer {
                 "AND owner = ? " +
                 "ORDER BY Start ASC", db.now(), db.ms(end), app.getOwner());
 
+    }
+
+    public AfspraakCollection getAfspraken(DateTime van, DateTime tot) throws IOException
+    {
+        if (! app.hasInternet()) throw new NoInternetException();
+
+        AfspraakCollection afspraken = app.getApi().getAfspraken(van, tot);
+
+        db.insertAfspraken(app.getOwner(), afspraken);
+
+        return afspraken;
+    }
+
+    public AfspraakCollection getAfsprakenFromCache(DateTime van, DateTime tot) throws IOException
+    {
+        return db.queryAfspraken("WHERE owner = ? AND Start > ? AND Einde < ?", app.getOwner(), db.ms(van), db.ms(tot));
     }
 
     public CijferList getCijfers() throws IOException
