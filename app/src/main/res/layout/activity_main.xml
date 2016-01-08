@@ -8,28 +8,34 @@
 	android:layout_width="match_parent"
 	android:fitsSystemWindows="true">
 
-	<android.support.design.widget.CoordinatorLayout
-		android:id="@+id/coordinator_layout"
-		android:layout_height="match_parent"
-		android:layout_width="match_parent">
-
-		<LinearLayout
+		<android.support.design.widget.CoordinatorLayout
+			android:id="@+id/coordinator_layout"
 			android:layout_height="match_parent"
-			android:layout_width="match_parent"
-			android:orientation="vertical"
-			tools:context=".Main">
+			android:layout_width="match_parent">
 
-			<include layout="@layout/toolbar"/>
-
-			<FrameLayout
-				android:id="@+id/fragment_container"
+			<LinearLayout
+				android:layout_height="match_parent"
 				android:layout_width="match_parent"
-				android:layout_height="match_parent" />
+				android:orientation="vertical"
+				tools:context=".Main">
 
-		</LinearLayout>
+				<include layout="@layout/toolbar"/>
 
-	</android.support.design.widget.CoordinatorLayout>
+				<android.support.v4.widget.SwipeRefreshLayout
+					android:id="@+id/refresh_layout"
+					android:layout_height="match_parent"
+					android:layout_width="match_parent">
 
+					<FrameLayout
+						android:id="@+id/fragment_container"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent" />
+
+				</android.support.v4.widget.SwipeRefreshLayout>
+
+			</LinearLayout>
+
+		</android.support.design.widget.CoordinatorLayout>
 
 	<android.support.design.widget.NavigationView
 		android:id="@+id/nav_view"
@@ -38,6 +44,6 @@
 		android:layout_gravity="start"
 		android:fitsSystemWindows="true"
 		app:headerLayout="@layout/nav_header"
-		app:menu="@menu/drawer_menu"/>
+		app:menu="@menu/drawer_menu" />
 
 </android.support.v4.widget.DrawerLayout>

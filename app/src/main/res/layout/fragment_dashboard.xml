@@ -1,117 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<ScrollView
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="match_parent"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
-
-	<android.support.v4.widget.SwipeRefreshLayout
+	android:scrollbars="vertical">
+	<LinearLayout
+		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:id="@+id/dasboard_swipeview">
-		<ScrollView
-			android:layout_height="match_parent"
+		android:focusableInTouchMode="true"
+		android:orientation="vertical">
+		<android.support.v7.widget.CardView
+			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
-			android:scrollbars="vertical">
+			android:layout_marginTop="@dimen/layout_cardmargin"
+			style="@style/card">
+
 			<LinearLayout
-				android:layout_height="wrap_content"
+				android:orientation="vertical"
 				android:layout_width="match_parent"
-				android:focusableInTouchMode="true"
-				android:orientation="vertical">
-				<android.support.v7.widget.CardView
+				android:layout_height="match_parent">
+
+				<LinearLayout
+					android:orientation="horizontal"
 					android:layout_height="wrap_content"
 					android:layout_width="match_parent"
-					android:layout_marginTop="@dimen/layout_cardmargin"
-					style="@style/card">
+					android:gravity="center"
+					android:padding="@dimen/layout_cardpadding">
 
-					<LinearLayout
-						android:orientation="vertical"
+					<ImageView
+						android:src="@drawable/ic_query_builder_amber_a700_36dp"
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:alpha="0.54" />
+
+					<TextView
+						android:text="@string/volgende_uur"
+						android:id="@+id/volgende_uur_text"
+						android:textSize="@dimen/card_text_primary_size"
+						android:textColor="@color/textCardPrimary"
+						android:gravity="top|right"
 						android:layout_width="match_parent"
-						android:layout_height="match_parent">
+						android:layout_height="wrap_content" />
+				</LinearLayout>
 
-						<LinearLayout
-							android:orientation="horizontal"
-							android:layout_height="wrap_content"
-							android:layout_width="match_parent"
-							android:gravity="center"
-							android:padding="@dimen/layout_cardpadding">
-
-							<ImageView
-								android:src="@drawable/ic_query_builder_amber_a700_36dp"
-								android:layout_height="wrap_content"
-								android:layout_width="wrap_content"
-								android:alpha="0.54" />
-
-							<TextView
-								android:text="@string/volgende_uur"
-								android:id="@+id/volgende_uur_text"
-								android:textSize="@dimen/card_text_primary_size"
-								android:textColor="@color/textCardPrimary"
-								android:gravity="top|right"
-								android:layout_width="match_parent"
-								android:layout_height="wrap_content" />
-						</LinearLayout>
-
-						<View
-							android:layout_height="1dp"
-							android:layout_width="match_parent"
-							android:background="@android:color/black"
-							android:alpha="0.12"/>
-
-						<LinearLayout
-							android:orientation="vertical"
-							android:id="@+id/volgende_uur_container"
-							android:layout_width="match_parent"
-							android:layout_height="wrap_content" />
-
-					</LinearLayout>
-				</android.support.v7.widget.CardView>
-				<android.support.v7.widget.CardView
+				<View
+					android:layout_height="1dp"
 					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					style="@style/card">
-					<LinearLayout
-						android:orientation="vertical"
-						android:layout_width="match_parent"
-						android:layout_height="match_parent">
+					android:background="@android:color/black"
+					android:alpha="0.12"/>
 
-						<LinearLayout
-							android:orientation="horizontal"
-							android:layout_height="wrap_content"
-							android:layout_width="match_parent"
-							android:gravity="center"
-							android:padding="@dimen/layout_cardpadding">
+				<LinearLayout
+					android:orientation="vertical"
+					android:id="@+id/volgende_uur_container"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content" />
 
-							<ImageView
-								android:src="@drawable/ic_spellcheck_amber_a700_36dp"
-								android:layout_height="wrap_content"
-								android:layout_width="wrap_content"
-								android:alpha="0.54" />
-
-							<TextView
-								android:text="@string/laatste_cijfers"
-								android:textSize="@dimen/card_text_primary_size"
-								android:textColor="@color/textCardPrimary"
-								android:gravity="top|right"
-								android:layout_width="match_parent"
-								android:layout_height="wrap_content" />
-						</LinearLayout>
-
-						<View
-							android:layout_height="1dp"
-							android:layout_width="match_parent"
-							android:background="@android:color/black"
-							android:alpha="0.12"/>
-
-
-						<LinearLayout
-							android:orientation="vertical"
-							android:id="@+id/laatste_cijfers_container"
-							android:layout_width="match_parent"
-							android:layout_height="wrap_content" />
-
-					</LinearLayout>
-				</android.support.v7.widget.CardView>
 			</LinearLayout>
-		</ScrollView>
-	</android.support.v4.widget.SwipeRefreshLayout>
-</FrameLayout>
+		</android.support.v7.widget.CardView>
+		<android.support.v7.widget.CardView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			style="@style/card">
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+
+				<LinearLayout
+					android:orientation="horizontal"
+					android:layout_height="wrap_content"
+					android:layout_width="match_parent"
+					android:gravity="center"
+					android:padding="@dimen/layout_cardpadding">
+
+					<ImageView
+						android:src="@drawable/ic_spellcheck_amber_a700_36dp"
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:alpha="0.54" />
+
+					<TextView
+						android:text="@string/laatste_cijfers"
+						android:textSize="@dimen/card_text_primary_size"
+						android:textColor="@color/textCardPrimary"
+						android:gravity="top|right"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content" />
+				</LinearLayout>
+
+				<View
+					android:layout_height="1dp"
+					android:layout_width="match_parent"
+					android:background="@android:color/black"
+					android:alpha="0.12"/>
+
+
+				<LinearLayout
+					android:orientation="vertical"
+					android:id="@+id/laatste_cijfers_container"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content" />
+
+			</LinearLayout>
+		</android.support.v7.widget.CardView>
+	</LinearLayout>
+</ScrollView>

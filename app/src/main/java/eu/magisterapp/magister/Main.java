@@ -1,11 +1,14 @@
 package eu.magisterapp.magister;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,12 +18,22 @@ import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import org.joda.time.DateTime;
 
-public class Main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
+import java.io.IOException;
+
+import eu.magisterapp.magister.Storage.DataFixer;
+import eu.magisterapp.magisterapi.BadResponseException;
+import eu.magisterapp.magisterapi.Utils;
+
+
+public class Main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener
 {
 	DrawerLayout mDrawerLayout;
 	NavigationView navigationView;
 	Toolbar toolbar;
+
+	SwipeRefreshLayout mSwipeRefreshLayout;
 
 	Fragments currentFragment = Fragments.DASHBOARD;
 
@@ -44,6 +57,15 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 			this.title = title;
 			this.navId = navId;
 			id = fragCounter++;
+		}
+
+		public static void pushUpdate(MagisterApp app)
+		{
+			for (Fragments fragment : values())
+			{
+				if (fragment.instance instanceof OnMainRefreshListener)
+					((OnMainRefreshListener) fragment.instance).onRefresh(app);
+			}
 		}
 	}
 
@@ -85,6 +107,16 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 			navigationView.setNavigationItemSelectedListener(this);
 		}
 
+		mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_layout);
+		mSwipeRefreshLayout.setColorSchemeColors(R.color.primary);
+		mSwipeRefreshLayout.setOnRefreshListener(this);
+		mSwipeRefreshLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				onRefresh();
+			}
+		});
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
 
@@ -102,6 +134,83 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
 		return handled;
 	}
+
+	@Override
+	public void onRefresh() {
+
+		mSwipeRefreshLayout.setRefreshing(true);
+
+		new OphaalTask().execute();
+	}
+
+	public class OphaalTask extends AsyncTask<Void, Void, IOException>
+	{
+		@Override
+		protected IOException doInBackground(Void... params) {
+
+			MagisterApp app = getMagisterApplication();
+			DataFixer data = app.getDataStore();
+
+			try
+			{
+				DateTime van = Utils.now();
+				DateTime tot = van.plusDays(app.getDaysInAdvance());
+
+				data.fetchOnlineAfspraken(van, tot);
+				data.fetchOnlineCijfers();
+				data.fetchOnlineRecentCijfers();
+
+				Fragments.pushUpdate(app);
+
+				return null;
+			}
+
+			catch (IOException e)
+			{
+				// Als er een error ontstaat wordt die hier gereturnt, zodat hij
+				// in onPostExecute wordt afgehandelt.
+				return e;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(IOException e) {
+
+			if (e != null)
+			{
+				e.printStackTrace();
+
+				Snackbar snackbar;
+
+				View view = findViewById(R.id.coordinator_layout);
+
+				// error!
+				if (e instanceof BadResponseException)
+					snackbar = Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_LONG);
+				else if (e instanceof NoInternetException)
+					snackbar = Snackbar.make(view, R.string.no_internet, Snackbar.LENGTH_LONG).setAction("INTERNET", new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							Main.this.startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
+						}
+					});
+				else
+					snackbar = Snackbar.make(view, R.string.error_generic, Snackbar.LENGTH_LONG);
+
+				snackbar.show();
+			}
+
+			else if ((currentFragment.instance instanceof OnMainRefreshListener) && currentFragment.instance.isVisible())
+			{
+				// Huidige fragment heeft een view, en is implement een method die UI update.
+				((OnMainRefreshListener) currentFragment.instance).onPostRefresh();
+			}
+
+			// Zorg ervoor dat de refreshlayout stopt met de refresh animatie na het refreshen.
+			mSwipeRefreshLayout.setRefreshing(false);
+		}
+	}
+
 
 	public void postLogin()
 	{

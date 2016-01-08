@@ -4,16 +4,9 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:layout_width="match_parent"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/cijfer_container"
         android:layout_height="match_parent"
-        android:id="@+id/cijfers_swipe_view">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/cijfer_container"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent" />
-
-    </android.support.v4.widget.SwipeRefreshLayout>
+        android:layout_width="match_parent" />
 
 </FrameLayout>

@@ -6,9 +6,11 @@ import android.util.Log;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 
 import eu.magisterapp.magister.MagisterApp;
+import eu.magisterapp.magister.NoInternetException;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.Cijfer;
@@ -83,30 +85,53 @@ public class DataFixer {
 
     }
 
+    public AfspraakCollection getAfspraken(DateTime van, DateTime tot) throws IOException
+    {
+        fetchOnlineAfspraken(van, tot);
+
+        return getAfsprakenFromCache(van, tot);
+    }
+
+    public void fetchOnlineAfspraken(DateTime van, DateTime tot) throws IOException
+    {
+        if (! app.hasInternet()) throw new NoInternetException();
+
+        AfspraakCollection afspraken = app.getApi().getAfspraken(van, tot);
+
+        db.insertAfspraken(app.getOwner(), afspraken);
+    }
+
+    public AfspraakCollection getAfsprakenFromCache(DateTime van, DateTime tot) throws IOException
+    {
+        return db.queryAfspraken("WHERE owner = ? AND Start > ? AND Einde < ?", app.getOwner(), db.ms(van), db.ms(tot));
+    }
+
     public CijferList getCijfers() throws IOException
     {
-        if (app.hasInternet())
-        {
-            // TODO: meerdere accounts: stop sessie van huidige account hierin, ipv mainsessie.
-            Sessie sessie = app.getApi().getMainSessie();
-            CijferList cijfers = sessie.getCijfers();
-
-            ArrayList<Cijfer.CijferInfo> info = new ArrayList<>();
-
-            for (Cijfer cijfer : cijfers)
-            {
-                Cijfer.CijferInfo cijferInfo = getCijferInfo(cijfer, sessie);
-                info.add(cijferInfo);
-                cijfer.setInfo(cijferInfo);
-            }
-
-            db.insertCijfers(sessie.id, cijfers);
-            db.insertCijferInfo(info);
-
-            return cijfers;
-        }
+        fetchOnlineCijfers();
 
         return getCijfersFromCache();
+    }
+
+    public void fetchOnlineCijfers() throws IOException
+    {
+        if (! app.hasInternet()) throw new NoInternetException();
+
+        // TODO: meerdere accounts: stop sessie van huidige account hierin, ipv mainsessie.
+        Sessie sessie = app.getApi().getMainSessie();
+        CijferList cijfers = sessie.getCijfers();
+
+        ArrayList<Cijfer.CijferInfo> info = new ArrayList<>();
+
+        for (Cijfer cijfer : cijfers)
+        {
+            Cijfer.CijferInfo cijferInfo = getCijferInfo(cijfer, sessie);
+            info.add(cijferInfo);
+            cijfer.setInfo(cijferInfo);
+        }
+
+        db.insertCijfers(sessie.id, cijfers);
+        db.insertCijferInfo(info);
     }
 
     public CijferList getCijfersFromCache() throws IOException
@@ -138,17 +163,15 @@ public class DataFixer {
 
     public CijferList getRecentCijfers() throws IOException
     {
-        if (app.hasInternet())
-        {
-            // TODO: meerdere accounts: stop sessie van huidige account hierin, ipv mainsessie.
-            CijferList cijfers = app.getApi().getRecentCijfers();
-
-            db.insertRecentCijfers(app.getOwner(), cijfers);
-
-            return cijfers;
-        }
+        fetchOnlineRecentCijfers();
 
         return getRecentCijfersFromCache();
+    }
+
+    public void fetchOnlineRecentCijfers() throws IOException
+    {
+        // TODO: meerdere accounts: stop sessie van huidige account hierin, ipv mainsessie.
+        db.insertRecentCijfers(app.getOwner(), app.getApi().getRecentCijfers());
     }
 
     public CijferList getRecentCijfersFromCache() throws IOException

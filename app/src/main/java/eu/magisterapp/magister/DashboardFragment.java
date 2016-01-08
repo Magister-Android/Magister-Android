@@ -1,11 +1,8 @@
 package eu.magisterapp.magister;
 
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
 
-import android.support.v4.widget.SwipeRefreshLayout;
+
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -19,25 +16,24 @@ import android.widget.Toast;
 import org.joda.time.Days;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import eu.magisterapp.magister.Storage.DataFixer;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
-import eu.magisterapp.magisterapi.BadResponseException;
 import eu.magisterapp.magisterapi.CijferList;
-import eu.magisterapp.magisterapi.Displayable;
 import eu.magisterapp.magisterapi.Utils;
 
 
-public class DashboardFragment extends TitledFragment
+public class DashboardFragment extends TitledFragment implements OnMainRefreshListener
 {
-    protected SwipeRefreshLayout mSwipeRefreshLayout;
     protected LinearLayout uurView;
     protected LinearLayout cijferView;
 
     protected ResourceAdapter uurAdapter;
     protected ResourceAdapter cijferAdapter;
+
+    protected CijferList cijfers;
+    protected AfspraakCollection afspraken;
 
     protected MagisterApp application;
     protected DataFixer data;
@@ -45,8 +41,7 @@ public class DashboardFragment extends TitledFragment
     protected View view;
     protected LayoutInflater inflater;
 
-    private boolean showRefreshAnimation = false;
-
+    private boolean refreshed = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -64,30 +59,43 @@ public class DashboardFragment extends TitledFragment
         cijferView = (LinearLayout) view.findViewById(R.id.laatste_cijfers_container);
         cijferAdapter = new ResourceAdapter();
 
-        application = (MagisterApp) getActivity().getApplication();
-
-        data = application.getDataStore();
-
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.dasboard_swipeview);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-
-            @Override
-            public void onRefresh() {
-                Log.i("Refresh", "Refresh gesture made, refreshing");
-                refreshDashboard();
-            }
-
-        });
-
         Log.i("Create", "DashboardFragment.onCreateView");
 
-        showRefreshAnimation = true;
+        if (refreshed) onPostRefresh();
 
         return view;
     }
 
+    @Override
+    public void onRefresh(MagisterApp app) {
 
+        DataFixer data = app.getDataStore();
+
+        try
+        {
+            afspraken = data.getNextDayFromCache();
+            cijfers = data.getRecentCijfersFromCache();
+
+            refreshed = true;
+        }
+
+        catch (IOException e)
+        {
+            e.printStackTrace();
+
+            // Dit komt alleen voor bij deserialization errors, of data corruption.
+            // alleen low-level shit, kan er vanuit gaan dat dit nooit gebeurt.
+            Toast.makeText(getContext(), R.string.error_generic, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onPostRefresh() {
+        refreshed = false;
+
+        updateRoosterView(afspraken);
+        updateCijferView(cijfers);
+    }
 
     protected void populateLinearLayout(LinearLayout layout, RecyclerView.Adapter adapter)
     {
@@ -101,142 +109,6 @@ public class DashboardFragment extends TitledFragment
             adapter.onBindViewHolder(holder, i);
 
             layout.addView(holder.itemView);
-        }
-    }
-
-    public void refreshDashboard(boolean silent)
-    {
-        if (! silent)
-            mSwipeRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                }
-            });
-
-        new DashboardFixerTask().execute();
-    }
-
-    public void refreshDashboard()
-    {
-        refreshDashboard(true);
-    }
-
-    public class DashboardFixerTask extends AsyncTask<Void, ArrayList<? extends Displayable>, Boolean>
-    {
-        AfspraakCollection afspraken;
-        CijferList cijfers;
-
-        IOException e;
-
-        boolean noInternet;
-
-        @Override
-        protected Boolean doInBackground(Void... args)
-        {
-            try
-            {
-                // haal eerst snel cache op zodat je niet hoeft te wachten op je shit.
-                publishProgress(data.getNextDayFromCache());
-                publishProgress(data.getRecentCijfersFromCache());
-            }
-
-            catch (IOException e)
-            {
-                // jammer als er hier wat mis gaat. is niet erg, wachten ze maar even.
-            }
-
-            // probeer hierna wel gwn je rooster op te halen.
-
-            if (! application.hasInternet())
-            {
-                noInternet = true;
-            }
-
-            else
-            {
-                try
-                {
-                    afspraken = data.getNextDay();
-                    cijfers = data.getRecentCijfers();
-
-                    return true;
-                }
-
-                catch (IOException e)
-                {
-                    this.e = e;
-
-                    return false;
-                }
-            }
-
-            try
-            {
-                afspraken = data.getNextDayFromCache();
-                cijfers = data.getRecentCijfersFromCache();
-
-                return true;
-            }
-
-            catch (IOException e)
-            {
-                this.e = e;
-
-                return false;
-            }
-        }
-
-        @SafeVarargs
-        @Override
-        protected final void onProgressUpdate(ArrayList<? extends Displayable>... values) {
-            if (values.length == 1)
-            {
-                if (values[0] instanceof AfspraakCollection)
-                {
-                    updateRoosterView((AfspraakCollection) values[0]);
-                }
-
-                if (values[0] instanceof CijferList)
-                {
-                    updateCijferView((CijferList) values[0]);
-                }
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-
-            if (noInternet)
-            {
-                Alerts.notify(getActivity(), R.string.no_internet_cache).setAction("INTERNET", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        getActivity().startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                    }
-                }).show();
-            }
-
-            if (success)
-            {
-                updateRoosterView(afspraken);
-                updateCijferView(cijfers);
-            }
-
-            else if (e != null)
-            {
-                if (e instanceof BadResponseException)
-                {
-                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-
-                else
-                {
-                    Toast.makeText(getContext(), R.string.error_generic, Toast.LENGTH_LONG).show();
-                }
-            }
-
-            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -323,23 +195,6 @@ public class DashboardFragment extends TitledFragment
         {
             cijferAdapter.swap(cijfers);
             populateLinearLayout(cijferView, cijferAdapter);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (showRefreshAnimation)
-        {
-            refreshDashboard(false);
-
-            showRefreshAnimation = false;
-        }
-
-        else
-        {
-            refreshDashboard();
         }
     }
 }
