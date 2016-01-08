@@ -19,8 +19,6 @@ public class CijfersFragment extends TitledFragment implements OnMainRefreshList
 {
     private RecyclerView cijferContainer;
     private CijferAdapter adapter;
-    private MagisterApp app;
-    private DataFixer data;
 
     private CijferList cijfers;
 
@@ -48,7 +46,7 @@ public class CijfersFragment extends TitledFragment implements OnMainRefreshList
     }
 
     @Override
-    public void onRefresh(MagisterApp app) {
+    public void onRefreshed(MagisterApp app) {
 
         try
         {

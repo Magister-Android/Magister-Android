@@ -67,7 +67,7 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
     }
 
     @Override
-    public void onRefresh(MagisterApp app) {
+    public void onRefreshed(MagisterApp app) {
 
         DataFixer data = app.getDataStore();
 

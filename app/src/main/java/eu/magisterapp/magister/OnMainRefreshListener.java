@@ -19,10 +19,10 @@ public interface OnMainRefreshListener {
      * ontstaan omdat je shit gebruikt die je pas in onCreateView of onCreate
      * een waarde geeft.
      */
-    public void onRefresh(MagisterApp app);
+    public void onRefreshed(MagisterApp app);
 
     /**
-     * Dit ding wordt wel op de UI-thread uitgevoerd, en altijd na onRefresh().
+     * Dit ding wordt wel op de UI-thread uitgevoerd, en altijd na onRefreshed().
      * Als je refresh voordat een fragment is gezien door een gebruiker, echter,
      * wordt dit nogsteeds uitgevoerd voor onCreateView. Je moet dus zorgen
      * dat je geen npe's krijgt..

@@ -45,7 +45,6 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 		ROOSTER(new RoosterFragment(), R.string.nav_rooster, R.id.nav_rooster), // 1
 		CIJFERS(new CijfersFragment(), R.string.nav_cijfers, R.id.nav_cijfers); // 2
 
-
 		public final Fragment instance;
 		public final int title;
 		public final int navId;
@@ -64,7 +63,7 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 			for (Fragments fragment : values())
 			{
 				if (fragment.instance instanceof OnMainRefreshListener)
-					((OnMainRefreshListener) fragment.instance).onRefresh(app);
+					((OnMainRefreshListener) fragment.instance).onRefreshed(app);
 			}
 		}
 	}
@@ -108,7 +107,7 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 		}
 
 		mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_layout);
-		mSwipeRefreshLayout.setColorSchemeColors(R.color.primary);
+		mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
 		mSwipeRefreshLayout.setOnRefreshListener(this);
 		mSwipeRefreshLayout.post(new Runnable() {
 			@Override
@@ -191,7 +190,7 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 					snackbar = Snackbar.make(view, R.string.no_internet, Snackbar.LENGTH_LONG).setAction("INTERNET", new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							Main.this.startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
+							startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
 						}
 					});
 				else
