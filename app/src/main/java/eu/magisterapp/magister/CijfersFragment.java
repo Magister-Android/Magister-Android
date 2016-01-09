@@ -71,6 +71,32 @@ public class CijfersFragment extends TitledFragment implements OnMainRefreshList
         updateCijferList(cijfers);
     }
 
+    @Override
+    public Object[] quickUpdate(MagisterApp app) {
+
+        DataFixer data = app.getDataStore();
+
+        try {
+            return new Object[] {
+                data.getCijfersFromCache()
+            };
+        }
+
+        catch (IOException e)
+        {
+            // jemoeder
+        }
+
+        return new Object[0];
+    }
+
+    @Override
+    public void onQuickUpdated(Object... result) {
+        if (result.length != 1) return;
+
+        updateCijferList((CijferList) result[0]);
+    }
+
     public void updateCijferList(CijferList cijfers)
     {
         adapter.setData(cijfers);

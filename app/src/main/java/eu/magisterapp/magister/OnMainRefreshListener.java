@@ -29,4 +29,13 @@ public interface OnMainRefreshListener {
      */
     public void onPostRefresh();
 
+
+    /**
+     * Hier kun je dingen uit cache halen.. wordt als eerste in refresh ding geroepen.
+     * @param app
+     */
+    public Object[] quickUpdate(MagisterApp app);
+
+    public void onQuickUpdated(Object... result);
+
 }

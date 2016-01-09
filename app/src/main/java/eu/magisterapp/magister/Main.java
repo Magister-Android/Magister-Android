@@ -29,6 +29,9 @@ import eu.magisterapp.magisterapi.Utils;
 
 public class Main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener
 {
+	private boolean swappedSinceRefresh = false;
+	private Long refreshedSince = 0L;
+
 	DrawerLayout mDrawerLayout;
 	NavigationView navigationView;
 	Toolbar toolbar;
@@ -139,10 +142,16 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
 		mSwipeRefreshLayout.setRefreshing(true);
 
+		if (currentFragment == Fragments.ROOSTER && ! swappedSinceRefresh)
+		{
+			// andere content boeit niet echt, update alleen rooster.
+			((RoosterFragment) Fragments.ROOSTER.instance).selfUpdate(mSwipeRefreshLayout);
+		}
+
 		new OphaalTask().execute();
 	}
 
-	public class OphaalTask extends AsyncTask<Void, Void, IOException>
+	public class OphaalTask extends AsyncTask<Void, Object, IOException>
 	{
 		@Override
 		protected IOException doInBackground(Void... params) {
@@ -150,8 +159,19 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 			MagisterApp app = getMagisterApplication();
 			DataFixer data = app.getDataStore();
 
+			if (currentFragment.instance instanceof OnMainRefreshListener && currentFragment.instance.isVisible())
+				publishProgress(((OnMainRefreshListener) currentFragment.instance).quickUpdate(app));
+
+
 			try
 			{
+				RoosterFragment rfrag = (RoosterFragment) Fragments.ROOSTER.instance;
+
+				if (currentFragment == Fragments.ROOSTER && rfrag.van != null && rfrag.tot != null)
+				{
+					data.fetchOnlineAfspraken(rfrag.van, rfrag.tot);
+				}
+
 				DateTime van = Utils.now();
 				DateTime tot = van.plusDays(app.getDaysInAdvance());
 
@@ -173,30 +193,23 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 		}
 
 		@Override
+		protected void onProgressUpdate(Object... values) {
+
+			for (Fragments fragment : Fragments.values())
+			{
+				if (fragment.instance instanceof OnMainRefreshListener)
+					((OnMainRefreshListener) fragment.instance).onQuickUpdated(values);
+			}
+		}
+
+		@Override
 		protected void onPostExecute(IOException e) {
 
 			if (e != null)
 			{
 				e.printStackTrace();
 
-				Snackbar snackbar;
-
-				View view = findViewById(R.id.coordinator_layout);
-
-				// error!
-				if (e instanceof BadResponseException)
-					snackbar = Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_LONG);
-				else if (e instanceof NoInternetException)
-					snackbar = Snackbar.make(view, R.string.no_internet, Snackbar.LENGTH_LONG).setAction("INTERNET", new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
-						}
-					});
-				else
-					snackbar = Snackbar.make(view, R.string.error_generic, Snackbar.LENGTH_LONG);
-
-				snackbar.show();
+				handleError(e);
 			}
 
 			else if ((currentFragment.instance instanceof OnMainRefreshListener) && currentFragment.instance.isVisible())
@@ -207,7 +220,35 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
 			// Zorg ervoor dat de refreshlayout stopt met de refresh animatie na het refreshen.
 			mSwipeRefreshLayout.setRefreshing(false);
+
+			// Update swapped status
+			swappedSinceRefresh = false;
+
+			// Update timestamp
+			refreshedSince = System.currentTimeMillis();
 		}
+	}
+
+	public void handleError(IOException e)
+	{
+		Snackbar snackbar;
+		View view = findViewById(R.id.coordinator_layout);
+
+		if (view == null) return;
+
+		if (e instanceof BadResponseException)
+			snackbar = Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_LONG);
+		else if (e instanceof NoInternetException)
+			snackbar = Snackbar.make(view, R.string.no_internet, Snackbar.LENGTH_LONG).setAction("INTERNET", new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
+				}
+			});
+		else
+			snackbar = Snackbar.make(view, R.string.error_generic, Snackbar.LENGTH_LONG);
+
+		snackbar.show();
 	}
 
 
@@ -320,6 +361,8 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 		setTitle(getString(fragment.title));
 
 		transaction.commit();
+
+		swappedSinceRefresh = true;
 	}
 
 }

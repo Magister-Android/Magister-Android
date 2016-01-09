@@ -91,10 +91,35 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
 
     @Override
     public void onPostRefresh() {
-        refreshed = false;
-
         updateRoosterView(afspraken);
         updateCijferView(cijfers);
+
+        refreshed = false;
+    }
+
+    @Override
+    public Object[] quickUpdate(MagisterApp app) {
+        try
+        {
+            DataFixer data = app.getDataStore();
+
+            return new Object[] {data.getNextDayFromCache(), data.getRecentCijfersFromCache()};
+        }
+
+        catch (IOException e)
+        {
+            // jemoeder
+        }
+
+        return new Object[0];
+    }
+
+    @Override
+    public void onQuickUpdated(Object... result) {
+        if (result.length != 2) return;
+
+        updateRoosterView((AfspraakCollection) result[0]);
+        updateCijferView((CijferList) result[1]);
     }
 
     protected void populateLinearLayout(LinearLayout layout, RecyclerView.Adapter adapter)
