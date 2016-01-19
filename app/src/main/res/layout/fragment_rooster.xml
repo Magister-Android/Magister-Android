@@ -5,10 +5,10 @@
 	android:layout_height="match_parent"
 	android:layout_width="match_parent">
 
-	<android.support.v4.view.ViewPager
-		android:id="@+id/rooster_pager"
+	<android.support.v7.widget.RecyclerView
 		android:layout_height="match_parent"
-		android:layout_width="match_parent" />
+		android:layout_width="match_parent"
+		android:id="@+id/fcking_recycler_view_bitch"/>
 
 	<android.support.design.widget.FloatingActionButton
 		android:layout_height="wrap_content"

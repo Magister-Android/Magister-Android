@@ -46,11 +46,6 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
     private boolean refreshed = false;
 
     private DateTime current = DateTime.now();
-    public DateTime van = current.minusDays(5);
-    public DateTime tot = current.plusDays(5);
-
-    private ViewPager mViewPager;
-    private RoosterPagerAdapter mPagerAdapter;
 
     private AfspraakCollection afspraken;
     public Map<Integer, AfspraakCollection> parsedAfspraken;
@@ -78,9 +73,6 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
             }
         });
 
-        mViewPager = (ViewPager) view.findViewById(R.id.rooster_pager);
-        mViewPager.setAdapter(mPagerAdapter = new RoosterPagerAdapter(getChildFragmentManager(), this));
-
         if (refreshed && afspraken != null && afspraken.size() > 0) onPostRefresh();
 
         return view;
@@ -97,7 +89,7 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
         this.month = month;
         this.day = day;
 
-        this.current = new DateTime(year, month, day, 0, 0);
+        this.current = new DateTime(year, month + 1, day, 0, 0);
 
         selfUpdate(null);
     }
@@ -106,7 +98,7 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
     public void onRefreshed(MagisterApp app) {
         try
         {
-            afspraken = app.getDataStore().getAfsprakenFromCache(van, tot);
+            afspraken = app.getDataStore().getAfsprakenFromCache(current, current.plusDays(1));
 
             refreshed = true;
         }
@@ -136,10 +128,6 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
         // update swagview met nieuwe afspraken.
 
         Log.i("Swag", "update swag");
-
-        mPagerAdapter.setData(parsedAfspraken = parseAfspraakResponse(afspraken));
-
-        mViewPager.setCurrentItem(getPositionFromDate(current), false);
 
         refreshed = false;
     }
