@@ -98,6 +98,8 @@ public class DataFixer {
 
         AfspraakCollection afspraken = app.getApi().getAfspraken(van, tot);
 
+        if (afspraken.size() > 0) db.cleanAfspraken(van, tot);
+
         db.insertAfspraken(app.getOwner(), afspraken);
     }
 

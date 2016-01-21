@@ -3,6 +3,7 @@ package eu.magisterapp.magister;
 import android.app.DatePickerDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +11,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,189 +46,93 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
     private int month;
     private int day;
 
+    public DateTime van, tot;
+
     private boolean refreshed = false;
 
     private DateTime current = DateTime.now();
-    public DateTime van = current.minusDays(5);
-    public DateTime tot = current.plusDays(5);
-
-    private ViewPager mViewPager;
-    private RoosterPagerAdapter mPagerAdapter;
 
     private AfspraakCollection afspraken;
-    public Map<Integer, AfspraakCollection> parsedAfspraken;
 
+    private RecyclerView mRecyclerView;
+    private ResourceAdapter mAdapter;
+
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        if (view != null) return view;
+        view = inflater.inflate(R.layout.fragment_rooster, container);
 
-        DateTime now = Utils.now();
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.rooster_recycler_view);
+        mAdapter = new ResourceAdapter();
 
-        year = now.getYear();
-        month = now.getMonthOfYear();
-        day = now.getDayOfMonth();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mAdapter);
 
-        // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_rooster, container, false);
-
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab_pick_date);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                makeDatePicker().show();
-            }
-        });
-
-        mViewPager = (ViewPager) view.findViewById(R.id.rooster_pager);
-        mViewPager.setAdapter(mPagerAdapter = new RoosterPagerAdapter(getChildFragmentManager(), this));
-
-        if (refreshed && afspraken != null && afspraken.size() > 0) onPostRefresh();
-
-        return view;
-    }
-
-    public DatePickerDialog makeDatePicker()
-    {
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
-    public void onDateSet(DatePicker view, int year, int month, int day) {
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         this.year = year;
-        this.month = month;
-        this.day = day;
+        this.month = monthOfYear + 1;
+        this.day = dayOfMonth;
 
-        this.current = new DateTime(year, month, day, 0, 0);
+        van = current = new DateTime(year, month, day, 0, 0);
+        tot = van.plusDays(1);
 
         selfUpdate(null);
     }
 
     @Override
     public void onRefreshed(MagisterApp app) {
-        try
-        {
-            afspraken = app.getDataStore().getAfsprakenFromCache(van, tot);
+        // asdf
+    }
 
-            refreshed = true;
-        }
-
-        catch (IOException e)
-        {
-            // Low level kut exception..
-            e.printStackTrace();
-
-            Toast.makeText(getContext(), R.string.error_generic, Toast.LENGTH_LONG).show();
-        }
+    @Override
+    public void onPostRefresh() {
+        // asdf
     }
 
     @Override
     public Object[] quickUpdate(MagisterApp app) {
+        try
+        {
+            return new Object[] { app.getDataStore().getAfspraken(van, tot) };
+    }
+
+        catch (IOException e)
+        {
+            // asdf
+        }
+
         return new Object[0];
     }
 
     @Override
     public void onQuickUpdated(Object... result) {
+        if (result.length < 1) return;
 
+        AfspraakCollection afspraken = (AfspraakCollection) result[0];
+
+        mAdapter.swap(afspraken);
     }
 
-    @Override
-    public void onPostRefresh() {
-
-        // update swagview met nieuwe afspraken.
-
-        Log.i("Swag", "update swag");
-
-        mPagerAdapter.setData(parsedAfspraken = parseAfspraakResponse(afspraken));
-
-        mViewPager.setCurrentItem(getPositionFromDate(current), false);
-
-        refreshed = false;
-    }
-
-    private int getPositionFromDate(DateTime date)
+    public void selfUpdate(SwipeRefreshLayout mainRefresh)
     {
-        return Days.daysBetween(magisterBegin, date).getDays();
+
     }
 
-    private Map<Integer, AfspraakCollection> parseAfspraakResponse(AfspraakCollection unparsed)
+    private class UpdateTask extends AsyncTask<SwipeRefreshLayout, Void, Void>
     {
-        Map<Integer, AfspraakCollection> result = new HashMap<>();
-
-        Iterator<AfspraakCollection> iterator = unparsed.dayIterator();
-
-        while (iterator.hasNext())
-        {
-            AfspraakCollection day = iterator.next();
-
-            result.put(getPositionFromDate(day.getFirstDayTime()), day);
-        }
-
-        return result;
-    }
-
-    public void selfUpdate(SwipeRefreshLayout refreshLayout)
-    {
-        new RoosterUpdater().execute(refreshLayout);
-    }
-
-    private class RoosterUpdater extends AsyncTask<SwipeRefreshLayout, Void, Boolean>
-    {
-        AfspraakCollection afspraken;
-        DataFixer data = main.getMagisterApplication().getDataStore();
-
-        SwipeRefreshLayout mainlayout;
+        private SwipeRefreshLayout refreshLayout;
 
         @Override
-        protected Boolean doInBackground(SwipeRefreshLayout... params) {
+        protected Void doInBackground(SwipeRefreshLayout... params) {
 
-            if (params[0] != null) mainlayout = params[0];
+            if (params.length > 0) refreshLayout = params[0];
 
-            try
-            {
-                data.fetchOnlineAfspraken(van, tot);
-            }
-
-            catch (IOException e)
-            {
-                e.printStackTrace();
-
-                main.handleError(e);
-
-                return false;
-            }
-
-            try
-            {
-                afspraken = data.getAfsprakenFromCache(van, tot);
-                parsedAfspraken = parseAfspraakResponse(afspraken);
-            }
-
-            catch (IOException e)
-            {
-                e.printStackTrace();
-
-                // low level exception, weet niet eens of dit wel in een ander thread mag. yolo
-                Toast.makeText(getContext(), R.string.error_generic, Toast.LENGTH_LONG).show();
-            }
-
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-
-            if (success)
-            {
-                RoosterFragment.this.afspraken = afspraken;
-
-                refreshed = true;
-
-                onPostRefresh();
-            }
-
-            if (mainlayout != null) mainlayout.setRefreshing(false);
+            return null;
         }
     }
 }
