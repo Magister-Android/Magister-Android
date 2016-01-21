@@ -326,6 +326,16 @@ public class MagisterDatabase extends SQLiteOpenHelper
         stmt.executeUpdateDelete();
     }
 
+    public void cleanAfspraken(DateTime van, DateTime tot)
+    {
+        SQLiteStatement stmt = getWritableDatabase().compileStatement("DELETE FROM " + Afspraken.TABLE + " WHERE " + Afspraken.START + " >= ? AND " + Afspraken.EINDE +  " <= ?");
+
+        stmt.bindLong(1, van.getMillis());
+        stmt.bindLong(2, tot.getMillis());
+
+        stmt.executeUpdateDelete();
+    }
+
     public CijferList queryCijfers(String query, String... params) throws IOException
     {
         Cursor cursor = getReadableDatabase().rawQuery("SELECT instance FROM " + Cijfers.TABLE + " " + query, params);
