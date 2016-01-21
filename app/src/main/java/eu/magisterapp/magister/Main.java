@@ -197,7 +197,7 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
 			for (Fragments fragment : Fragments.values())
 			{
-				if (fragment.instance instanceof OnMainRefreshListener)
+				if (fragment.instance instanceof OnMainRefreshListener && fragment.instance.isVisible())
 					((OnMainRefreshListener) fragment.instance).onQuickUpdated(values);
 			}
 		}
@@ -250,7 +250,6 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
 		snackbar.show();
 	}
-
 
 	public void postLogin()
 	{

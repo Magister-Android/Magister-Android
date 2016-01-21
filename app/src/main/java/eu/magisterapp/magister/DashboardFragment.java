@@ -3,13 +3,16 @@ package eu.magisterapp.magister;
 import android.os.Bundle;
 
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +44,9 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
     protected View view;
     protected LayoutInflater inflater;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ScrollView scrollview;
+
     private boolean refreshed = false;
 
     @Override
@@ -59,9 +65,21 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
         cijferView = (LinearLayout) view.findViewById(R.id.laatste_cijfers_container);
         cijferAdapter = new ResourceAdapter();
 
+        swipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.refresh_layout);
+
         Log.i("Create", "DashboardFragment.onCreateView");
 
         if (refreshed) onPostRefresh();
+
+        // Fix scrollview
+        scrollview = (ScrollView) view.findViewById(R.id.dashboard_scrollview);
+        scrollview.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                // Disable de main swiperefreshlayout als je niet helemaal omhoog bent gescrolt.
+                swipeRefreshLayout.setEnabled(scrollview.getScrollY() == 0);
+            }
+        });
 
         return view;
     }
@@ -221,5 +239,22 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
             cijferAdapter.swap(cijfers);
             populateLinearLayout(cijferView, cijferAdapter);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (scrollview == null) return;
+
+        swipeRefreshLayout.setEnabled(scrollview.getScrollY() == 0);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // Enable swipeRefreshlayout weer, anders werkt hij niet in andere fragments.
+        swipeRefreshLayout.setEnabled(true);
     }
 }
