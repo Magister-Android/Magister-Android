@@ -279,8 +279,6 @@ public class MagisterDatabase extends SQLiteOpenHelper
 
     public AfspraakCollection queryAfspraken(String query, String... params) throws IOException
     {
-        cleanAfspraken();
-
         Cursor cursor = getReadableDatabase().rawQuery("SELECT instance FROM " + Afspraken.TABLE + " " + query, params);
 
         AfspraakCollection collection = new AfspraakCollection();
@@ -291,6 +289,8 @@ public class MagisterDatabase extends SQLiteOpenHelper
         }
 
         cursor.close();
+
+        cleanAfspraken();
 
         return collection;
     }

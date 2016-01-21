@@ -159,13 +159,20 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
 
             try
             {
-                app.getDataStore().fetchOnlineAfspraken(van, tot);
-                return app.getDataStore().getAfsprakenFromCache(van, tot);
+                if (! app.hasInternet()) return app.getDataStore().getAfsprakenFromCache(van, tot);
+
+                return app.getDataStore().getAfspraken(van, tot);
             }
 
             catch (IOException e)
             {
                 this.e = e;
+
+                try {
+                    return app.getDataStore().getAfsprakenFromCache(van, tot);
+                } catch (IOException tooBadSoSad) {
+                    // :(
+                }
             }
 
             return null;
