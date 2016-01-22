@@ -76,12 +76,7 @@ public class DataFixer {
         DateTime start = eerste.Start; // Begin van 1e afspraak
         DateTime end = start.withTimeAtStartOfDay().plusDays(1); // begin van volgende dag.
 
-        return db.queryAfspraken("WHERE ((Start <= @now AND Einde >= @end) " +
-                "OR (Start >= @now AND Einde <= @end) " +
-                "OR (@now BETWEEN Start AND Einde) " +
-                "OR (@end BETWEEN Start AND Einde)) " +
-                "AND owner = ? " +
-                "ORDER BY Start ASC", db.now(), db.ms(end), app.getOwner());
+        return getAfsprakenFromCache(DateTime.now(), end);
 
     }
 
@@ -105,7 +100,12 @@ public class DataFixer {
 
     public AfspraakCollection getAfsprakenFromCache(DateTime van, DateTime tot) throws IOException
     {
-        return db.queryAfspraken("WHERE owner = ? AND Start > ? AND Einde < ?", app.getOwner(), db.ms(van), db.ms(tot));
+        return db.queryAfspraken("WHERE ((Start <= @now AND Einde >= @end) " +
+                "OR (Start >= @now AND Einde <= @end) " +
+                "OR (@now BETWEEN Start AND Einde) " +
+                "OR (@end BETWEEN Start AND Einde)) " +
+                "AND owner = ? " +
+                "ORDER BY Start ASC", db.ms(van), db.ms(tot), app.getOwner());
     }
 
     public CijferList getCijfers() throws IOException

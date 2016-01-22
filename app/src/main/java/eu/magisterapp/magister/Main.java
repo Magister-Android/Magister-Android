@@ -100,7 +100,9 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 				super.onDrawerSlide(drawerView, 0);
 			}
 		};
+
 		mDrawerLayout.setDrawerListener(adbToggle);
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
 		navigationView = (NavigationView) findViewById(R.id.nav_view);
 
@@ -255,6 +257,13 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 	{
 		setFragment(currentFragment, false);
 		navigationView.getMenu().findItem(currentFragment.navId).setChecked(true);
+
+		mSwipeRefreshLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				onRefresh();
+			}
+		});
 	}
 
 	public MagisterApp getMagisterApplication()

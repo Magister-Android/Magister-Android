@@ -27,7 +27,7 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
 
     private static final DateTime magisterBegin = new DateTime(1900, 1, 1, 0, 0);
 
-    private DateTime current = DateTime.now();
+    private DateTime current = DateTime.now().withTime(0, 0, 0, 0);
 
     public DateTime van = current;
     public DateTime tot = current.plusDays(1);

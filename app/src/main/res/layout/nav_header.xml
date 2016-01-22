@@ -10,6 +10,6 @@
         android:adjustViewBounds="true"
         android:scaleType="centerInside"
         android:contentDescription="@string/gaben"
-        android:src="@drawable/header" />
+        android:src="@drawable/header_material" />
 
 </LinearLayout>

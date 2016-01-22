@@ -17,6 +17,7 @@
 		android:src="@drawable/ic_event_white"
 		android:layout_gravity="bottom|end"
 		android:layout_margin="16dp"
+		app:backgroundTint="@color/fabColor"
 		app:fabSize="normal" />
 
 </android.support.design.widget.CoordinatorLayout>
