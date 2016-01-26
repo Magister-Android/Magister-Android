@@ -3,7 +3,7 @@ package eu.magisterapp.magister;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -30,7 +30,7 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
         TextView cijfer;
         TextView omschrijving;
 
-        public ViewHolder(LinearLayout row)
+        public ViewHolder(RelativeLayout row)
         {
             super(row);
 
@@ -71,7 +71,7 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        LinearLayout row = (LinearLayout) inflater.inflate(viewType, parent, false);
+        RelativeLayout row = (RelativeLayout) inflater.inflate(viewType, parent, false);
 
         return new ViewHolder(row);
     }
@@ -98,8 +98,8 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
 
         if (holder.gemiddelde != null)
         {
-            holder.gemiddelde.setText(String.format("%.2f", cijfer.Vak.getGemiddelde()));
-            holder.vak.setText(cijfer.getVak());
+            holder.gemiddelde.setText(String.format("%.1f", cijfer.Vak.getGemiddelde()));
+            holder.vak.setText(cijfer.Vak.afkorting);
         }
 
         holder.cijfer.setText(cijfer.CijferStr);
