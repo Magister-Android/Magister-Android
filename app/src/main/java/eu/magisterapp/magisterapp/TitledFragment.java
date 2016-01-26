@@ -1,4 +1,4 @@
-package eu.magisterapp.magister;
+package eu.magisterapp.magisterapp;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;

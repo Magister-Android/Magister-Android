@@ -1,4 +1,4 @@
-package eu.magisterapp.magister;
+package eu.magisterapp.magisterapp;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,7 +12,6 @@ import android.view.View;
 import java.io.IOException;
 
 import eu.magisterapp.magisterapi.BadResponseException;
-import eu.magisterapp.magisterapi.MagisterAPI;
 
 /**
  * Created by max on 10-12-15.
@@ -51,7 +50,7 @@ public abstract class ErrorableAsyncTask extends AsyncTask<Void, Void, Void> {
             {
                 @Override
                 public void onClick(View v) {
-                    context.startActivity(new Intent(context, eu.magisterapp.magister.Settings.class));
+                    context.startActivity(new Intent(context, eu.magisterapp.magisterapp.Settings.class));
                 }
             });
 

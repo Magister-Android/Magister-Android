@@ -1,4 +1,4 @@
-package eu.magisterapp.magister;
+package eu.magisterapp.magisterapp;
 
 /**
  * Created by max on 8-1-16.

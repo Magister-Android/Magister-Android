@@ -1,4 +1,4 @@
-package eu.magisterapp.magister;
+package eu.magisterapp.magisterapp;
 
 import android.app.DatePickerDialog;
 import android.os.AsyncTask;

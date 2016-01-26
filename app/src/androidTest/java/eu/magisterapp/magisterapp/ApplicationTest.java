@@ -1,4 +1,4 @@
-package eu.magisterapp.magister;
+package eu.magisterapp.magisterapp;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

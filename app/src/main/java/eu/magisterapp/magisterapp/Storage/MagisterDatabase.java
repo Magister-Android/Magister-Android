@@ -1,12 +1,10 @@
-package eu.magisterapp.magister.Storage;
+package eu.magisterapp.magisterapp.Storage;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
-import android.util.Base64;
 
 import org.joda.time.DateTime;
 
@@ -16,18 +14,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.StreamCorruptedException;
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.Cijfer;
 import eu.magisterapp.magisterapi.CijferList;
-import eu.magisterapp.magisterapi.Module;
 import eu.magisterapp.magisterapi.Utils;
 
 /**

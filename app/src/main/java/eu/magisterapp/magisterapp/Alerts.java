@@ -1,4 +1,4 @@
-package eu.magisterapp.magister;
+package eu.magisterapp.magisterapp;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,10 +6,6 @@ import android.content.DialogInterface;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.view.View;
-import android.widget.Toast;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by max on 10-12-15.

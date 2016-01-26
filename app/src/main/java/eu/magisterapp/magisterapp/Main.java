@@ -1,4 +1,4 @@
-package eu.magisterapp.magister;
+package eu.magisterapp.magisterapp;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -22,7 +22,7 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 
-import eu.magisterapp.magister.Storage.DataFixer;
+import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.BadResponseException;
 import eu.magisterapp.magisterapi.Utils;
 

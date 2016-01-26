@@ -1,4 +1,4 @@
-package eu.magisterapp.magister;
+package eu.magisterapp.magisterapp;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;

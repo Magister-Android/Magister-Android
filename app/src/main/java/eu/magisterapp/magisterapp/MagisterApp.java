@@ -1,4 +1,4 @@
-package eu.magisterapp.magister;
+package eu.magisterapp.magisterapp;
 
 import android.app.Application;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.net.NetworkInfo;
 
 import java.io.IOException;
 
-import eu.magisterapp.magister.Storage.DataFixer;
+import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.MagisterAPI;
 
 /**

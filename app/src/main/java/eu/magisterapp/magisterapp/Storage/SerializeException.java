@@ -1,4 +1,4 @@
-package eu.magisterapp.magister.Storage;
+package eu.magisterapp.magisterapp.Storage;
 
 import java.io.IOException;
 

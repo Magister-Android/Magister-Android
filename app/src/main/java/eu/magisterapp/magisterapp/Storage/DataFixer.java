@@ -1,16 +1,14 @@
-package eu.magisterapp.magister.Storage;
+package eu.magisterapp.magisterapp.Storage;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.joda.time.DateTime;
 
 import java.io.IOException;
-import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 
-import eu.magisterapp.magister.MagisterApp;
-import eu.magisterapp.magister.NoInternetException;
+import eu.magisterapp.magisterapp.MagisterApp;
+import eu.magisterapp.magisterapp.NoInternetException;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.Cijfer;

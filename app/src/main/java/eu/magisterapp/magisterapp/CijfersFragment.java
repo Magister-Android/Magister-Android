@@ -1,4 +1,4 @@
-package eu.magisterapp.magister;
+package eu.magisterapp.magisterapp;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-import eu.magisterapp.magister.Storage.DataFixer;
+import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.CijferList;
 
 

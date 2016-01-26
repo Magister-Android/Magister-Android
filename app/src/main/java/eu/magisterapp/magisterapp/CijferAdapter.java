@@ -1,4 +1,4 @@
-package eu.magisterapp.magister;
+package eu.magisterapp.magisterapp;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
