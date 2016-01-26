@@ -5,4 +5,20 @@
 		<item>Rooster</item>
 		<item>Alle Cijfers</item>
 	</string-array>
+
+	<array name="cijfer_colors_voldoende">
+		<item>@color/c_deep_purple</item>
+		<item>@color/c_deep_orange</item>
+		<item>@color/c_teal</item>
+		<item>@color/c_red</item>
+		<item>@color/c_pink</item>
+	</array>
+
+	<array name="cijfer_colors_onvoldoende">
+		<item>@color/c_deep_purple_dark</item>
+		<item>@color/c_deep_orange_dark</item>
+		<item>@color/c_teal_dark</item>
+		<item>@color/c_red_dark</item>
+		<item>@color/c_pink_dark</item>
+	</array>
 </resources>

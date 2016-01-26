@@ -1,7 +1,9 @@
 package eu.magisterapp.magisterapp;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -11,6 +13,7 @@ import java.util.Comparator;
 
 import eu.magisterapp.magisterapi.Cijfer;
 import eu.magisterapp.magisterapi.CijferList;
+import eu.magisterapp.magisterapi.Vak;
 
 /**
  * Created by max on 29-12-15.
@@ -23,12 +26,25 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
 {
     private CijferList cijfers;
 
+    private int[] colorsVoldoende;
+    private int[] colorsOnVoldoende;
+
+    public CijferAdapter(Context context)
+    {
+        super();
+
+        colorsVoldoende = context.getResources().getIntArray(R.array.cijfer_colors_voldoende);
+        colorsOnVoldoende = context.getResources().getIntArray(R.array.cijfer_colors_onvoldoende);
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
         TextView gemiddelde;
         TextView vak;
         TextView cijfer;
         TextView omschrijving;
+
+        View background;
 
         public ViewHolder(RelativeLayout row)
         {
@@ -38,6 +54,8 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
             vak = (TextView) row.findViewById(R.id.cijfer_header_vak);
             cijfer = (TextView) row.findViewById(R.id.cijfer);
             omschrijving = (TextView) row.findViewById(R.id.cijfer_omschrijving);
+
+            background = row.findViewById(R.id.cijfer_background);
         }
     }
 
@@ -99,8 +117,12 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
         if (holder.gemiddelde != null)
         {
             holder.gemiddelde.setText(String.format("%.1f", cijfer.Vak.getGemiddelde()));
-            holder.vak.setText(cijfer.Vak.afkorting);
+            holder.vak.setText(cijfer.Vak.Afkorting);
         }
+
+        int color = getColorForVak(cijfer.Vak, cijfer.IsVoldoende);
+
+        holder.background.setBackgroundColor(color);
 
         holder.cijfer.setText(cijfer.CijferStr);
         holder.omschrijving.setText(cijfer.info.KolomOmschrijving);
@@ -109,5 +131,12 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
     @Override
     public int getItemCount() {
         return cijfers == null ? 0 : cijfers.size();
+    }
+
+    private int getColorForVak(Vak vak, boolean voldoende)
+    {
+        int length = colorsVoldoende.length;
+
+        return voldoende ? colorsVoldoende[vak.Id % length] : colorsOnVoldoende[vak.Id % length];
     }
 }

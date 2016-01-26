@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-  android:layout_height="32dp"
-  android:layout_width="wrap_content"
-  android:layout_marginLeft="72dp"
-  android:layout_marginRight="16dp"
-  android:layout_marginBottom="8dp"
-  android:padding="4dp"
-  android:background="#F00"
-  android:orientation="horizontal"
-  xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cijfer_background"
+    android:layout_height="32dp"
+    android:layout_width="wrap_content"
+    android:layout_marginLeft="72dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginBottom="8dp"
+    android:padding="4dp"
+    android:orientation="horizontal">
+
   <TextView
     android:layout_height="match_parent"
     android:layout_width="wrap_content"
@@ -17,6 +18,7 @@
     android:textColor="#FFF"
     android:id="@+id/cijfer_omschrijving"
     android:textStyle="bold"/>
+
   <TextView
     android:layout_height="match_parent"
     android:textColor="#FFF"

@@ -35,7 +35,7 @@ public class CijfersFragment extends TitledFragment implements OnMainRefreshList
         view = inflater.inflate(R.layout.fragment_cijfers, container, false);
 
         cijferContainer = (RecyclerView) view.findViewById(R.id.cijfer_container);
-        adapter = new CijferAdapter();
+        adapter = new CijferAdapter(getContext());
 
         cijferContainer.setLayoutManager(new LinearLayoutManager(getContext()));
         cijferContainer.setAdapter(adapter);
