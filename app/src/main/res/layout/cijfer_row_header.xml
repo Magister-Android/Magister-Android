@@ -11,7 +11,7 @@
         android:paddingTop="0dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:textSize="16dp"
+        android:textSize="24dp"
         android:id="@+id/cijfer_header_gemiddelde"/>
 
     <TextView
@@ -20,7 +20,7 @@
         android:layout_width="72dp"
         android:layout_height="match_parent"
         android:layout_below="@id/cijfer_header_gemiddelde"
-        android:textSize="12dp"
+        android:textSize="16dp"
         android:id="@+id/cijfer_header_vak"/>
 
 
