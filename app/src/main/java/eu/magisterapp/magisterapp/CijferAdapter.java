@@ -45,6 +45,7 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
         TextView omschrijving;
 
         View background;
+        View cijferHeaderContainer;
 
         public ViewHolder(RelativeLayout row)
         {
@@ -56,6 +57,7 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
             omschrijving = (TextView) row.findViewById(R.id.cijfer_omschrijving);
 
             background = row.findViewById(R.id.cijfer_background);
+            cijferHeaderContainer = row.findViewById(R.id.cijfer_header_container);
         }
     }
 

@@ -31,6 +31,11 @@
 						android:layout_width="match_parent"
 						android:layout_height="match_parent" />
 
+					<View
+						android:layout_width="match_parent"
+						android:layout_height="5dp"
+						android:background="@drawable/toolbar_dropshadow" />
+
 				</android.support.v4.widget.SwipeRefreshLayout>
 
 			</LinearLayout>
