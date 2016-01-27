@@ -4,7 +4,7 @@
 
 	<PreferenceCategory
 		android:title="@string/credentials_title"
-		android:key="credentials">
+		android:key="magister-storage">
 
 		<EditTextPreference
 			android:key="username"
@@ -12,6 +12,7 @@
 
 		<EditTextPreference
 			android:key="password"
+			android:inputType="textPassword"
 			android:title="@string/password_text" />
 
 		<EditTextPreference
