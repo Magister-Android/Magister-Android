@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory
+		android:title="@string/credentials_title"
+		android:key="credentials">
+
+		<EditTextPreference
+			android:key="username"
+			android:title="@string/username_text" />
+
+		<EditTextPreference
+			android:key="password"
+			android:title="@string/password_text" />
+
+		<EditTextPreference
+			android:key="school"
+			android:title="@string/school_text" />
+
+	</PreferenceCategory>
+
+	<PreferenceCategory
+		android:title="@string/frequency_title"
+		android:key="frequency">
+
+		<EditTextPreference
+			android:title="@string/frequency_text"
+			android:summary="@string/frequency_desc"
+			android:inputType="number"/>
+
+	</PreferenceCategory>
+
+</PreferenceScreen>

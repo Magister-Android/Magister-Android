@@ -23,14 +23,22 @@
 	<string name="school_text">School</string>
 	<string name="password_text">Wachtwoord</string>
 	<string name="username_text">Gebruikersnaam</string>
+	<string name="frequency_text">Hoeveelheid updates</string>
+
+	<string name="frequency_desc">Hoeveel updates per dag?</string>
 
 	<string name="no_internet">Je hebt momenteel geen internet. Probeer het later opnieuw.</string>
 	<string name="error_generic">Er is iets mis gegaan. Probeer het later opnieuw.</string>
 	<string name="no_internet_cache">Je hebt nu geen internet. Dit zijn oude gegevens.</string>
 	<string name="credential_failure">De gegevens die je hebt ingevuld zijn onjuist.</string>
+
 	<string name="nav_dashboard">Dashboard</string>
 	<string name="nav_rooster">Rooster</string>
 	<string name="nav_cijfers">Cijfers</string>
 	<string name="nav_settings">Instellingen</string>
+
 	<string name="gaben">Gaben.</string>
+
+	<string name="credentials_title">Inlog gegevens</string>
+	<string name="frequency_title">Updates</string>
 </resources>

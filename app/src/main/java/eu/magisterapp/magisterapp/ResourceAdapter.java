@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
         public TextView docent;
         public TextView time;
 
-        public ViewHolder(LinearLayout row)
+        public ViewHolder(RelativeLayout row)
         {
             super(row);
 
@@ -60,7 +60,7 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
     {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        LinearLayout row = (LinearLayout) inflater.inflate(viewType, parent, false);
+        RelativeLayout row = (RelativeLayout) inflater.inflate(viewType, parent, false);
 
         return new ViewHolder(row);
     }
