@@ -7,10 +7,10 @@ import org.joda.time.DateTime;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import eu.magisterapp.magisterapi.AfspraakList;
 import eu.magisterapp.magisterapp.MagisterApp;
 import eu.magisterapp.magisterapp.NoInternetException;
 import eu.magisterapp.magisterapi.Afspraak;
-import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.Cijfer;
 import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.MagisterAPI;
@@ -45,7 +45,7 @@ public class DataFixer {
         return context.getSharedPreferences(MagisterApp.PREFS_NAME, 0).getInt(MagisterApp.PREFS_DAYS_IN_ADVANCE, 21);
     }
 
-    public AfspraakCollection getNextDay() throws IOException
+    public AfspraakList getNextDay() throws IOException
     {
         if (app.hasInternet())
         {
@@ -63,9 +63,9 @@ public class DataFixer {
         return getNextDayFromCache();
     }
 
-    public AfspraakCollection getNextDayFromCache() throws IOException
+    public AfspraakList getNextDayFromCache() throws IOException
     {
-        AfspraakCollection afspraken = db.queryAfspraken("WHERE Einde >= ? AND owner = ? ORDER BY Start ASC LIMIT ?", db.now(), app.getOwner(), "1");
+        AfspraakList afspraken = db.queryAfspraken("WHERE Einde >= ? AND owner = ? ORDER BY Start ASC LIMIT ?", db.now(), app.getOwner(), "1");
         Afspraak eerste;
 
         if (afspraken.size() > 0) eerste = afspraken.get(0);
@@ -78,7 +78,7 @@ public class DataFixer {
 
     }
 
-    public AfspraakCollection getAfspraken(DateTime van, DateTime tot) throws IOException
+    public AfspraakList getAfspraken(DateTime van, DateTime tot) throws IOException
     {
         fetchOnlineAfspraken(van, tot);
 
@@ -89,14 +89,14 @@ public class DataFixer {
     {
         if (! app.hasInternet()) throw new NoInternetException();
 
-        AfspraakCollection afspraken = app.getApi().getAfspraken(van, tot);
+        AfspraakList afspraken = app.getApi().getAfspraken(van, tot);
 
         if (afspraken.size() > 0) db.cleanAfspraken(van, tot);
 
         db.insertAfspraken(app.getOwner(), afspraken);
     }
 
-    public AfspraakCollection getAfsprakenFromCache(DateTime van, DateTime tot) throws IOException
+    public AfspraakList getAfsprakenFromCache(DateTime van, DateTime tot) throws IOException
     {
         return db.queryAfspraken("WHERE ((Start <= @now AND Einde >= @end) " +
                 "OR (Start >= @now AND Einde <= @end) " +
