@@ -20,9 +20,9 @@ import org.joda.time.Days;
 
 import java.io.IOException;
 
+import eu.magisterapp.magisterapi.AfspraakList;
 import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.Afspraak;
-import eu.magisterapp.magisterapi.AfspraakCollection;
 import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.Utils;
 
@@ -36,7 +36,7 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
     protected ResourceAdapter cijferAdapter;
 
     protected CijferList cijfers;
-    protected AfspraakCollection afspraken;
+    protected AfspraakList afspraken;
 
     protected MagisterApp application;
     protected DataFixer data;
@@ -136,7 +136,7 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
     public void onQuickUpdated(Object... result) {
         if (result.length != 2) return;
 
-        updateRoosterView((AfspraakCollection) result[0]);
+        updateRoosterView((AfspraakList) result[0]);
         updateCijferView((CijferList) result[1]);
     }
 
@@ -155,7 +155,7 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
         }
     }
 
-    private void updateRoosterView(AfspraakCollection afspraken)
+    private void updateRoosterView(AfspraakList afspraken)
     {
         if (afspraken.size() > 0)
         {

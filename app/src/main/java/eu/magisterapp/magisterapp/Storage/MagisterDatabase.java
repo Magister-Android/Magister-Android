@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import eu.magisterapp.magisterapi.Afspraak;
-import eu.magisterapp.magisterapi.AfspraakCollection;
+import eu.magisterapp.magisterapi.AfspraakList;
 import eu.magisterapp.magisterapi.Cijfer;
 import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.Utils;
@@ -50,7 +50,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
      *
      */
 
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
     public static final String DATABASE_NAME = "magisterdb";
 
@@ -269,11 +269,11 @@ public class MagisterDatabase extends SQLiteOpenHelper
         }
     }
 
-    public AfspraakCollection queryAfspraken(String query, String... params) throws IOException
+    public AfspraakList queryAfspraken(String query, String... params) throws IOException
     {
         Cursor cursor = getReadableDatabase().rawQuery("SELECT instance FROM " + Afspraken.TABLE + " " + query, params);
 
-        AfspraakCollection collection = new AfspraakCollection();
+        AfspraakList collection = new AfspraakList();
 
         while (cursor.moveToNext())
         {
@@ -287,7 +287,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
         return collection;
     }
 
-    public void insertAfspraken(String owner, AfspraakCollection afspraken) throws SerializeException
+    public void insertAfspraken(String owner, AfspraakList afspraken) throws SerializeException
     {
         for (Afspraak afspraak : afspraken)
         {

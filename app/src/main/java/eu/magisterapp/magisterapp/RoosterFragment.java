@@ -18,7 +18,7 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 
-import eu.magisterapp.magisterapi.AfspraakCollection;
+import eu.magisterapp.magisterapi.AfspraakList;
 
 
 public class RoosterFragment extends TitledFragment implements DatePickerDialog.OnDateSetListener, OnMainRefreshListener
@@ -38,7 +38,7 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
 
     private boolean refreshed = false;
 
-    private AfspraakCollection afspraken;
+    private AfspraakList afspraken;
 
     private RecyclerView mRecyclerView;
     private ResourceAdapter mAdapter;
@@ -124,7 +124,7 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
     public void onQuickUpdated(Object... result) {
         if (result.length < 1) return;
 
-        AfspraakCollection afspraken = (AfspraakCollection) result[0];
+        AfspraakList afspraken = (AfspraakList) result[0];
 
         mAdapter.swap(afspraken);
     }
@@ -136,7 +136,7 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
         new UpdateTask(mainRefresh).execute();
     }
 
-    private class UpdateTask extends AsyncTask<Void, Void, AfspraakCollection>
+    private class UpdateTask extends AsyncTask<Void, Void, AfspraakList>
     {
         private SwipeRefreshLayout swipeRefreshLayout;
         private MagisterApp app;
@@ -155,7 +155,7 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
         }
 
         @Override
-        protected AfspraakCollection doInBackground(Void... params) {
+        protected AfspraakList doInBackground(Void... params) {
 
             try
             {
@@ -179,7 +179,7 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
         }
 
         @Override
-        protected void onPostExecute(AfspraakCollection afspraken) {
+        protected void onPostExecute(AfspraakList afspraken) {
 
             if (afspraken == null && e != null && main != null) main.handleError(e);
 
