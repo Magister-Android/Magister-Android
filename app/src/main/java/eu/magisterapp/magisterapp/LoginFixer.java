@@ -109,17 +109,22 @@ public class LoginFixer implements DialogInterface.OnClickListener
 
     private class LoginTask extends AsyncTask<String, Void, Boolean>
     {
-        private ProgressDialog progress;
-
         @Override
         protected void onPreExecute()
         {
-            progress = new ProgressDialog(main);
-            progress.setMessage(main.getString(R.string.login));
-            progress.setIndeterminate(true);
-            progress.setCancelable(false);
+            if (main.progress != null)
+            {
+                main.progress.show();
 
-            progress.show();
+                return;
+            }
+
+            main.progress = new ProgressDialog(main);
+            main.progress.setMessage(main.getString(R.string.login));
+            main.progress.setIndeterminate(true);
+            main.progress.setCancelable(false);
+
+            main.progress.show();
         }
 
         @Override
@@ -148,7 +153,7 @@ public class LoginFixer implements DialogInterface.OnClickListener
         @Override
         protected void onPostExecute(Boolean success)
         {
-            progress.dismiss();
+            main.progress.dismiss();
 
             if (success)
             {
