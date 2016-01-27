@@ -18,17 +18,21 @@
 
 	<!-- c_ staat voor cijfer(row) -->
 	<item name="c_deep_purple" type="color">#FF673AB7</item>
-	<item name="c_deep_orange" type="color">#FFFF5722</item>
 	<item name="c_teal" type="color">#FF009688</item>
-	<item name="c_red" type="color">#FFF44336</item>
 	<item name="c_pink" type="color">#FFE91E63</item>
+	<item name="c_indigo" type="color">#FF3F51B5</item>
+	<item name="c_lime" type="color">#FFCDDC39</item>
+	<item name="c_yellow" type="color">#FFFFEB3B</item>
+	<item name="c_brown" type="color">#FF795548</item>
 
 	<!-- De donkere versies voor onvoldoendes-->
-	<item name="c_deep_purple_dark" type="color">#FF673AB7</item>
-	<item name="c_deep_orange_dark" type="color">#FFE64A19</item>
-	<item name="c_teal_dark" type="color">#FF00796B</item>
-	<item name="c_red_dark" type="color">#FFD32F2F</item>
-	<item name="c_pink_dark" type="color">#FFC2185B</item>
+	<item name="c_deep_purple_dark" type="color">#FF311B92</item>
+	<item name="c_teal_dark" type="color">#FF004D40</item>
+	<item name="c_pink_dark" type="color">#FF880E4F</item>
+	<item name="c_indigo_dark" type="color">#FF1A237E</item>
+	<item name="c_lime_dark" type="color">#FF827717</item>
+	<item name="c_yellow_dark" type="color">#FFF57F17</item>
+	<item name="c_brown_dark" type="color">#FF3E2723</item>
 
 	<item name="uitval_bg" type="color">#FF8A80</item>
 </resources>
