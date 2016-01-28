@@ -1,5 +1,6 @@
 package eu.magisterapp.magisterapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
@@ -21,6 +22,8 @@ import android.view.View;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.BadResponseException;
@@ -35,6 +38,8 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 	DrawerLayout mDrawerLayout;
 	NavigationView navigationView;
 	Toolbar toolbar;
+
+	ProgressDialog progress;
 
 	SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -114,12 +119,6 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 		mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_layout);
 		mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
 		mSwipeRefreshLayout.setOnRefreshListener(this);
-		mSwipeRefreshLayout.post(new Runnable() {
-			@Override
-			public void run() {
-				onRefresh();
-			}
-		});
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
@@ -340,8 +339,8 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 			case R.id.action_logout:
 				getMagisterApplication().getApi().disconnect();
 				getMagisterApplication().voidCredentails();
-				startActivity(new Intent(this, this.getClass()));
 				finish();
+				startActivity(new Intent(this, this.getClass()));
 				return true;
 
 			default:
@@ -373,4 +372,14 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 		swappedSinceRefresh = true;
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		if (progress != null)
+		{
+			progress.dismiss();
+			progress = null;
+		}
+	}
 }
