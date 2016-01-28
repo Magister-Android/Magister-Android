@@ -254,6 +254,8 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
     public void onPause() {
         super.onPause();
 
+				Log.i("Pause", "Pause");
+
         // Enable swipeRefreshlayout weer, anders werkt hij niet in andere fragments.
         swipeRefreshLayout.setEnabled(true);
     }

@@ -22,8 +22,6 @@ import android.view.View;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.BadResponseException;
@@ -337,9 +335,9 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 				return true;
 
 			case R.id.action_logout:
+				finish();
 				getMagisterApplication().getApi().disconnect();
 				getMagisterApplication().voidCredentails();
-				finish();
 				startActivity(new Intent(this, this.getClass()));
 				return true;
 

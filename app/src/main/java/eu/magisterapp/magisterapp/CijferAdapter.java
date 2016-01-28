@@ -2,6 +2,7 @@ package eu.magisterapp.magisterapp;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,13 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
 
             background = row.findViewById(R.id.cijfer_background);
             cijferHeaderContainer = row.findViewById(R.id.cijfer_header_container);
+
+						background.setOnClickListener(new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+									background.setBackgroundColor(0);
+							}
+						});
         }
     }
 

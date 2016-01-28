@@ -125,6 +125,8 @@ public class MagisterApp extends Application {
 
     public String getOwner()
     {
+				if (getApi().getMainSessie() == null) return "";
+
         // TODO: misschien account manager - meerdere accounts en shit
         return getApi().getMainSessie().id;
     }
