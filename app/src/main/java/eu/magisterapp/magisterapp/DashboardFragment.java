@@ -257,4 +257,9 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
         // Enable swipeRefreshlayout weer, anders werkt hij niet in andere fragments.
         swipeRefreshLayout.setEnabled(true);
     }
+
+		public void deleteView()
+		{
+			view = null;
+		}
 }

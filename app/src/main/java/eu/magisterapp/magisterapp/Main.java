@@ -381,5 +381,10 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 			progress.dismiss();
 			progress = null;
 		}
+
+		((DashboardFragment) Fragments.DASHBOARD.instance).deleteView();
+		((RoosterFragment) Fragments.ROOSTER.instance).deleteView();
+		((CijfersFragment) Fragments.CIJFERS.instance).deleteView();
+
 	}
 }

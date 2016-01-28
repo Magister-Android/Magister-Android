@@ -189,4 +189,9 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
 
         }
     }
+
+		public void deleteView()
+		{
+			view = null;
+		}
 }

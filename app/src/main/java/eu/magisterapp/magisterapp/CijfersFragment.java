@@ -101,4 +101,9 @@ public class CijfersFragment extends TitledFragment implements OnMainRefreshList
     {
         adapter.setData(cijfers);
     }
+
+		public void deleteView()
+		{
+			view = null;
+		}
 }
