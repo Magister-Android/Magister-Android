@@ -459,9 +459,9 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 				return true;
 
 			case R.id.action_logout:
+				finish();
 				getMagisterApplication().getApi().disconnect();
 				getMagisterApplication().voidCredentails();
-				finish();
 				startActivity(new Intent(this, this.getClass()));
 				return true;
 
