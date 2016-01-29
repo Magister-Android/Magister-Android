@@ -18,11 +18,15 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 
+import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakList;
+import eu.magisterapp.magisterapp.Storage.DataFixer;
 
 
-public class RoosterFragment extends TitledFragment implements DatePickerDialog.OnDateSetListener, OnMainRefreshListener
+public class RoosterFragment extends TitledFragment implements DatePickerDialog.OnDateSetListener, DataFixer.OnResultInterface
 {
+    private static final long MILLIS_PER_DAY = 24 * 3600 * 1000;
+
     private View view;
 
     private static final DateTime magisterBegin = new DateTime(1900, 1, 1, 0, 0);
@@ -36,7 +40,7 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
     private int month = current.getMonthOfYear();
     private int day = current.getDayOfMonth();
 
-    private boolean refreshed = false;
+    private boolean mNeedsUpdate = false;
 
     private AfspraakList afspraken;
 
@@ -67,10 +71,30 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
             }
         });
 
+        if (mNeedsUpdate) {
+            mAdapter.swap(getAfsprakenForDay(van, afspraken));
+
+            mNeedsUpdate = false;
+        }
+
         // fix een update.
         selfUpdate((SwipeRefreshLayout) getActivity().findViewById(R.id.refresh_layout));
 
         return view;
+    }
+
+    private AfspraakList getAfsprakenForDay(DateTime day, AfspraakList afspraken)
+    {
+        AfspraakList result = new AfspraakList();
+
+        long dayMillis = day.getMillis() / MILLIS_PER_DAY;
+
+        for (Afspraak afspraak : afspraken)
+        {
+            if (afspraak.getDay().getMillis() / MILLIS_PER_DAY == dayMillis) result.add(afspraak);
+        }
+
+        return result;
     }
 
     @Override
@@ -87,46 +111,22 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
         selfUpdate((SwipeRefreshLayout) getActivity().findViewById(R.id.refresh_layout));
     }
 
+    /**
+     * Deze wordt gebruikt voor de swipeRefreshLayout refresh uit main.
+     *
+     * @param result data die uit een (cache) refresh komt.
+     */
     @Override
-    public void onRefreshed(MagisterApp app) {
-        try
+    public void onResult(DataFixer.ResultBundle result) {
+        if (! isVisible())
         {
-            afspraken = app.getDataStore().getAfsprakenFromCache(van, tot);
+            afspraken = result.afspraken;
+            mNeedsUpdate = true;
+
+            return;
         }
 
-        catch (IOException e)
-        {
-            // jemoeder
-        }
-    }
-
-    @Override
-    public void onPostRefresh() {
-        if (afspraken != null && afspraken.size() > 0 && isVisible()) mAdapter.swap(afspraken);
-    }
-
-    @Override
-    public Object[] quickUpdate(MagisterApp app) {
-        try
-        {
-            return new Object[] { app.getDataStore().getAfspraken(van, tot) };
-    }
-
-        catch (IOException e)
-        {
-            // asdf
-        }
-
-        return new Object[0];
-    }
-
-    @Override
-    public void onQuickUpdated(Object... result) {
-        if (result.length < 1) return;
-
-        AfspraakList afspraken = (AfspraakList) result[0];
-
-        mAdapter.swap(afspraken);
+        mAdapter.swap(getAfsprakenForDay(van, result.afspraken));
     }
 
     public void selfUpdate(SwipeRefreshLayout mainRefresh)

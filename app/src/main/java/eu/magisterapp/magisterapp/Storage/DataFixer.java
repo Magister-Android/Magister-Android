@@ -29,6 +29,27 @@ public class DataFixer {
 
     private Context context;
 
+    public static class ResultBundle
+    {
+        public AfspraakList afspraken;
+        public CijferList cijfers;
+
+        public void setAfspraken(AfspraakList afspraken)
+        {
+            this.afspraken = afspraken;
+        }
+
+        public void setCijfers(CijferList cijfers)
+        {
+            this.cijfers = cijfers;
+        }
+    }
+
+    public interface OnResultInterface
+    {
+        void onResult(ResultBundle result);
+    }
+
     public DataFixer(MagisterAPI api, Context context)
     {
         this.api = api;

@@ -14,11 +14,8 @@ import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.joda.time.Days;
-
-import java.io.IOException;
 
 import eu.magisterapp.magisterapi.AfspraakList;
 import eu.magisterapp.magisterapp.Storage.DataFixer;
@@ -27,7 +24,7 @@ import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.Utils;
 
 
-public class DashboardFragment extends TitledFragment implements OnMainRefreshListener
+public class DashboardFragment extends TitledFragment implements DataFixer.OnResultInterface
 {
     protected LinearLayout uurView;
     protected LinearLayout cijferView;
@@ -47,7 +44,7 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
     private SwipeRefreshLayout swipeRefreshLayout;
     private ScrollView scrollview;
 
-    private boolean refreshed = false;
+    private boolean mNeedsUpdate = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -69,7 +66,10 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
 
         Log.i("Create", "DashboardFragment.onCreateView");
 
-        if (refreshed) onPostRefresh();
+        if (mNeedsUpdate) {
+            updateUI(afspraken, cijfers);
+            mNeedsUpdate = false;
+        }
 
         // Fix scrollview
         scrollview = (ScrollView) view.findViewById(R.id.dashboard_scrollview);
@@ -85,59 +85,23 @@ public class DashboardFragment extends TitledFragment implements OnMainRefreshLi
     }
 
     @Override
-    public void onRefreshed(MagisterApp app) {
-
-        DataFixer data = app.getDataStore();
-
-        try
+    public void onResult(DataFixer.ResultBundle result) {
+        if (! isVisible())
         {
-            afspraken = data.getNextDayFromCache();
-            cijfers = data.getRecentCijfersFromCache();
+            afspraken = result.afspraken;
+            cijfers = result.cijfers;
 
-            refreshed = true;
+            mNeedsUpdate = true;
+            return;
         }
 
-        catch (IOException e)
-        {
-            e.printStackTrace();
-
-            // Dit komt alleen voor bij deserialization errors, of data corruption.
-            // alleen low-level shit, kan er vanuit gaan dat dit nooit gebeurt.
-            Toast.makeText(getContext(), R.string.error_generic, Toast.LENGTH_LONG).show();
-        }
+        updateUI(result.afspraken, result.cijfers);
     }
 
-    @Override
-    public void onPostRefresh() {
+    private void updateUI(AfspraakList afspraken, CijferList cijfers)
+    {
         updateRoosterView(afspraken);
         updateCijferView(cijfers);
-
-        refreshed = false;
-    }
-
-    @Override
-    public Object[] quickUpdate(MagisterApp app) {
-        try
-        {
-            DataFixer data = app.getDataStore();
-
-            return new Object[] {data.getNextDayFromCache(), data.getRecentCijfersFromCache()};
-        }
-
-        catch (IOException e)
-        {
-            // jemoeder
-        }
-
-        return new Object[0];
-    }
-
-    @Override
-    public void onQuickUpdated(Object... result) {
-        if (result.length != 2) return;
-
-        updateRoosterView((AfspraakList) result[0]);
-        updateCijferView((CijferList) result[1]);
     }
 
     protected void populateLinearLayout(LinearLayout layout, RecyclerView.Adapter adapter)

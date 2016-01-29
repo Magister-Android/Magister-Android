@@ -21,22 +21,18 @@
 
 				<include layout="@layout/toolbar"/>
 
-				<android.support.v4.widget.SwipeRefreshLayout
+				<eu.magisterapp.magisterapp.ui.FloatingSwipeRefreshLayout
 					android:id="@+id/refresh_layout"
 					android:layout_height="match_parent"
-					android:layout_width="match_parent">
+					android:layout_width="match_parent"
+					app:foreground="@drawable/header_shadow">
 
 					<FrameLayout
 						android:id="@+id/fragment_container"
 						android:layout_width="match_parent"
 						android:layout_height="match_parent" />
 
-					<View
-						android:layout_width="match_parent"
-						android:layout_height="5dp"
-						android:background="@drawable/toolbar_dropshadow" />
-
-				</android.support.v4.widget.SwipeRefreshLayout>
+				</eu.magisterapp.magisterapp.ui.FloatingSwipeRefreshLayout>
 
 			</LinearLayout>
 

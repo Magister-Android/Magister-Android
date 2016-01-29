@@ -15,14 +15,14 @@ import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.CijferList;
 
 
-public class CijfersFragment extends TitledFragment implements OnMainRefreshListener
+public class CijfersFragment extends TitledFragment implements DataFixer.OnResultInterface
 {
     private RecyclerView cijferContainer;
     private CijferAdapter adapter;
 
     private CijferList cijfers;
 
-    private boolean refreshed = false;
+    private boolean mNeedsUpdate = false;
 
     private View view;
 
@@ -40,61 +40,22 @@ public class CijfersFragment extends TitledFragment implements OnMainRefreshList
         cijferContainer.setLayoutManager(new LinearLayoutManager(getContext()));
         cijferContainer.setAdapter(adapter);
 
-        if (refreshed) onPostRefresh();
+        if (mNeedsUpdate) updateCijferList(cijfers);
 
         return view;
     }
 
     @Override
-    public void onRefreshed(MagisterApp app) {
-
-        try
+    public void onResult(DataFixer.ResultBundle result) {
+        if (! isVisible())
         {
-            cijfers = app.getDataStore().getCijfersFromCache();
+            cijfers = result.cijfers;
+            mNeedsUpdate = true;
 
-            refreshed = true;
+            return;
         }
 
-        catch (IOException e)
-        {
-            e.printStackTrace();
-
-            // Dit komt voor als er een error ontstaat tijdens het deserializen,
-            // of als je opslag corrupt is. Alleen low-level shit.
-            Toast.makeText(getContext(), R.string.error_generic, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void onPostRefresh() {
-        refreshed = false;
-        updateCijferList(cijfers);
-    }
-
-    @Override
-    public Object[] quickUpdate(MagisterApp app) {
-
-        DataFixer data = app.getDataStore();
-
-        try {
-            return new Object[] {
-                data.getCijfersFromCache()
-            };
-        }
-
-        catch (IOException e)
-        {
-            // jemoeder
-        }
-
-        return new Object[0];
-    }
-
-    @Override
-    public void onQuickUpdated(Object... result) {
-        if (result.length != 1) return;
-
-        updateCijferList((CijferList) result[0]);
+        updateCijferList(result.cijfers);
     }
 
     public void updateCijferList(CijferList cijfers)
@@ -102,7 +63,7 @@ public class CijfersFragment extends TitledFragment implements OnMainRefreshList
         adapter.setData(cijfers);
     }
 
-		public void deleteView()
+    public void deleteView()
 		{
 			view = null;
 		}
