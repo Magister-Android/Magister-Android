@@ -121,7 +121,7 @@ public class DashboardFragment extends TitledFragment implements DataFixer.OnRes
 
     private void updateRoosterView(AfspraakList afspraken)
     {
-        if (afspraken.size() > 0)
+        if (afspraken != null && afspraken.size() > 0)
         {
             // verander het kopje "R.string.volgende_uur" naar iets anders
             TextView header = (TextView) view.findViewById(R.id.volgende_uur_text);
@@ -186,7 +186,7 @@ public class DashboardFragment extends TitledFragment implements DataFixer.OnRes
 
     private void updateCijferView(CijferList cijfers)
     {
-        if (cijfers.size() == 0)
+        if (cijfers != null && cijfers.size() == 0)
         {
             // Maak hier een custom "empty" view, en zet dat in die linearLayout.
             View view = inflater.inflate(R.layout.resource_row_empty, null);
