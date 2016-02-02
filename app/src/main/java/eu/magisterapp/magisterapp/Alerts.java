@@ -17,7 +17,7 @@ public class Alerts {
     public static AlertDialog makeDialogAlert(Context context, String message)
     {
         return new AlertDialog.Builder(context)
-                .setTitle("Je hebt kutcijfers")
+                .setTitle("Er is iets mis met je cijfers")
                 .setMessage(message)
                 .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
