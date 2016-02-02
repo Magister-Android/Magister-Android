@@ -60,7 +60,7 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
             background = row.findViewById(R.id.cijfer_background);
             cijferHeaderContainer = row.findViewById(R.id.cijfer_header_container);
 
-						background.setOnClickListener(new View.OnClickListener() {
+			background.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
 									background.setBackgroundColor(0);

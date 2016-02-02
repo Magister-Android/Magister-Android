@@ -465,6 +465,14 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 				startActivity(new Intent(this, this.getClass()));
 				return true;
 
+			case R.id.action_debug_nukedb:
+				// Deze optie is alleen zichtbaar in de "debug" variant.
+				// Handig zodat je niet de heletijd data moet verwijderen & opnieuw
+				// in te loggen als je iets wilt testen.
+				// De app crasht als je dit gebruikt tijdens een refresh btw..
+				getMagisterApplication().getDataStore().getDB().nuke();
+				return true;
+
 			default:
 				return false;
 		}

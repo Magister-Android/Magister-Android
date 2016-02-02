@@ -204,4 +204,9 @@ public class DataFixer {
         return db.queryRecentCijfers("WHERE owner = ?", app.getOwner());
     }
 
+    public MagisterDatabase getDB()
+    {
+        return db;
+    }
+
 }

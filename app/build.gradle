@@ -8,7 +8,7 @@ android {
         applicationId "eu.magisterapp.magisterapp"
         minSdkVersion 11
         targetSdkVersion 23
-        versionCode 3
+        versionCode 4
         versionName "1.0.69"
 
     }
@@ -24,10 +24,6 @@ android {
     }
 }
 
-repositories {
-    maven { url "https://jitpack.io" }
-}
-
 dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:cardview-v7:23.1.1'
@@ -37,4 +33,3 @@ dependencies {
         exclude group: 'org.json'
     }
 }
-
