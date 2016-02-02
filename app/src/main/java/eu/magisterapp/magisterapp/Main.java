@@ -271,7 +271,7 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
 		private int quickRefreshRecentCijfers(int mask) throws IOException
 		{
-			result.setCijfers(data.getRecentCijfersFromCache());
+			result.setRecentCijfers(data.getRecentCijfersFromCache());
 
             return mask & ~RECENT_CIJFER_REFRESH;
 		}
@@ -315,7 +315,7 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
         private int longRefreshRecentCijfers(int mask) throws IOException
         {
-            result.setCijfers(data.getRecentCijfers());
+            result.setRecentCijfers(data.getRecentCijfers());
 
             return mask & ~RECENT_CIJFER_REFRESH;
         }

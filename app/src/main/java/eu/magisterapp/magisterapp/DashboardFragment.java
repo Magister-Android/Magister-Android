@@ -86,16 +86,19 @@ public class DashboardFragment extends TitledFragment implements DataFixer.OnRes
 
     @Override
     public void onResult(DataFixer.ResultBundle result) {
+		if(result.recentCijfers == null || result.afspraken == null)
+			return;
+
         if (! isVisible())
         {
             afspraken = result.afspraken;
-            cijfers = result.cijfers;
+            cijfers = result.recentCijfers;
 
             mNeedsUpdate = true;
             return;
         }
 
-        updateUI(result.afspraken, result.cijfers);
+        updateUI(result.afspraken, result.recentCijfers);
     }
 
     private void updateUI(AfspraakList afspraken, CijferList cijfers)

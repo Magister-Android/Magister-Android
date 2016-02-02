@@ -33,6 +33,7 @@ public class DataFixer {
     {
         public AfspraakList afspraken;
         public CijferList cijfers;
+		public CijferList recentCijfers;
 
         public void setAfspraken(AfspraakList afspraken)
         {
@@ -43,6 +44,8 @@ public class DataFixer {
         {
             this.cijfers = cijfers;
         }
+
+		public void setRecentCijfers(CijferList cijfers) { this.recentCijfers = cijfers; }
     }
 
     public interface OnResultInterface

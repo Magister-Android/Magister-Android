@@ -7,9 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import java.io.IOException;
 
 import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.CijferList;
@@ -47,6 +44,9 @@ public class CijfersFragment extends TitledFragment implements DataFixer.OnResul
 
     @Override
     public void onResult(DataFixer.ResultBundle result) {
+		if(result.cijfers == null)
+			return;
+
         if (! isVisible())
         {
             cijfers = result.cijfers;

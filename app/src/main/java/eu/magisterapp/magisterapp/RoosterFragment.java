@@ -118,6 +118,9 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
      */
     @Override
     public void onResult(DataFixer.ResultBundle result) {
+		if(result.afspraken == null)
+			return;
+
         if (! isVisible())
         {
             afspraken = result.afspraken;
