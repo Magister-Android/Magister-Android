@@ -115,6 +115,21 @@ public class DataFixer {
 
         AfspraakList afspraken = app.getApi().getAfspraken(van, tot);
 
+		AfspraakList wijzigingen = app.getApi().getMainSessie().getRoosterWijzigingen(van, tot);
+
+		for(Afspraak wijziging : wijzigingen) {
+
+			for (int i = 0; i < afspraken.size(); i++)
+			{
+				Afspraak afspraak = afspraken.get(i);
+
+				if (afspraak.Start.toString("yyyy-MM-dd").equals(wijziging.Start.toString("yyyy-MM-dd"))
+					&& afspraak.Einde.toString("yyyy-MM-dd").equals(wijziging.Einde.toString("yyyy-MM-dd"))
+					&& afspraak.LesuurVan == wijziging.LesuurVan && afspraak.LesuurTotMet == wijziging.LesuurTotMet)
+					afspraken.set(i, wijziging);
+			}
+		}
+
         if (afspraken.size() > 0) db.cleanAfspraken(van, tot);
 
         db.insertAfspraken(app.getOwner(), afspraken);
