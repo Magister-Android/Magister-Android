@@ -133,6 +133,8 @@ public class DataFixer {
                     afspraak.Status = wijziging.Status;
 
                     if (wijziging.Status == Afspraak.StatusEnum.GEENSTATUS) Log.wtf("jemoeder", "het zou moeten werken");
+
+                    break; // elke wijziging hoort maar bij 1 afspraak
                 }
 			}
 		}
