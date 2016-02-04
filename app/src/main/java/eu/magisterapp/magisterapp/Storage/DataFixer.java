@@ -1,6 +1,7 @@
 package eu.magisterapp.magisterapp.Storage;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.joda.time.DateTime;
 
@@ -119,14 +120,20 @@ public class DataFixer {
 
 		for(Afspraak wijziging : wijzigingen) {
 
-			for (int i = 0; i < afspraken.size(); i++)
+			for (Afspraak afspraak : afspraken)
 			{
-				Afspraak afspraak = afspraken.get(i);
-
 				if (afspraak.Start.toString("yyyy-MM-dd").equals(wijziging.Start.toString("yyyy-MM-dd"))
 					&& afspraak.Einde.toString("yyyy-MM-dd").equals(wijziging.Einde.toString("yyyy-MM-dd"))
 					&& afspraak.LesuurVan == wijziging.LesuurVan && afspraak.LesuurTotMet == wijziging.LesuurTotMet)
-					afspraken.set(i, wijziging);
+                {
+                    afspraak.Id = wijziging.Id;
+                    afspraak.Lokalen = wijziging.Lokalen;
+                    if (wijziging.Lokatie != "")
+                        afspraak.Locatie = afspraak.Lokatie = wijziging.Lokatie;
+                    afspraak.Status = wijziging.Status;
+
+                    if (wijziging.Status == Afspraak.StatusEnum.GEENSTATUS) Log.wtf("jemoeder", "het zou moeten werken");
+                }
 			}
 		}
 
