@@ -15,18 +15,22 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 import java.io.IOException;
 
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakList;
+import eu.magisterapp.magisterapi.Utils;
 import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapp.sync.Refresh;
+import eu.magisterapp.magisterapp.sync.RefreshHolder;
 
 
 public class RoosterFragment extends TitledFragment implements DatePickerDialog.OnDateSetListener, Refreshable
 {
     private static final long MILLIS_PER_DAY = 24 * 3600 * 1000;
+    private static final int FETCH_LIMIT = 10;
 
     private View view;
 
@@ -113,8 +117,28 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
     }
 
     @Override
-    public Refresh[] getRefreshers() {
-        return new Refresh[0];
+    public Refresh[] getRefreshers(MagisterApp app) {
+
+        DateTime now = Utils.now();
+
+        int difference = Days.daysBetween(now, current).getDays();
+
+        // te veel dagen tussen wat hij normaal ophaalt voor het dashboard, en de dag die hij
+        // nu moet ophalen. Maak dus een custom ding, die niet hetzelfde is als het dashboard.
+        if (difference > app.getDaysInAdvance() + FETCH_LIMIT || difference < FETCH_LIMIT)
+        {
+            return new Refresh[] {RefreshHolder.getRoosterRefresh(app, van, tot, false)};
+        }
+
+        // Als hij wel in die reeks zit, geef dan een andere Refresh instance. (die het dashboard eenmalig ook gebruikt)
+        else
+        {
+            DateTime refreshVan = now.isBefore(van) ? now : van;
+            DateTime refreshTot = now.isAfter(tot) ? now : tot;
+
+            return new Refresh[] { RefreshHolder.getRoosterRefresh(app, refreshVan, refreshTot, true) };
+        }
+
     }
 
     /**

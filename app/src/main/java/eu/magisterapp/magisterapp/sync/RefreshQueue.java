@@ -1,10 +1,16 @@
 package eu.magisterapp.magisterapp.sync;
 
 
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import eu.magisterapp.magisterapp.RefreshHandlerInterface;
@@ -12,21 +18,24 @@ import eu.magisterapp.magisterapp.RefreshHandlerInterface;
 /**
  * Created by max on 2/5/16.
  */
-public class RefreshQueue
+public class RefreshQueue extends Handler
 {
-    private List<Refresh> queue = new ArrayList<>();
-    private Set<Integer> codes = new HashSet<>();
+    private static final String TAG = "sync.RefreshQueue";
+
+    private Map<Integer, Refresh> queue = new HashMap<>();
 
     private RefreshHandlerInterface onDoneListener;
 
-    public RefreshQueue(Refresh... refreshCallabels)
+    public RefreshQueue(Refresh... refreshCallables)
     {
-        Collections.addAll(queue, refreshCallabels);
+        for (Refresh refresh : refreshCallables)
+            queue.put(refresh.hashCode(), refresh);
     }
 
     public RefreshQueue then(Refresh... refreshers)
     {
-        Collections.addAll(queue, refreshers);
+        for (Refresh refresh : refreshers)
+            queue.put(refresh.hashCode(), refresh);
 
         return this;
     }
@@ -42,11 +51,11 @@ public class RefreshQueue
     {
         if (queue.size() <= 5) // max 5 threads
         {
-            for (Refresh runnable : queue)
+            for (Map.Entry<Integer, Refresh> entry : queue.entrySet())
             {
-                codes.add(runnable.hashCode());
+                Log.i(TAG, "Start new thread");
 
-                new Thread(runnable).run();
+                new Thread(entry.getValue().setQueue(this)).start();
             }
         }
 
@@ -55,18 +64,24 @@ public class RefreshQueue
             throw new RuntimeException("Te veel runnables");
         }
 
-        if (codes.size() == 0 && onDoneListener != null) onDoneListener.onDoneRefreshing();
+        if (queue.size() == 0 && onDoneListener != null) onDoneListener.onDoneRefreshing();
     }
 
     public void setFinished(int id)
     {
-        codes.remove(id);
+        Log.i(TAG, "Finish thread");
+        queue.remove(id);
 
-        if (codes.isEmpty() && onDoneListener != null)
+        if (queue.isEmpty() && onDoneListener != null)
         {
             // alle shit is af.
-            // TODO: fix dat hij al iets zodra de dingen van currentFragmetn af zijn.
+            // TODO: fix dat hij al iets zodra de dingen van currentFragment af zijn.
             onDoneListener.onDoneRefreshing();
         }
+    }
+
+    @Override
+    public void handleMessage(Message msg) {
+        setFinished(msg.what);
     }
 }

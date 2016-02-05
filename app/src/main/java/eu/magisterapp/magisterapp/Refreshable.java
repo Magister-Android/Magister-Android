@@ -7,6 +7,6 @@ import eu.magisterapp.magisterapp.sync.Refresh;
  */
 public interface Refreshable {
 
-    public Refresh[] getRefreshers();
+    public Refresh[] getRefreshers(MagisterApp app);
 
 }

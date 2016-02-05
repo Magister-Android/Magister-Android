@@ -49,20 +49,18 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 		CIJFERS(new CijfersFragment(), R.string.nav_cijfers, R.id.nav_cijfers); // 2
 
 		public final Fragment instance;
+        public final Refreshable refreshable;
 		public final int title;
 		public final int navId;
 		public final int id;
 
-        public final Refresh[] refreshers;
-
 		FragmentView(Refreshable fragment, int title, int navId)
 		{
 			instance = (Fragment) fragment;
+            refreshable = fragment;
 			this.title = title;
 			this.navId = navId;
 			id = fragCounter++;
-
-            refreshers = fragment.getRefreshers();
 		}
 	}
 
@@ -143,10 +141,10 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
         {
             if (fragment == currentFragment) continue;
 
-            refreshers.addAll(new ArrayList<>(Arrays.asList(fragment.refreshers)));
+            refreshers.addAll(new ArrayList<>(Arrays.asList(fragment.refreshable.getRefreshers(getMagisterApplication()))));
         }
 
-        rm.first(currentFragment.refreshers) // Elk fragment heeft een of meer "Refresh" runnables
+        rm.first(currentFragment.refreshable.getRefreshers(getMagisterApplication())) // Elk fragment heeft een of meer "Refresh" runnables
                 .then(refreshers.toArray(new Refresh[refreshers.size()]))
                 .done(this) // zet een callback onDoneRefreshing
                 .run(); // voer refresh uit.

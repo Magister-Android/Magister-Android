@@ -44,8 +44,9 @@ public class CijfersFragment extends TitledFragment implements Refreshable
     }
 
     @Override
-    public Refresh[] getRefreshers() {
-        return new Refresh[0];
+    public Refresh[] getRefreshers(MagisterApp app) {
+
+        return new Refresh[] { };
     }
 
     public void onResult(DataFixer.ResultBundle result) {

@@ -2,7 +2,6 @@ package eu.magisterapp.magisterapp;
 
 import android.os.Bundle;
 
-
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -23,7 +22,7 @@ import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.Utils;
 import eu.magisterapp.magisterapp.sync.Refresh;
-
+import eu.magisterapp.magisterapp.sync.RefreshHolder;
 
 public class DashboardFragment extends TitledFragment implements Refreshable
 {
@@ -86,8 +85,13 @@ public class DashboardFragment extends TitledFragment implements Refreshable
     }
 
     @Override
-    public Refresh[] getRefreshers() {
-        return new Refresh[0];
+    public Refresh[] getRefreshers(MagisterApp app) {
+
+        return new Refresh[] {
+                RefreshHolder.getRoosterRefresh(app),
+                RefreshHolder.getRecentCijferRefresh(app)
+        };
+
     }
 
     public void onResult(DataFixer.ResultBundle result) {

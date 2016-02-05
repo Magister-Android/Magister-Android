@@ -17,9 +17,6 @@ public abstract class Refresh implements Runnable
 {
     public int id = hashCode();
 
-    public DateTime van;
-    public DateTime tot;
-
     public MagisterApp mApp;
     public DataFixer mData;
     public MagisterAPI mApi;
@@ -33,9 +30,6 @@ public abstract class Refresh implements Runnable
         mApp = app;
         mData = app.getDataStore();
         mApi = app.getApi();
-
-        van = Utils.now();
-        tot = van.plusDays(app.getDaysInAdvance());
     }
 
     public Refresh setErrorHandler(ErrorHandlerInterface errorHandler)
@@ -60,11 +54,13 @@ public abstract class Refresh implements Runnable
 
     public void done()
     {
-        if (mQueue != null) mQueue.setFinished(id);
+        if (mQueue != null) mQueue.sendEmptyMessage(id);
     }
 
-    public void setQueue(RefreshQueue queue)
+    public Refresh setQueue(RefreshQueue queue)
     {
         mQueue = queue;
+
+        return this;
     }
 }
