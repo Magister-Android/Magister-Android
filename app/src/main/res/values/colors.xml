@@ -16,6 +16,10 @@
 	<item name="background" type="color">@color/white</item>
 	<item name="darkbg" type="color">#FF111111</item>
 
+	<item name="uitval_text" type="color">#f44336</item> <!-- Red 500 -->
+	<item name="onvoldoende_text" type="color">#f44336</item> <!-- Red 500 -->
+
+
 	<!-- c_ staat voor cijfer(row) -->
 	<item name="c_deep_purple" type="color">#FF673AB7</item>
 	<item name="c_teal" type="color">#FF009688</item>
@@ -33,6 +37,4 @@
 	<item name="c_lime_dark" type="color">#FF827717</item>
 	<item name="c_yellow_dark" type="color">#FFF57F17</item>
 	<item name="c_brown_dark" type="color">#FF3E2723</item>
-
-	<item name="uitval_bg" type="color">#FF8A80</item>
 </resources>

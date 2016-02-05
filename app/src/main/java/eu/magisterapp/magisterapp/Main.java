@@ -20,26 +20,14 @@ import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import org.joda.time.DateTime;
-
 import java.io.IOException;
 
-import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.BadResponseException;
-import eu.magisterapp.magisterapi.Utils;
+import eu.magisterapp.magisterapp.sync.RefreshManager;
 
 
-public class Main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener
+public class Main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener, ErrorHandlerInterface
 {
-	private boolean swappedSinceRefresh = false;
-
-	private static final int AFSPRAAK_REFRESH       = 0b0001;
-	private static final int CIJFER_REFRESH         = 0b0010;
-	private static final int RECENT_CIJFER_REFRESH  = 0b0100;
-	private static final int NEXT_DAY_REFRESH       = 0b1000;
-
-	private OphaalTask currentTask;
-
 	DrawerLayout mDrawerLayout;
 	NavigationView navigationView;
 	Toolbar toolbar;
@@ -54,24 +42,21 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
 	private enum FragmentView
 	{
-		DASHBOARD(new DashboardFragment(), R.string.app_name, R.id.nav_dashboard, RECENT_CIJFER_REFRESH | NEXT_DAY_REFRESH), // 0
-		ROOSTER(new RoosterFragment(), R.string.nav_rooster, R.id.nav_rooster, AFSPRAAK_REFRESH), // 1
-		CIJFERS(new CijfersFragment(), R.string.nav_cijfers, R.id.nav_cijfers, CIJFER_REFRESH); // 2
+		DASHBOARD(new DashboardFragment(), R.string.app_name, R.id.nav_dashboard), // 0
+		ROOSTER(new RoosterFragment(), R.string.nav_rooster, R.id.nav_rooster), // 1
+		CIJFERS(new CijfersFragment(), R.string.nav_cijfers, R.id.nav_cijfers); // 2
 
 		public final Fragment instance;
 		public final int title;
 		public final int navId;
 		public final int id;
-		public final int mask;
 
-		FragmentView(Fragment fragment, int title, int navId, int refreshMask)
+		FragmentView(Fragment fragment, int title, int navId)
 		{
 			instance = fragment;
 			this.title = title;
 			this.navId = navId;
 			id = fragCounter++;
-
-			mask = refreshMask;
 		}
 	}
 
@@ -142,216 +127,14 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
 		mSwipeRefreshLayout.setRefreshing(true);
 
-        if (currentTask != null && (currentTask.ongoing & currentFragment.mask) == currentFragment.mask)
-        {
-            currentTask.doContinue();
-        }
+        RefreshManager rm = getMagisterApplication().getRefreshManager();
 
-		else if (currentFragment == FragmentView.ROOSTER && ! swappedSinceRefresh)
-		{
-			// andere content boeit niet echt, update alleen rooster.
-			((RoosterFragment) FragmentView.ROOSTER.instance).selfUpdate(mSwipeRefreshLayout);
-		}
+        rm.setErrorHandler(this);
 
-        else (currentTask = new OphaalTask()).execute();
+
 	}
 
-	public class OphaalTask extends AsyncTask<Void, DataFixer.ResultBundle, Void>
-	{
-		private boolean isQuick = true;
-		private boolean finished = false;
-
-		public int ongoing;
-
-		private DataFixer.ResultBundle result = new DataFixer.ResultBundle();
-
-		private MagisterApp app = getMagisterApplication();
-		private DataFixer data = app.getDataStore();
-
-		@Override
-		protected Void doInBackground(Void... params) {
-
-			// Dit zijn alle flags die aangeven welke delen gerefresht moeten worden.
-			int mask = ongoing = currentFragment.mask;
-
-			// Dit zijn alle flags die aangeven welke delen NIET gerefresht moeten worden.
-			// We fixen ze alleen wel, zodat je sneller je shit hebt.
-			int unnecessary = ~mask & (0b1111);
-
-			try {
-				quickRefresh(mask);
-
-				publishProgress(result);
-
-			} catch (IOException e) {
-				// Jammer als er hier iets ontstaan.
-				// TODO: misschien database nuken, zodat opslag niet meer faalt? Of misschien een berichtje sturen dat niks gecached kan worden.
-				e.printStackTrace();
-			}
-
-			isQuick = false;
-
-			try {
-				longRefresh(mask);
-
-				publishProgress(result);
-
-			} catch (IOException e) {
-				// Als hier een error is, is het wel legit balen. Dan is je internet gay o.i.d.
-				e.printStackTrace();
-				handleError(e);
-			}
-
-			// Zodra het nodige is gepublisht kunnen we net doen alsof deze task al klaar is.
-			finished = true;
-
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					mSwipeRefreshLayout.setRefreshing(false);
-				}
-			});
-
-			// In werkelijkheid gaat hij nu verder met de andere dingen refreshen, die niet zichtbaar zijn.
-			// VB: RoosterFragment is zichtbaar -> hij refresht nu cijfers.
-			// VB2: DashboardFragment is zichtbaar -> hij refresht nu niks, want het dashboard had alles al nodig.
-
-			// Geef status aan, zodat er kan worden bepaald of aan hetgene wat iemand wil refreshen gewerkt wordt.
-			ongoing = unnecessary;
-
-			try {
-				longRefresh(unnecessary);
-
-				if (! finished) publishProgress(result);
-			} catch (IOException e) {
-				e.printStackTrace();
-
-                if (! finished) handleError(e);
-			}
-
-			ongoing = 0;
-
-			return null;
-		}
-
-		private void quickRefresh(int toRefresh) throws IOException
-		{
-			if ((NEXT_DAY_REFRESH & toRefresh) == NEXT_DAY_REFRESH)
-			{
-				result.setAfspraken(data.getNextDayFromCache());
-
-                toRefresh = toRefresh & ~NEXT_DAY_REFRESH;
-			}
-
-			else if ((AFSPRAAK_REFRESH & toRefresh) == AFSPRAAK_REFRESH) toRefresh = quickRefreshAfspraken(toRefresh);
-
-			if ((CIJFER_REFRESH & toRefresh) == CIJFER_REFRESH) toRefresh = quickRefreshCijfers(toRefresh);
-
-			if ((RECENT_CIJFER_REFRESH & toRefresh) == RECENT_CIJFER_REFRESH) toRefresh = quickRefreshRecentCijfers(toRefresh);
-
-			if (toRefresh > 0) Log.wtf("Refresh", "mask = " + toRefresh);
-		}
-
-		private int quickRefreshAfspraken(int mask) throws IOException
-		{
-			DateTime van = Utils.now();
-			DateTime tot = van.plusDays(app.getDaysInAdvance());
-
-			result.setAfspraken(data.getAfsprakenFromCache(van, tot));
-
-			return mask & ~AFSPRAAK_REFRESH;
-		}
-
-		private int quickRefreshCijfers(int mask) throws IOException
-		{
-			result.setCijfers(data.getCijfersFromCache());
-
-			return mask & ~CIJFER_REFRESH;
-		}
-
-		private int quickRefreshRecentCijfers(int mask) throws IOException
-		{
-			result.setRecentCijfers(data.getRecentCijfersFromCache());
-
-            return mask & ~RECENT_CIJFER_REFRESH;
-		}
-
-		private void longRefresh(int toRefresh) throws IOException
-		{
-            if ((NEXT_DAY_REFRESH & toRefresh) == NEXT_DAY_REFRESH)
-            {
-                longRefreshAfspraken(toRefresh);
-
-                result.setAfspraken(data.getNextDayFromCache());
-
-                toRefresh = toRefresh & ~ NEXT_DAY_REFRESH;
-            }
-
-			if ((AFSPRAAK_REFRESH & toRefresh) == AFSPRAAK_REFRESH) toRefresh = longRefreshAfspraken(toRefresh);
-
-			if ((CIJFER_REFRESH & toRefresh) == CIJFER_REFRESH) toRefresh = longRefreshCijfers(toRefresh);
-
-            if ((RECENT_CIJFER_REFRESH & toRefresh) == RECENT_CIJFER_REFRESH) toRefresh = longRefreshRecentCijfers(toRefresh);
-
-			if (toRefresh > 0) Log.wtf("Refresh", "mask = " + toRefresh);
-		}
-
-		private int longRefreshAfspraken(int mask) throws IOException
-		{
-			DateTime van = Utils.now();
-			DateTime tot = van.plusDays(app.getDaysInAdvance());
-
-			result.setAfspraken(data.getAfspraken(van, tot));
-
-			return mask & ~AFSPRAAK_REFRESH;
-		}
-
-		private int longRefreshCijfers(int mask) throws IOException
-		{
-			result.setCijfers(data.getCijfers());
-
-			return mask & ~CIJFER_REFRESH;
-		}
-
-        private int longRefreshRecentCijfers(int mask) throws IOException
-        {
-            result.setRecentCijfers(data.getRecentCijfers());
-
-            return mask & ~RECENT_CIJFER_REFRESH;
-        }
-
-		@Override
-		protected void onProgressUpdate(DataFixer.ResultBundle... values) {
-
-            if ((ongoing & currentFragment.mask) != currentFragment.mask) return;
-
-			if (currentFragment.instance.isVisible() || ! isQuick)
-			{
-				((DataFixer.OnResultInterface) currentFragment.instance).onResult(result);
-			}
-		}
-
-		/**
-		 * Wordt geroepen als iemand probeert om het overbodige deel te refreshen.
-		 */
-		public void doContinue()
-		{
-			finished = false;
-		}
-
-		@Override
-		protected void onPostExecute(Void aVoid) {
-			if (! finished)
-			{
-				// Tussen de periode dat de "oorspronkelijke" refresh klaar was
-				// refreshte iemand nog een keer, en werd er gewerkt aan het toen overbodige deel.
-				mSwipeRefreshLayout.setRefreshing(false);
-
-				finished = true;
-			}
-		}
-	}
-
+	@Override
 	public void handleError(IOException e)
 	{
 		Snackbar snackbar;
@@ -498,8 +281,6 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 		setTitle(getString(fragment.title));
 
 		transaction.commit();
-
-		swappedSinceRefresh = true;
 	}
 
 	@Override

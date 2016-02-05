@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.MagisterAPI;
+import eu.magisterapp.magisterapp.sync.RefreshManager;
 
 /**
  * Created by max on 13-12-15.
@@ -27,6 +28,7 @@ public class MagisterApp extends Application {
 
     private MagisterAPI api;
     private DataFixer data;
+    private RefreshManager refresh;
 
     public int getDaysInAdvance()
     {
@@ -140,4 +142,13 @@ public class MagisterApp extends Application {
 
         return data;
     }
+
+    public RefreshManager getRefreshManager()
+    {
+        if (refresh == null)
+            refresh = new RefreshManager(this);
+
+        return refresh;
+    }
+
 }

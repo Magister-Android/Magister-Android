@@ -1,5 +1,7 @@
 package eu.magisterapp.magisterapp;
 
+import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -60,33 +62,35 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
     {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        RelativeLayout row = (RelativeLayout) inflater.inflate(viewType, parent, false);
+        RelativeLayout row = (RelativeLayout) inflater.inflate(R.layout.resource_row, parent, false);
 
         return new ViewHolder(row);
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-
-        switch (displayables.get(position).getType())
-        {
-            case INVALID: // doorstreepte tekst
-            case NOTICE: // rode tekst
-                return R.layout.resource_row_notice;
-
-            case WARNING: // rode achtergrond
-                return R.layout.resource_row_warning;
-
-            case NORMAL: // normaal
-            default:
-                return R.layout.resource_row;
-        }
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position)
     {
         Displayable row = displayables.get(position);
+
+        switch (row.getType())
+        {
+            case INVALID:
+                holder.vak.setPaintFlags(holder.vak.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.title.setPaintFlags(holder.title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.docent.setPaintFlags(holder.docent.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.time.setPaintFlags(holder.time.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+                holder.vak.setTextColor(ContextCompat.getColor(holder.vak.getContext(), R.color.uitval_text));
+                holder.title.setTextColor(ContextCompat.getColor(holder.title.getContext(), R.color.uitval_text));
+                break;
+
+            case NOTICE:
+                holder.title.setTextColor(ContextCompat.getColor(holder.title.getContext(), R.color.accent));
+                break;
+
+            case WARNING:
+                holder.title.setTextColor(ContextCompat.getColor(holder.title.getContext(), R.color.onvoldoende_text));
+        }
 
         holder.vak.setText(row.getVak());
         holder.title.setText(row.getTitle());
