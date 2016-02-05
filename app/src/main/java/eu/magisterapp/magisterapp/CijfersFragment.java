@@ -10,9 +10,10 @@ import android.view.ViewGroup;
 
 import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.CijferList;
+import eu.magisterapp.magisterapp.sync.Refresh;
 
 
-public class CijfersFragment extends TitledFragment implements DataFixer.OnResultInterface
+public class CijfersFragment extends TitledFragment implements Refreshable
 {
     private RecyclerView cijferContainer;
     private CijferAdapter adapter;
@@ -43,6 +44,10 @@ public class CijfersFragment extends TitledFragment implements DataFixer.OnResul
     }
 
     @Override
+    public Refresh[] getRefreshers() {
+        return new Refresh[0];
+    }
+
     public void onResult(DataFixer.ResultBundle result) {
 		if(result.cijfers == null)
 			return;

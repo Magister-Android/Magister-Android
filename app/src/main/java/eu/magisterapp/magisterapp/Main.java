@@ -2,7 +2,6 @@ package eu.magisterapp.magisterapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -13,7 +12,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,12 +19,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import eu.magisterapp.magisterapi.BadResponseException;
+import eu.magisterapp.magisterapp.sync.Refresh;
 import eu.magisterapp.magisterapp.sync.RefreshManager;
 
 
-public class Main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener, ErrorHandlerInterface
+public class Main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, RefreshHandlerInterface, ErrorHandlerInterface
 {
 	DrawerLayout mDrawerLayout;
 	NavigationView navigationView;
@@ -51,12 +53,16 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 		public final int navId;
 		public final int id;
 
-		FragmentView(Fragment fragment, int title, int navId)
+        public final Refresh[] refreshers;
+
+		FragmentView(Refreshable fragment, int title, int navId)
 		{
-			instance = fragment;
+			instance = (Fragment) fragment;
 			this.title = title;
 			this.navId = navId;
 			id = fragCounter++;
+
+            refreshers = fragment.getRefreshers();
 		}
 	}
 
@@ -131,10 +137,31 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
         rm.setErrorHandler(this);
 
+        List<Refresh> refreshers = new ArrayList<>();
 
+        for (FragmentView fragment : FragmentView.values())
+        {
+            if (fragment == currentFragment) continue;
+
+            refreshers.addAll(new ArrayList<>(Arrays.asList(fragment.refreshers)));
+        }
+
+        rm.first(currentFragment.refreshers) // Elk fragment heeft een of meer "Refresh" runnables
+                .then(refreshers.toArray(new Refresh[refreshers.size()]))
+                .done(this) // zet een callback onDoneRefreshing
+                .run(); // voer refresh uit.
 	}
 
-	@Override
+    @Override
+    public void onDoneRefreshing() {
+        mSwipeRefreshLayout.setRefreshing(false);
+
+        // TODO: update local data van fragments
+        // TODO: call een onDone method op currentFragment.instance,
+            // die fixt dat hij zn shit refresht. (kan misschien bij de data update)
+    }
+
+    @Override
 	public void handleError(IOException e)
 	{
 		Snackbar snackbar;

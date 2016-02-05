@@ -23,6 +23,8 @@ import eu.magisterapp.magisterapi.Utils;
  */
 public class DataFixer {
 
+    private static final String TAG = "Storage.DataFixer";
+
     private MagisterAPI api;
     private MagisterDatabase db;
 
@@ -122,17 +124,26 @@ public class DataFixer {
 
 			for (Afspraak afspraak : afspraken)
 			{
-				if (afspraak.Start.toString("yyyy-MM-dd").equals(wijziging.Start.toString("yyyy-MM-dd"))
-					&& afspraak.Einde.toString("yyyy-MM-dd").equals(wijziging.Einde.toString("yyyy-MM-dd"))
-					&& afspraak.LesuurVan == wijziging.LesuurVan && afspraak.LesuurTotMet == wijziging.LesuurTotMet)
+				if (afspraak.LesuurVan.equals(wijziging.LesuurVan) && afspraak.LesuurTotMet.equals(wijziging.LesuurTotMet)
+                        && afspraak.Start.toString("yyyy-MM-dd").equals(wijziging.Start.toString("yyyy-MM-dd"))
+                        && afspraak.Einde.toString("yyyy-MM-dd").equals(wijziging.Einde.toString("yyyy-MM-dd")))
                 {
-                    afspraak.Id = wijziging.Id;
-                    afspraak.Lokalen = wijziging.Lokalen;
-                    if (wijziging.Lokatie != "")
-                        afspraak.Locatie = afspraak.Lokatie = wijziging.Lokatie;
-                    afspraak.Status = wijziging.Status;
+                    if (! wijziging.Lokalen.isEmpty())
+                    {
+                        afspraak.Lokalen = wijziging.Lokalen;
+                        afspraak.isLokaalGewijzigd = true;
+                    }
 
-                    if (wijziging.Status == Afspraak.StatusEnum.GEENSTATUS) Log.wtf("jemoeder", "het zou moeten werken");
+                    if (wijziging.Lokatie != null && ! wijziging.Lokatie.isEmpty())
+                    {
+                        afspraak.Locatie = afspraak.Lokatie = wijziging.Lokatie;
+                        afspraak.isLokaalGewijzigd = true;
+                    }
+
+                    afspraak.Status = wijziging.Status;
+                    afspraak.Type = wijziging.Type;
+
+                    if (wijziging.Status == Afspraak.StatusEnum.GEENSTATUS) Log.wtf(TAG, "het zou moeten werken");
 
                     break; // elke wijziging hoort maar bij 1 afspraak
                 }

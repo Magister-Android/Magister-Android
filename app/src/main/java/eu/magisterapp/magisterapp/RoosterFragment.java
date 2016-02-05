@@ -21,9 +21,10 @@ import java.io.IOException;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.AfspraakList;
 import eu.magisterapp.magisterapp.Storage.DataFixer;
+import eu.magisterapp.magisterapp.sync.Refresh;
 
 
-public class RoosterFragment extends TitledFragment implements DatePickerDialog.OnDateSetListener, DataFixer.OnResultInterface
+public class RoosterFragment extends TitledFragment implements DatePickerDialog.OnDateSetListener, Refreshable
 {
     private static final long MILLIS_PER_DAY = 24 * 3600 * 1000;
 
@@ -111,12 +112,16 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
         selfUpdate((SwipeRefreshLayout) getActivity().findViewById(R.id.refresh_layout));
     }
 
+    @Override
+    public Refresh[] getRefreshers() {
+        return new Refresh[0];
+    }
+
     /**
      * Deze wordt gebruikt voor de swipeRefreshLayout refresh uit main.
      *
      * @param result data die uit een (cache) refresh komt.
      */
-    @Override
     public void onResult(DataFixer.ResultBundle result) {
 		if(result.afspraken == null)
 			return;

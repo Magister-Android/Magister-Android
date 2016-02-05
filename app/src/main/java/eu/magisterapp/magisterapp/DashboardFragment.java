@@ -22,9 +22,10 @@ import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapi.Utils;
+import eu.magisterapp.magisterapp.sync.Refresh;
 
 
-public class DashboardFragment extends TitledFragment implements DataFixer.OnResultInterface
+public class DashboardFragment extends TitledFragment implements Refreshable
 {
     protected LinearLayout uurView;
     protected LinearLayout cijferView;
@@ -85,6 +86,10 @@ public class DashboardFragment extends TitledFragment implements DataFixer.OnRes
     }
 
     @Override
+    public Refresh[] getRefreshers() {
+        return new Refresh[0];
+    }
+
     public void onResult(DataFixer.ResultBundle result) {
 		if(result.recentCijfers == null || result.afspraken == null)
 			return;
@@ -227,8 +232,10 @@ public class DashboardFragment extends TitledFragment implements DataFixer.OnRes
         swipeRefreshLayout.setEnabled(true);
     }
 
-		public void deleteView()
+	public void deleteView()
 		{
 			view = null;
 		}
+
+
 }
