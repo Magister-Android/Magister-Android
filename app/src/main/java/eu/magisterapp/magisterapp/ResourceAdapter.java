@@ -4,7 +4,9 @@ import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.magisterapp.magisterapi.Afspraak;
+import eu.magisterapp.magisterapi.AfspraakList;
 import eu.magisterapp.magisterapi.Displayable;
 
 
@@ -54,6 +58,7 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
     public void swap(List<? extends Displayable> newData)
     {
         displayables = newData;
+
         notifyDataSetChanged();
     }
 

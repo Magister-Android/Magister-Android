@@ -142,10 +142,8 @@ public class DataFixer {
                         afspraak.isLokaalGewijzigd = true;
                     }
 
-                    afspraak.Status = wijziging.Status;
-                    afspraak.Type = wijziging.Type;
-
-                    if (wijziging.Status == Afspraak.StatusEnum.GEENSTATUS) Log.wtf(TAG, "het zou moeten werken");
+                    if (wijziging.Status != null) afspraak.Status = wijziging.Status;
+                    if (wijziging.Type != null) afspraak.Type = wijziging.Type;
 
                     break; // elke wijziging hoort maar bij 1 afspraak
                 }

@@ -215,13 +215,6 @@ public class DashboardFragment extends TitledFragment implements Refreshable
 
         uurAdapter.swap(afspraken);
 
-        for (Afspraak afspraak : afspraken)
-        {
-            if (afspraak.getType() != Displayable.Type.NORMAL) Log.i("Dashboard", "Roosterwijziging: " + afspraak.LesuurTotMet);
-
-            Log.i("Afspraak: ", afspraak.getVakken() + " " + afspraak.getLokalen());
-        }
-
         populateLinearLayout(uurView, uurAdapter);
     }
 

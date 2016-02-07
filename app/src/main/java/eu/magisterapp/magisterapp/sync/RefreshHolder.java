@@ -29,9 +29,6 @@ public class RefreshHolder {
     private static RefreshHolder dashboardRefresh = new RefreshHolder();
     private static Refresh dummyDashboardRefresh;
 
-    private static DateTime roosterVan;
-    private static DateTime roosterTot;
-
     private static RefreshHolder recentCijferRefresh = new RefreshHolder();
 
     public static RefreshHolder getDashboardRoosterRefresh(MagisterApp app)
@@ -52,9 +49,6 @@ public class RefreshHolder {
     public static RefreshHolder getRoosterFragmentRefresh(MagisterApp app, DateTime van, DateTime tot)
     {
         DateTime now = Utils.now();
-
-        roosterVan = van;
-        roosterTot = tot;
 
         int ahead = app.getDaysInAdvance();
 
@@ -146,6 +140,8 @@ public class RefreshHolder {
 
         return recentCijferRefresh;
     }
+
+    /* Einde van de "echte" holder.. Hier onder is een dom object, dat ik gebruik omdat java geen pointers heeft. */
 
     private Refresh refreshInstance;
 
