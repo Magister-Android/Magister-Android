@@ -25,9 +25,11 @@ import eu.magisterapp.magisterapi.Utils;
 import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapp.sync.Refresh;
 import eu.magisterapp.magisterapp.sync.RefreshHolder;
+import eu.magisterapp.magisterapp.sync.RefreshManager;
+import eu.magisterapp.magisterapp.sync.RefreshQueue;
 
 
-public class RoosterFragment extends TitledFragment implements DatePickerDialog.OnDateSetListener, Refreshable
+public class RoosterFragment extends TitledFragment implements DatePickerDialog.OnDateSetListener, Refreshable, RefreshHandlerInterface
 {
     private static final long MILLIS_PER_DAY = 24 * 3600 * 1000;
     private static final int FETCH_LIMIT = 10;
@@ -115,7 +117,43 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
         van = current = new DateTime(year, month, day, 0, 0);
         tot = van.plusDays(1);
 
+        updateAfspraken();
+    }
 
+    private void updateAfspraken()
+    {
+        Main main = (Main) getActivity();
+
+        SwipeRefreshLayout srl = (SwipeRefreshLayout) main.findViewById(R.id.refresh_layout);
+
+        if (srl.isRefreshing()) return;
+
+        srl.setRefreshing(true);
+
+        RefreshManager rm = main.getMagisterApplication().getRefreshManager();
+
+        RefreshQueue queue = rm.first(getRefreshers(main.getMagisterApplication()));
+        queue.done(this);
+        queue.error(main);
+        queue.run();
+    }
+
+    @Override
+    public void onDoneRefreshing() {
+        try {
+            readDatabase(((Main)getActivity()).getMagisterApplication().getDataStore());
+        } catch (IOException e) {
+            // jemoeder is gay.
+            e.printStackTrace();
+        }
+
+        ((SwipeRefreshLayout) getActivity().findViewById(R.id.refresh_layout)).setRefreshing(false);
+    }
+
+    @Override
+    public void onRefresh() {
+        // Dit gebeurt toch niet.
+        Log.wtf("RoosterFragment", "wtf dit zou niet moeten gebeuren. lol");
     }
 
     @Override

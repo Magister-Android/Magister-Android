@@ -205,6 +205,23 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 		setFragment(currentFragment, false);
 		navigationView.getMenu().findItem(currentFragment.navId).setChecked(true);
 
+		// Update alle views met hetgene dat in de database staat.
+		mSwipeRefreshLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				for (FragmentView fragment : FragmentView.values())
+				{
+					try {
+						fragment.refreshable.readDatabase(getMagisterApplication().getDataStore());
+					} catch (IOException tooBadSoSad) {
+						// Database error. idk
+						tooBadSoSad.printStackTrace();
+					}
+				}
+			}
+		});
+
+		// Haal shit op, en laat het zien als het opgehaald is.
 		mSwipeRefreshLayout.post(new Runnable() {
 			@Override
 			public void run() {
