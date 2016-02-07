@@ -24,21 +24,19 @@ public class RefreshHolder {
     // niet in een keer zn hele telefoon vol zit met 1500 dagen cache.
     private static final int FETCH_LIMIT = 14;
 
-    private static Refresh cijferRefresh;
+    private static RefreshHolder cijferRefresh = new RefreshHolder();
 
-    private static Refresh dashboardRefresh;
+    private static RefreshHolder dashboardRefresh = new RefreshHolder();
     private static Refresh dummyDashboardRefresh;
 
     private static DateTime roosterVan;
     private static DateTime roosterTot;
 
-    private static Refresh recentCijferRefresh;
+    private static RefreshHolder recentCijferRefresh = new RefreshHolder();
 
-    public static Refresh getDashboardRoosterRefresh(MagisterApp app)
+    public static RefreshHolder getDashboardRoosterRefresh(MagisterApp app)
     {
-        dashboardRefresh = getDummyDashboardRefresh(app);
-
-        return dashboardRefresh;
+        return dashboardRefresh.set(getDummyDashboardRefresh(app));
     }
 
     private static Refresh getDummyDashboardRefresh(final MagisterApp app)
@@ -51,7 +49,7 @@ public class RefreshHolder {
         return dummyDashboardRefresh;
     }
 
-    public static Refresh getRoosterFragmentRefresh(MagisterApp app, DateTime van, DateTime tot)
+    public static RefreshHolder getRoosterFragmentRefresh(MagisterApp app, DateTime van, DateTime tot)
     {
         DateTime now = Utils.now();
 
@@ -67,9 +65,9 @@ public class RefreshHolder {
 
             Log.i("RefreshHolder", "andere dan dashboard");
 
-            dashboardRefresh = getDummyDashboardRefresh(app);
+            dashboardRefresh.set(getDummyDashboardRefresh(app));
 
-            return makeRoosterRefresh(app, van, tot, false);
+            return new RefreshHolder().set(makeRoosterRefresh(app, van, tot, false));
         }
 
         else
@@ -83,7 +81,7 @@ public class RefreshHolder {
             // zodat de huidige dag van het rooster er ook bij zit.
             // Hij gebruikt dus de kleinste (nu of van) en de grootste (nu of tot)
 
-            return dashboardRefresh = makeRoosterRefresh(app, refreshVan, refreshTot, false);
+            return dashboardRefresh.set(makeRoosterRefresh(app, refreshVan, refreshTot, false));
         }
     }
 
@@ -105,11 +103,11 @@ public class RefreshHolder {
         };
     }
 
-    public static Refresh getCijferRefresh(final MagisterApp app)
+    public static RefreshHolder getCijferRefresh(final MagisterApp app)
     {
-        if (cijferRefresh == null)
+        if (cijferRefresh.get() == null)
 
-            cijferRefresh = new Refresh("Cijfers") {
+            cijferRefresh.set(new Refresh("Cijfers") {
                 @Override
                 public void fire() {
                     try
@@ -122,16 +120,16 @@ public class RefreshHolder {
                         handleError(e);
                     }
                 }
-            };
+            });
 
         return cijferRefresh;
     }
 
-    public static Refresh getRecentCijferRefresh(final MagisterApp app)
+    public static RefreshHolder getRecentCijferRefresh(final MagisterApp app)
     {
-        if (recentCijferRefresh == null)
+        if (recentCijferRefresh.get() == null)
 
-            recentCijferRefresh = new Refresh("Recent cijfers") {
+            recentCijferRefresh.set(new Refresh("Recent cijfers") {
                 @Override
                 public void fire() {
                     try
@@ -144,7 +142,7 @@ public class RefreshHolder {
                         handleError(e);
                     }
                 }
-            };
+            });
 
         return recentCijferRefresh;
     }
@@ -156,9 +154,11 @@ public class RefreshHolder {
         return refreshInstance;
     }
 
-    public void set(Refresh refresh)
+    public RefreshHolder set(Refresh refresh)
     {
         refreshInstance = refresh;
+
+        return this;
     }
 
 }

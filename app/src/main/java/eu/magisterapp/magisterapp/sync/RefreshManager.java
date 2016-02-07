@@ -38,7 +38,7 @@ public class RefreshManager {
         errorHandler = eh;
     }
 
-    public RefreshQueue first(Refresh... refreshers)
+    public RefreshQueue first(RefreshHolder... refreshers)
     {
         return new RefreshQueue(refreshers);
     }

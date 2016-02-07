@@ -83,9 +83,9 @@ public class DashboardFragment extends TitledFragment implements Refreshable
     }
 
     @Override
-    public Refresh[] getRefreshers(MagisterApp app) {
+    public RefreshHolder[] getRefreshers(MagisterApp app) {
 
-        return new Refresh[] {
+        return new RefreshHolder[] {
                 RefreshHolder.getDashboardRoosterRefresh(app),
                 RefreshHolder.getRecentCijferRefresh(app)
         };

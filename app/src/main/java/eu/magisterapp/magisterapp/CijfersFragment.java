@@ -53,9 +53,9 @@ public class CijfersFragment extends TitledFragment implements Refreshable
     }
 
     @Override
-    public Refresh[] getRefreshers(MagisterApp app) {
+    public RefreshHolder[] getRefreshers(MagisterApp app) {
 
-        return new Refresh[] { RefreshHolder.getCijferRefresh(app) };
+        return new RefreshHolder[] { RefreshHolder.getCijferRefresh(app) };
     }
 
     @Override

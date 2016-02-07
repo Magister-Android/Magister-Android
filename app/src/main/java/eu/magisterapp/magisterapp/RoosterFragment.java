@@ -119,9 +119,9 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
     }
 
     @Override
-    public Refresh[] getRefreshers(MagisterApp app) {
+    public RefreshHolder[] getRefreshers(MagisterApp app) {
 
-        return new Refresh[] { RefreshHolder.getRoosterFragmentRefresh(app, van, tot) };
+        return new RefreshHolder[] { RefreshHolder.getRoosterFragmentRefresh(app, van, tot) };
 
     }
 

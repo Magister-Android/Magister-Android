@@ -29,16 +29,16 @@ public class RefreshQueue extends Handler
 
     private RefreshHandlerInterface onDoneListener;
 
-    public RefreshQueue(Refresh... refreshCallables)
+    public RefreshQueue(RefreshHolder... refreshCallables)
     {
-        for (Refresh refresh : refreshCallables)
-            queue.put(refresh.hashCode(), refresh);
+        for (RefreshHolder holder : refreshCallables)
+            queue.put(holder.get().hashCode(), holder.get());
     }
 
-    public RefreshQueue then(Refresh... refreshers)
+    public RefreshQueue then(RefreshHolder... refreshers)
     {
-        for (Refresh refresh : refreshers)
-            queue.put(refresh.hashCode(), refresh);
+        for (RefreshHolder holder : refreshers)
+            queue.put(holder.get().hashCode(), holder.get());
 
         return this;
     }

@@ -25,6 +25,7 @@ import java.util.List;
 
 import eu.magisterapp.magisterapi.BadResponseException;
 import eu.magisterapp.magisterapp.sync.Refresh;
+import eu.magisterapp.magisterapp.sync.RefreshHolder;
 import eu.magisterapp.magisterapp.sync.RefreshManager;
 import eu.magisterapp.magisterapp.sync.RefreshQueue;
 
@@ -138,7 +139,7 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
         rm.setErrorHandler(this);
 
-        List<Refresh> refreshers = new ArrayList<>();
+        List<RefreshHolder> refreshers = new ArrayList<>();
 
         for (FragmentView fragment : FragmentView.values())
         {
@@ -148,7 +149,7 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
         }
 
 		RefreshQueue queue = rm.first(currentFragment.refreshable.getRefreshers(getMagisterApplication()));
-		queue.then(refreshers.toArray(new Refresh[refreshers.size()]));
+		queue.then(refreshers.toArray(new RefreshHolder[refreshers.size()]));
 		queue.done(this);
 		queue.error(this);
 		queue.run();
