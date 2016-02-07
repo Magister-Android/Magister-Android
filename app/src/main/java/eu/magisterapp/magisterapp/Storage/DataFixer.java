@@ -124,27 +124,32 @@ public class DataFixer {
 
             Log.i(TAG, "Er is een wijziging.");
 
-			for (Afspraak afspraak : afspraken)
-			{
-				if (afspraak.LesuurVan.equals(wijziging.LesuurVan) && afspraak.LesuurTotMet.equals(wijziging.LesuurTotMet)
-                        && afspraak.Start.toString("yyyy-MM-dd").equals(wijziging.Start.toString("yyyy-MM-dd"))
-                        && afspraak.Einde.toString("yyyy-MM-dd").equals(wijziging.Einde.toString("yyyy-MM-dd")))
+            // Uitval
+            if (wijziging.Id == -1)
+            {
+                DateTime start = wijziging.Start;
+                DateTime einde = wijziging.Einde;
+
+                for (Afspraak afspraak : afspraken)
                 {
-                    if (! wijziging.Lokalen.isEmpty())
+                    if (afspraak.Start.isEqual(start) && afspraak.Einde.isEqual(einde))
                     {
-                        afspraak.Lokalen = wijziging.Lokalen;
-                        afspraak.isLokaalGewijzigd = true;
+                        afspraak.Status = Afspraak.StatusEnum.GEENSTATUS;
+
+                        break;
                     }
+                }
 
-                    if (wijziging.Lokatie != null && ! wijziging.Lokatie.isEmpty())
-                    {
-                        afspraak.Locatie = afspraak.Lokatie = wijziging.Lokatie;
-                        afspraak.isLokaalGewijzigd = true;
-                    }
+                break;
+            }
 
-                    if (wijziging.Status != null) afspraak.Status = wijziging.Status;
-                    if (wijziging.Type != null) afspraak.Type = wijziging.Type;
-
+            // Normale wijzigingen.
+			for (int i = 0; i < afspraken.size(); i++)
+			{
+				if (afspraken.get(i).Id == wijziging.Id)
+                {
+                    wijziging.isLokaalGewijzigd = true;
+                    afspraken.set(i, wijziging);
                     break; // elke wijziging hoort maar bij 1 afspraak
                 }
 			}

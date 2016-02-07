@@ -34,6 +34,14 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
         public TextView docent;
         public TextView time;
 
+        public int vakPaintFlags;
+        public int titlePaintFlags;
+        public int docentPaintFlags;
+        public int timePaintFlags;
+
+        public int vakColor;
+        public int titleColor;
+
         public ViewHolder(RelativeLayout row)
         {
             super(row);
@@ -42,6 +50,14 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
             title = (TextView) row.findViewById(R.id.text_title);
             docent = (TextView) row.findViewById(R.id.text_docent);
             time = (TextView) row.findViewById(R.id.text_time);
+
+            vakPaintFlags = vak.getPaintFlags();
+            titlePaintFlags = title.getPaintFlags();
+            docentPaintFlags = docent.getPaintFlags();
+            timePaintFlags = time.getPaintFlags();
+
+            vakColor = vak.getCurrentTextColor();
+            titleColor = title.getCurrentTextColor();
         }
     }
 
@@ -79,6 +95,9 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
 
         switch (row.getType())
         {
+            // Als je hier een regel maakt: vergeet niet om het omgekeerde van die regel bij de "NORMAL" te zetten.
+            // Dit moet omdat de recyclerview Views recyclet. Daarom moet je flags expliciet opnieuw instellen als
+            // dit het geval is.
             case INVALID:
                 holder.vak.setPaintFlags(holder.vak.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 holder.title.setPaintFlags(holder.title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -95,6 +114,17 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.ViewHo
 
             case WARNING:
                 holder.title.setTextColor(ContextCompat.getColor(holder.title.getContext(), R.color.onvoldoende_text));
+                break;
+
+            case NORMAL:
+                holder.vak.setPaintFlags(holder.vakPaintFlags);
+                holder.title.setPaintFlags(holder.titlePaintFlags);
+                holder.docent.setPaintFlags(holder.docentPaintFlags);
+                holder.time.setPaintFlags(holder.timePaintFlags);
+
+                holder.vak.setTextColor(holder.vakColor);
+                holder.title.setTextColor(holder.titleColor);
+                break;
         }
 
         holder.vak.setText(row.getVak());
