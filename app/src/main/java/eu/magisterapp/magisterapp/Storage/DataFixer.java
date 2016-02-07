@@ -122,6 +122,8 @@ public class DataFixer {
 
 		for(Afspraak wijziging : wijzigingen) {
 
+            Log.i(TAG, "Er is een wijziging.");
+
 			for (Afspraak afspraak : afspraken)
 			{
 				if (afspraak.LesuurVan.equals(wijziging.LesuurVan) && afspraak.LesuurTotMet.equals(wijziging.LesuurTotMet)

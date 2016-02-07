@@ -16,7 +16,10 @@ import android.widget.TextView;
 
 import org.joda.time.Days;
 
+import java.io.IOException;
+
 import eu.magisterapp.magisterapi.AfspraakList;
+import eu.magisterapp.magisterapi.Displayable;
 import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.Afspraak;
 import eu.magisterapp.magisterapi.CijferList;
@@ -66,11 +69,6 @@ public class DashboardFragment extends TitledFragment implements Refreshable
 
         Log.i("Create", "DashboardFragment.onCreateView");
 
-        if (mNeedsUpdate) {
-            updateUI(afspraken, cijfers);
-            mNeedsUpdate = false;
-        }
-
         // Fix scrollview
         scrollview = (ScrollView) view.findViewById(R.id.dashboard_scrollview);
         scrollview.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
@@ -88,10 +86,33 @@ public class DashboardFragment extends TitledFragment implements Refreshable
     public Refresh[] getRefreshers(MagisterApp app) {
 
         return new Refresh[] {
-                RefreshHolder.getRoosterRefresh(app),
+                RefreshHolder.getDashboardRoosterRefresh(app),
                 RefreshHolder.getRecentCijferRefresh(app)
         };
 
+    }
+
+    @Override
+    public void readDatabase(DataFixer data) throws IOException {
+        final AfspraakList afspraken = data.getNextDayFromCache();
+        final CijferList cijfers = data.getRecentCijfersFromCache();
+
+        if (uurView != null) {
+            uurView.post(new Runnable() {
+                @Override
+                public void run() {
+                    updateUI(afspraken, cijfers);
+                }
+            });
+        }
+
+        else
+        {
+            this.afspraken = afspraken;
+            this.cijfers = cijfers;
+
+            mNeedsUpdate = true;
+        }
     }
 
     public void onResult(DataFixer.ResultBundle result) {
@@ -193,6 +214,14 @@ public class DashboardFragment extends TitledFragment implements Refreshable
         }
 
         uurAdapter.swap(afspraken);
+
+        for (Afspraak afspraak : afspraken)
+        {
+            if (afspraak.getType() != Displayable.Type.NORMAL) Log.i("Dashboard", "Roosterwijziging: " + afspraak.LesuurTotMet);
+
+            Log.i("Afspraak: ", afspraak.getVakken() + " " + afspraak.getLokalen());
+        }
+
         populateLinearLayout(uurView, uurAdapter);
     }
 
@@ -220,6 +249,11 @@ public class DashboardFragment extends TitledFragment implements Refreshable
     @Override
     public void onResume() {
         super.onResume();
+
+        if (mNeedsUpdate) {
+            updateUI(afspraken, cijfers);
+            mNeedsUpdate = false;
+        }
 
         if (scrollview == null) return;
 

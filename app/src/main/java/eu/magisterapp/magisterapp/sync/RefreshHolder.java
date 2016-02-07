@@ -1,6 +1,9 @@
 package eu.magisterapp.magisterapp.sync;
 
+import android.util.Log;
+
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 import java.io.IOException;
 
@@ -12,37 +15,81 @@ import eu.magisterapp.magisterapp.MagisterApp;
  */
 public class RefreshHolder {
 
+    // TODO: misschien hier een instelling van maken?
+    // geen idee hoe ik dit moet uitleggen. Het is een getal dat bepaalt of
+    // hij het dashboard rooster verlengd met maximaal FETCH_LIMIT dagen, zodat
+    // de huidige dag op het RoosterFragment ook nog in die reeks valt. Dit scheelt
+    // 1 request, omdat we dan niet het dashboard rooster, en het RoosterFragment rooster apart moeten ophalen.
+    // We controleren hierop, zodat wanneer jurryt naar het rooster van 2010 gaat,
+    // niet in een keer zn hele telefoon vol zit met 1500 dagen cache.
+    private static final int FETCH_LIMIT = 14;
+
     private static Refresh cijferRefresh;
 
-    private static Refresh roosterRefresh;
+    private static Refresh dashboardRefresh;
+    private static Refresh dummyDashboardRefresh;
 
-    // Geeft aan of het normale rooster (7 dagen vooruit) moet worden gebruikt,
-    // of het rooster met de bounds van het RoosterFragment (custom)
-    private static boolean shouldUseRooster = false;
+    private static DateTime roosterVan;
+    private static DateTime roosterTot;
 
     private static Refresh recentCijferRefresh;
 
-    // Deze wordt door het dashboard gebruikt
-    public static Refresh getRoosterRefresh(final MagisterApp app)
+    public static Refresh getDashboardRoosterRefresh(MagisterApp app)
     {
-        if (roosterRefresh != null && shouldUseRooster)
-        {
-            shouldUseRooster = false;
-            return roosterRefresh;
-        }
+        dashboardRefresh = getDummyDashboardRefresh(app);
 
-        final DateTime van = Utils.now();
-        final DateTime tot = van.plusDays(app.getDaysInAdvance());
-
-        return getRoosterRefresh(app, van, tot, false);
+        return dashboardRefresh;
     }
 
-    // Deze wordt door het rooster gebruikt.
-    public static Refresh getRoosterRefresh(final MagisterApp app, final DateTime van, final DateTime tot, boolean useRooster)
+    private static Refresh getDummyDashboardRefresh(final MagisterApp app)
     {
-        shouldUseRooster = useRooster;
+        DateTime now = Utils.now();
 
-        roosterRefresh = new Refresh(app) {
+        if (dummyDashboardRefresh == null)
+            dummyDashboardRefresh = makeRoosterRefresh(app, now, now.plusDays(app.getDaysInAdvance()), true);
+
+        return dummyDashboardRefresh;
+    }
+
+    public static Refresh getRoosterFragmentRefresh(MagisterApp app, DateTime van, DateTime tot)
+    {
+        DateTime now = Utils.now();
+
+        roosterVan = van;
+        roosterTot = tot;
+
+        int ahead = app.getDaysInAdvance();
+
+        // Zorg dat dummyDashboardRefresh != null
+        getDummyDashboardRefresh(app);
+
+        if (Days.daysBetween(now, van).getDays() < -ahead || Days.daysBetween(now, tot).getDays() > ahead + FETCH_LIMIT) {
+
+            Log.i("RefreshHolder", "andere dan dashboard");
+
+            dashboardRefresh = getDummyDashboardRefresh(app);
+
+            return makeRoosterRefresh(app, van, tot, false);
+        }
+
+        else
+        {
+            Log.i("RefreshHolder", "Zelfde als dashboard");
+
+            DateTime refreshVan = van.isBefore(dummyDashboardRefresh.van) ? van : dummyDashboardRefresh.van;
+            DateTime refreshTot = tot.isAfter(dummyDashboardRefresh.tot) ? tot : dummyDashboardRefresh.tot;
+
+            // Maak een refresh die de dashboardweek ophaalt, verkort of verlengd
+            // zodat de huidige dag van het rooster er ook bij zit.
+            // Hij gebruikt dus de kleinste (nu of van) en de grootste (nu of tot)
+
+            return dashboardRefresh = makeRoosterRefresh(app, refreshVan, refreshTot, false);
+        }
+    }
+
+    private static Refresh makeRoosterRefresh(final MagisterApp app, final DateTime van, final DateTime tot, boolean dummy)
+    {
+        return new Refresh(van, tot, dummy ? "Dashboard dummy" : "RoosterFragment") {
             @Override
             public void fire() {
                 try
@@ -56,15 +103,13 @@ public class RefreshHolder {
                 }
             }
         };
-
-        return roosterRefresh;
     }
 
     public static Refresh getCijferRefresh(final MagisterApp app)
     {
         if (cijferRefresh == null)
 
-            cijferRefresh = new Refresh(app) {
+            cijferRefresh = new Refresh("Cijfers") {
                 @Override
                 public void fire() {
                     try
@@ -86,7 +131,7 @@ public class RefreshHolder {
     {
         if (recentCijferRefresh == null)
 
-            recentCijferRefresh = new Refresh(app) {
+            recentCijferRefresh = new Refresh("Recent cijfers") {
                 @Override
                 public void fire() {
                     try
@@ -103,4 +148,17 @@ public class RefreshHolder {
 
         return recentCijferRefresh;
     }
+
+    private Refresh refreshInstance;
+
+    public Refresh get()
+    {
+        return refreshInstance;
+    }
+
+    public void set(Refresh refresh)
+    {
+        refreshInstance = refresh;
+    }
+
 }

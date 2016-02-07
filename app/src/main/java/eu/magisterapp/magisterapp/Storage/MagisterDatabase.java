@@ -287,7 +287,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
         return collection;
     }
 
-    public void insertAfspraken(String owner, AfspraakList afspraken) throws SerializeException
+    public synchronized void insertAfspraken(String owner, AfspraakList afspraken) throws SerializeException
     {
         for (Afspraak afspraak : afspraken)
         {
@@ -295,7 +295,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
         }
     }
 
-    public void insertAfspraak(String owner, Afspraak afspraak) throws SerializeException
+    public synchronized void insertAfspraak(String owner, Afspraak afspraak) throws SerializeException
     {
         SQLiteStatement stmt = getWritableDatabase().compileStatement(Afspraken.INSERT_SQL);
 

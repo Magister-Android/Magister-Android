@@ -76,16 +76,18 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
             }
         });
 
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         if (mNeedsUpdate) {
-            mAdapter.swap(getAfsprakenForDay(van, afspraken));
+            mAdapter.swap(afspraken);
 
             mNeedsUpdate = false;
         }
-
-        // fix een update.
-        selfUpdate((SwipeRefreshLayout) getActivity().findViewById(R.id.refresh_layout));
-
-        return view;
     }
 
     private AfspraakList getAfsprakenForDay(DateTime day, AfspraakList afspraken)
@@ -113,32 +115,34 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
         van = current = new DateTime(year, month, day, 0, 0);
         tot = van.plusDays(1);
 
-        selfUpdate((SwipeRefreshLayout) getActivity().findViewById(R.id.refresh_layout));
+
     }
 
     @Override
     public Refresh[] getRefreshers(MagisterApp app) {
 
-        DateTime now = Utils.now();
+        return new Refresh[] { RefreshHolder.getRoosterFragmentRefresh(app, van, tot) };
 
-        int difference = Days.daysBetween(now, current).getDays();
+    }
 
-        // te veel dagen tussen wat hij normaal ophaalt voor het dashboard, en de dag die hij
-        // nu moet ophalen. Maak dus een custom ding, die niet hetzelfde is als het dashboard.
-        if (difference > app.getDaysInAdvance() + FETCH_LIMIT || difference < FETCH_LIMIT)
+    @Override
+    public void readDatabase(DataFixer data) throws IOException {
+        final AfspraakList afspraken = data.getAfsprakenFromCache(van, tot);
+
+        if (mRecyclerView == null)
         {
-            return new Refresh[] {RefreshHolder.getRoosterRefresh(app, van, tot, false)};
+            this.afspraken = afspraken;
+            mNeedsUpdate = true;
+
+            return;
         }
 
-        // Als hij wel in die reeks zit, geef dan een andere Refresh instance. (die het dashboard eenmalig ook gebruikt)
-        else
-        {
-            DateTime refreshVan = now.isBefore(van) ? now : van;
-            DateTime refreshTot = now.isAfter(tot) ? now : tot;
-
-            return new Refresh[] { RefreshHolder.getRoosterRefresh(app, refreshVan, refreshTot, true) };
-        }
-
+        mRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.swap(afspraken);
+            }
+        });
     }
 
     /**
@@ -161,68 +165,7 @@ public class RoosterFragment extends TitledFragment implements DatePickerDialog.
         mAdapter.swap(getAfsprakenForDay(van, result.afspraken));
     }
 
-    public void selfUpdate(SwipeRefreshLayout mainRefresh)
-    {
-        mainRefresh.setRefreshing(true);
-
-        new UpdateTask(mainRefresh).execute();
-    }
-
-    private class UpdateTask extends AsyncTask<Void, Void, AfspraakList>
-    {
-        private SwipeRefreshLayout swipeRefreshLayout;
-        private MagisterApp app;
-
-        private Main main;
-
-        // possible error
-        private IOException e;
-
-        public UpdateTask(SwipeRefreshLayout swipeRefreshLayout)
-        {
-            this.swipeRefreshLayout = swipeRefreshLayout;
-            app = (MagisterApp) getActivity().getApplication();
-
-            if (getActivity() instanceof Main) main = (Main) getActivity();
-        }
-
-        @Override
-        protected AfspraakList doInBackground(Void... params) {
-
-            try
-            {
-                if (! app.hasInternet()) return app.getDataStore().getAfsprakenFromCache(van, tot);
-
-                return app.getDataStore().getAfspraken(van, tot);
-            }
-
-            catch (IOException e)
-            {
-                this.e = e;
-
-                try {
-                    return app.getDataStore().getAfsprakenFromCache(van, tot);
-                } catch (IOException tooBadSoSad) {
-                    // :(
-                }
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(AfspraakList afspraken) {
-
-            if (afspraken == null && e != null && main != null) main.handleError(e);
-
-            if (afspraken != null && mAdapter != null) mAdapter.swap(afspraken);
-
-            swipeRefreshLayout.setRefreshing(false);
-
-        }
-    }
-
-		public void deleteView()
+	public void deleteView()
 		{
 			view = null;
 		}

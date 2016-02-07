@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import eu.magisterapp.magisterapp.ErrorHandlerInterface;
 import eu.magisterapp.magisterapp.RefreshHandlerInterface;
 
 /**
@@ -23,6 +24,8 @@ public class RefreshQueue extends Handler
     private static final String TAG = "sync.RefreshQueue";
 
     private Map<Integer, Refresh> queue = new HashMap<>();
+
+    private ErrorHandlerInterface eh;
 
     private RefreshHandlerInterface onDoneListener;
 
@@ -53,9 +56,9 @@ public class RefreshQueue extends Handler
         {
             for (Map.Entry<Integer, Refresh> entry : queue.entrySet())
             {
-                Log.i(TAG, "Start new thread");
+                Log.i(TAG, "Start new thread (" + String.valueOf(entry.getValue().hashCode()) + ", " + entry.getValue().tag + ")");
 
-                new Thread(entry.getValue().setQueue(this)).start();
+                new Thread(entry.getValue().setQueue(this).setErrorHandler(eh)).start();
             }
         }
 
@@ -69,15 +72,22 @@ public class RefreshQueue extends Handler
 
     public void setFinished(int id)
     {
-        Log.i(TAG, "Finish thread");
+        Log.i(TAG, "Finish thread (" + String.valueOf(id) + ")");
         queue.remove(id);
 
         if (queue.isEmpty() && onDoneListener != null)
         {
             // alle shit is af.
-            // TODO: fix dat hij al iets zodra de dingen van currentFragment af zijn.
+            // TODO: fix dat hij al iets doet zodra de opdrachten van currentFragment af zijn.
             onDoneListener.onDoneRefreshing();
         }
+    }
+
+    public RefreshQueue error(ErrorHandlerInterface eh)
+    {
+        this.eh = eh;
+
+        return this;
     }
 
     @Override

@@ -17,19 +17,39 @@ public abstract class Refresh implements Runnable
 {
     public int id = hashCode();
 
-    public MagisterApp mApp;
-    public DataFixer mData;
-    public MagisterAPI mApi;
+    public String tag;
 
     private RefreshQueue mQueue;
 
     public ErrorHandlerInterface mErrorHandler;
 
-    public Refresh(MagisterApp app)
+    public final DateTime van;
+    public final DateTime tot;
+
+    public Refresh()
     {
-        mApp = app;
-        mData = app.getDataStore();
-        mApi = app.getApi();
+        van = null;
+        tot = null;
+    }
+
+    public Refresh(String tag)
+    {
+        van = null;
+        tot = null;
+        this.tag = tag;
+    }
+
+    public Refresh(final DateTime van, final DateTime tot)
+    {
+        this.van = van;
+        this.tot = tot;
+    }
+
+    public Refresh(final DateTime van, final DateTime tot, String tag)
+    {
+        this.van = van;
+        this.tot = tot;
+        this.tag = tag;
     }
 
     public Refresh setErrorHandler(ErrorHandlerInterface errorHandler)

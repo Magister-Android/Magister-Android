@@ -8,9 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.IOException;
+
 import eu.magisterapp.magisterapp.Storage.DataFixer;
 import eu.magisterapp.magisterapi.CijferList;
 import eu.magisterapp.magisterapp.sync.Refresh;
+import eu.magisterapp.magisterapp.sync.RefreshHolder;
 
 
 public class CijfersFragment extends TitledFragment implements Refreshable
@@ -38,15 +41,41 @@ public class CijfersFragment extends TitledFragment implements Refreshable
         cijferContainer.setLayoutManager(new LinearLayoutManager(getContext()));
         cijferContainer.setAdapter(adapter);
 
-        if (mNeedsUpdate) updateCijferList(cijfers);
 
         return view;
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mNeedsUpdate) updateCijferList(cijfers);
+    }
+
+    @Override
     public Refresh[] getRefreshers(MagisterApp app) {
 
-        return new Refresh[] { };
+        return new Refresh[] { RefreshHolder.getCijferRefresh(app) };
+    }
+
+    @Override
+    public void readDatabase(DataFixer data) throws IOException {
+        final CijferList cijfers = data.getCijfersFromCache();
+
+        if (cijferContainer == null)
+        {
+            this.cijfers = cijfers;
+            mNeedsUpdate = true;
+
+            return;
+        }
+
+        cijferContainer.post(new Runnable() {
+            @Override
+            public void run() {
+                updateCijferList(cijfers);
+            }
+        });
     }
 
     public void onResult(DataFixer.ResultBundle result) {

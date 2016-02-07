@@ -26,6 +26,7 @@ import java.util.List;
 import eu.magisterapp.magisterapi.BadResponseException;
 import eu.magisterapp.magisterapp.sync.Refresh;
 import eu.magisterapp.magisterapp.sync.RefreshManager;
+import eu.magisterapp.magisterapp.sync.RefreshQueue;
 
 
 public class Main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, RefreshHandlerInterface, ErrorHandlerInterface
@@ -39,6 +40,8 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 	SwipeRefreshLayout mSwipeRefreshLayout;
 
 	FragmentView currentFragment = FragmentView.DASHBOARD;
+
+	boolean switchedSinceRefresh = false;
 
 	static int fragCounter = 0;
 
@@ -144,19 +147,33 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
             refreshers.addAll(new ArrayList<>(Arrays.asList(fragment.refreshable.getRefreshers(getMagisterApplication()))));
         }
 
-        rm.first(currentFragment.refreshable.getRefreshers(getMagisterApplication())) // Elk fragment heeft een of meer "Refresh" runnables
-                .then(refreshers.toArray(new Refresh[refreshers.size()]))
-                .done(this) // zet een callback onDoneRefreshing
-                .run(); // voer refresh uit.
+		RefreshQueue queue = rm.first(currentFragment.refreshable.getRefreshers(getMagisterApplication()));
+		queue.then(refreshers.toArray(new Refresh[refreshers.size()]));
+		queue.done(this);
+		queue.error(this);
+		queue.run();
+
+		switchedSinceRefresh = false;
 	}
 
     @Override
     public void onDoneRefreshing() {
         mSwipeRefreshLayout.setRefreshing(false);
 
-        // TODO: update local data van fragments
-        // TODO: call een onDone method op currentFragment.instance,
-            // die fixt dat hij zn shit refresht. (kan misschien bij de data update)
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for (FragmentView fragment : FragmentView.values())
+				{
+					try {
+						fragment.refreshable.readDatabase(getMagisterApplication().getDataStore());
+					} catch (IOException tooBadSoSad) {
+						// Database error. idk
+						tooBadSoSad.printStackTrace();
+					}
+				}
+			}
+		}).start();
     }
 
     @Override
@@ -306,6 +323,8 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 		setTitle(getString(fragment.title));
 
 		transaction.commit();
+
+		switchedSinceRefresh = true;
 	}
 
 	@Override
