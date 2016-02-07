@@ -282,6 +282,13 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
 	public boolean handleAction(int actionId)
 	{
+		if (actionId == getResources().getIdentifier("action_nuke_db", "id", getPackageName()))
+		{
+			getMagisterApplication().getDataStore().getDB().nuke();
+
+			return true;
+		}
+
 		switch (actionId)
 		{
 			case R.id.nav_dashboard:
@@ -306,14 +313,6 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 				getMagisterApplication().getApi().disconnect();
 				getMagisterApplication().voidCredentails();
 				startActivity(new Intent(this, this.getClass()));
-				return true;
-
-			case R.id.action_debug_nukedb:
-				// Deze optie is alleen zichtbaar in de "debug" variant.
-				// Handig zodat je niet de heletijd data moet verwijderen & opnieuw
-				// in te loggen als je iets wilt testen.
-				// De app crasht als je dit gebruikt tijdens een refresh btw..
-				getMagisterApplication().getDataStore().getDB().nuke();
 				return true;
 
 			default:

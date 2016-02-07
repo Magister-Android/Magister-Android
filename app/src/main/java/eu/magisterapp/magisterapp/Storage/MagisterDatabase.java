@@ -50,7 +50,7 @@ public class MagisterDatabase extends SQLiteOpenHelper
      *
      */
 
-    public static final int VERSION = 3;
+    public static final int VERSION = 4;
 
     public static final String DATABASE_NAME = "magisterdb";
 
