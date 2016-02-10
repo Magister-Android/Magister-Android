@@ -41,4 +41,5 @@
 
 	<string name="credentials_title">Inlog gegevens</string>
 	<string name="frequency_title">Updates</string>
+	<string name="title_activity_cijfer_detail">CijferDetail</string>
 </resources>

@@ -1,6 +1,7 @@
 package eu.magisterapp.magisterapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,12 +28,16 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
 {
     private CijferList cijfers;
 
+	private Context context;
+
     private int[] colorsVoldoende;
     private int[] colorsOnVoldoende;
 
     public CijferAdapter(Context context)
     {
         super();
+
+		this.context = context;
 
         colorsVoldoende = context.getResources().getIntArray(R.array.cijfer_colors_voldoende);
         colorsOnVoldoende = context.getResources().getIntArray(R.array.cijfer_colors_onvoldoende);
@@ -115,7 +120,7 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        Cijfer cijfer = cijfers.get(position);
+        final Cijfer cijfer = cijfers.get(position);
 
         if (holder.gemiddelde != null)
         {
@@ -129,6 +134,15 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
 
         holder.cijfer.setText(cijfer.CijferStr);
         holder.omschrijving.setText(cijfer.info.KolomOmschrijving);
+
+		holder.itemView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(context.getApplicationContext(), CijferDetail.class);
+				intent.putExtra("cijfer", cijfer);
+				context.startActivity(intent);
+			}
+		});
     }
 
     @Override
