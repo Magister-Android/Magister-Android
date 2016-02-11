@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar
+
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:id="@+id/toolbar"
-	android:layout_height="?attr/actionBarSize"
+	android:orientation="vertical"
+	android:layout_height="wrap_content"
 	android:layout_width="match_parent"
-	android:background="@color/primary"
-	app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-	app:popupTheme="@style/Theme.AppCompat.Light"
-	app:contentInsetStart="72dp" />
+	android:layout_marginBottom="-4dp">
+
+	<android.support.v7.widget.Toolbar
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/toolbar"
+		android:layout_height="?attr/actionBarSize"
+		android:layout_width="match_parent"
+		android:background="@color/primary"
+		app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+		app:popupTheme="@style/Theme.AppCompat.Light"
+		app:contentInsetStart="72dp" />
+
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="4dp"
+		android:background="@drawable/header_shadow"
+		android:focusable="false"
+		android:focusableInTouchMode="false"/>
+
+</LinearLayout>
+

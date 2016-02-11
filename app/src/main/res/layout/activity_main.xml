@@ -37,11 +37,6 @@
 
 					</eu.magisterapp.magisterapp.ui.FloatingSwipeRefreshLayout>
 
-					<View
-						android:layout_width="match_parent"
-						android:layout_height="4dp"
-						android:background="@drawable/header_shadow"/>
-
 				</FrameLayout>
 
 			</LinearLayout>

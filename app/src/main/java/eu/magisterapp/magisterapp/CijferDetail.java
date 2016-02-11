@@ -12,6 +12,7 @@ import eu.magisterapp.magisterapi.Cijfer;
 public class CijferDetail extends AppCompatActivity {
 
 	protected Cijfer cijfer;
+	protected Cijfer.CijferInfo info;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -20,11 +21,17 @@ public class CijferDetail extends AppCompatActivity {
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-		this.cijfer = (Cijfer) getIntent().getExtras().get("cijfer");
+		cijfer = (Cijfer) getIntent().getExtras().get("cijfer");
+		info = (Cijfer.CijferInfo) getIntent().getExtras().get("info");
 
-		TextView text = (TextView) findViewById(R.id.asdfjkl);
 
-		toolbar.setTitle(this.cijfer.info.KolomOmschrijving);
+		TextView cijfer_big = (TextView) findViewById(R.id.cijfer_big);
+		TextView vak = (TextView) findViewById(R.id.cijfer_vak);
+
+		cijfer_big.setText(cijfer.CijferStr);
+		vak.setText(cijfer.Vak.Omschrijving);
+
+		toolbar.setTitle(info.KolomOmschrijving);
 
 		setSupportActionBar(toolbar);
 

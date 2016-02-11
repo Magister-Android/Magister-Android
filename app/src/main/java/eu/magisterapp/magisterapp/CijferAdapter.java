@@ -138,8 +138,9 @@ public class CijferAdapter extends RecyclerView.Adapter<CijferAdapter.ViewHolder
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(context.getApplicationContext(), CijferDetail.class);
+				Intent intent = new Intent(v.getContext().getApplicationContext(), CijferDetail.class);
 				intent.putExtra("cijfer", cijfer);
+				intent.putExtra("info", cijfer.info);
 				context.startActivity(intent);
 			}
 		});
