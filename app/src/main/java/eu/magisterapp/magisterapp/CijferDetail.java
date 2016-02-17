@@ -26,12 +26,18 @@ public class CijferDetail extends AppCompatActivity {
 
 
 		TextView cijfer_big = (TextView) findViewById(R.id.cijfer_big);
-		TextView vak = (TextView) findViewById(R.id.cijfer_vak);
+		TextView vak = (TextView) findViewById(R.id.vak);
+		TextView docent = (TextView) findViewById(R.id.docent);
+		TextView omschrijving = (TextView) findViewById(R.id.omschrijving);
+		TextView weging = (TextView) findViewById(R.id.weging);
 
 		cijfer_big.setText(cijfer.CijferStr);
 		vak.setText(cijfer.Vak.Omschrijving);
+		docent.setText(cijfer.Docent);
+		omschrijving.setText(info.KolomOmschrijving);
+		weging.setText(String.format("%dx", info.KolomSoortKolom));
 
-		toolbar.setTitle(info.KolomOmschrijving);
+		toolbar.setTitle(cijfer.Vak.Omschrijving);
 
 		setSupportActionBar(toolbar);
 

@@ -1,7 +1,9 @@
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:orientation="vertical"
+	android:layout_height="match_parent"
+	xmlns:andriod="http://schemas.android.com/apk/res-auto">
 
 	<include layout="@layout/toolbar"/>
 
@@ -13,18 +15,58 @@
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:id="@+id/cijfer_big"
 			android:layout_alignParentTop="true"
-			android:layout_alignParentLeft="true"/>
+			android:layout_alignParentStart="true"
+			android:textSize="76dp"
+			android:id="@+id/cijfer_big"
+			android:padding="28dp"
+			android:textStyle="bold"
+			android:text="6.1"
+			android:layout_alignParentLeft="true" />
 
 		<TextView
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:id="@+id/cijfer_vak"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="Natuurkunde"
+			android:layout_alignParentTop="true"
+			android:textSize="28dp"
 			android:layout_toRightOf="@id/cijfer_big"
-			android:layout_alignParentTop="true"/>
+			android:paddingTop="22dp"
+			android:id="@+id/vak"/>
 
-		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/asdfjkl"/>
+		<TextView
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="K. Dopheide"
+			android:layout_below="@id/vak"
+			android:textSize="18dp"
+			android:layout_toRightOf="@id/cijfer_big"
+			android:paddingTop="3dp"
+			android:id="@+id/docent"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="5x"
+			android:layout_below="@id/docent"
+			android:textSize="18dp"
+			android:layout_toRightOf="@id/cijfer_big"
+			android:paddingTop="3dp"
+			android:id="@+id/weging"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="PO2 rapport"
+			android:layout_below="@id/cijfer_big"
+			android:textSize="22dp"
+			android:padding="22dp"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
+			android:id="@+id/omschrijving"/>
+
+
+
 	</RelativeLayout>
 </LinearLayout>
 

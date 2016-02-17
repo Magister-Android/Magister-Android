@@ -162,8 +162,8 @@ public class DataFixer {
 
     public AfspraakList getAfsprakenFromCache(DateTime van, DateTime tot) throws IOException
     {
-        return db.queryAfspraken("WHERE ((Start <= @now AND Einde >= @end) " +
-                "OR (Start >= @now AND Einde <= @end) " +
+        return db.queryAfspraken("WHERE ((Start < @now AND Einde > @end) " +
+                "OR (Start > @now AND Einde < @end) " +
                 "OR (@now BETWEEN Start AND Einde) " +
                 "OR (@end BETWEEN Start AND Einde)) " +
                 "AND owner = ? " +
